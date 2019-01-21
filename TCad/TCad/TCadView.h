@@ -39,6 +39,7 @@ public:
     void CreateOpenGLFont();
     void OnLighting();
     void OffLighting();
+    void MakeGrid();
 // Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view

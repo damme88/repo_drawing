@@ -585,6 +585,14 @@ BOOL TCadView::OnMouseWheel(UINT nFlags, short zDetal, CPoint point)
     return  ret;
 }
 
+void TCadView::MakeGrid()
+{
+  
+
+
+
+}
+
 void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
     switch (nChar) 

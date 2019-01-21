@@ -43,6 +43,7 @@
 
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
+#include <math.h>
 #include "Const.h"
 #include"..\openLib\include\gl\glut.h"
 #include "..\openLib\include\glm\glm\vec3.hpp"
