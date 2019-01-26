@@ -328,6 +328,14 @@ IDR_RIBBON              RT_RIBBON_XML           "res\\ribbon.mfcribbon-ms"
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Cursor
+//
+
+IDC_CUR_DRAW            CURSOR                  "res\\cursor1.cur"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -466,6 +474,23 @@ STRINGTABLE
 BEGIN
     ID_DRAWING_AXIS         "Show Axis"
     ID_DRAWING_GRID         "Show Grid"
+END
+
+STRINGTABLE
+BEGIN
+    ID_DRAWING_LINE         "Draw single line on XOY Plane"
+    ID_DRAWING_POLYLINE     "Drawing Poly Line"
+    ID_DRAWING_CIRCLE       "Drawing Circle"
+    ID_VIEW_ISO             "View Iso Type"
+    ID_VIEW_LEFT            "View Left"
+    ID_VIEW_FRONT           "View Front"
+END
+
+STRINGTABLE
+BEGIN
+    ID_DRAWING_RECT         "Drawing Rectangle"
+    ID_DRAWING_ARC          "Drawing Arc"
+    ID_DRAWING_POINT        "Drawing Point"
 END
 
 #endif    // English (United States) resources

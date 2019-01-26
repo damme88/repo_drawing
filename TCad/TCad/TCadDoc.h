@@ -14,7 +14,8 @@
 
 
 #pragma once
-
+#include "DataList.h"
+#include "EntityObject.h"
 
 class TCadDoc : public CDocument
 {
@@ -24,7 +25,8 @@ protected: // create from serialization only
 
 // Attributes
 public:
-
+    void RenderEntity();
+    void AppendEntity(EntityObject* entity);
 // Operations
 public:
 
@@ -46,6 +48,7 @@ public:
 #endif
 
 protected:
+    DataList<EntityObject*> data_list_;
 
 // Generated message map functions
 protected:

@@ -191,7 +191,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Const.h" />
+    <ClInclude Include="DataList.h" />
+    <ClInclude Include="EntityObject.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Object2D.h" />
     <ClInclude Include="PCam.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -199,9 +202,14 @@
     <ClInclude Include="TCad.h" />
     <ClInclude Include="TCadDoc.h" />
     <ClInclude Include="TCadView.h" />
+    <ClInclude Include="TLine.h" />
+    <ClInclude Include="TPoint.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataList.cpp" />
+    <ClCompile Include="EntityObject.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Object2D.cpp" />
     <ClCompile Include="PCam.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -212,6 +220,8 @@
     <ClCompile Include="TCad.cpp" />
     <ClCompile Include="TCadDoc.cpp" />
     <ClCompile Include="TCadView.cpp" />
+    <ClCompile Include="TLine.cpp" />
+    <ClCompile Include="TPoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TCad.rc" />
@@ -220,15 +230,18 @@
     <Image Include="res\buttons.bmp" />
     <Image Include="res\filelarge.bmp" />
     <Image Include="res\filesmall.bmp" />
+    <Image Include="res\grid2.bmp" />
     <Image Include="res\main.bmp" />
     <Image Include="res\TCad.ico" />
     <Image Include="res\TCadDoc.ico" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\UNTITLED.bmp" />
     <Image Include="res\writelarge.bmp" />
     <Image Include="res\writesmall.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\cursor1.cur" />
     <None Include="res\ribbon.mfcribbon-ms" />
     <None Include="res\TCad.rc2" />
   </ItemGroup>

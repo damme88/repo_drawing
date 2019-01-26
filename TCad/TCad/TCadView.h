@@ -14,6 +14,9 @@
 
 #pragma once
 #include "PCam.h"
+#include <vector>
+#include "TLine.h"
+#include "TPoint.h"
 
 class TCadView : public CView
 {
@@ -39,7 +42,12 @@ public:
     void CreateOpenGLFont();
     void OnLighting();
     void OffLighting();
-    void MakeGrid();
+    void MakeGrid(double width, double height, double distance);
+    VEC3D ConvertWindowToOpenGL(const CPoint &point2D);
+    VEC3D GetPPVectorScreen();
+    POINT3D GetMousePtOnPlane(POINT3D &gl_point, POINT3D &origin_point);
+    void DrawEntityObject();
+    void Update2DObjState(UINT type);
 // Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
@@ -84,6 +92,11 @@ protected:
     int cy_;
 
     bool is_show_axis_;
+    bool is_show_grid_;
+    UINT type_2d_;
+    bool is_line_;
+    bool is_point_;
+    std::vector<CPoint> pt_list_;
 // Generated message map functions
 protected:
     afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -97,10 +110,24 @@ protected:
     afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	DECLARE_MESSAGE_MAP()
 public:
     afx_msg void OnDrawingAxis();
     afx_msg void OnUpdateDrawingAxis(CCmdUI *pCmdUI);
+    afx_msg void OnBtnGrid();
+    afx_msg void OnViewIso();
+    afx_msg void OnViewTop();
+    afx_msg void OnViewLeft();
+    afx_msg void OnViewFront();
+    afx_msg void OnViewBottom();
+    afx_msg void OnViewRight();
+    afx_msg void OnViewBack();
+    afx_msg void OnUpdateBtnGrid(CCmdUI *pCmdUI);
+    afx_msg void OnDrawingLine();
+    afx_msg void OnUpdateDrawingLine(CCmdUI *pCmdUI);
+    afx_msg void OnDrawingPoint();
+    afx_msg void OnUpdateDrawingPoint(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in TCadView.cpp

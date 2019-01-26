@@ -16,36 +16,36 @@ public:
     const Vector3D &operator + (Vector3D &v1) 
     {
         Vector3D temp;
-        temp.v[0] = v[0] + v1.v[0];
-        temp.v[1] = v[1] + v1.v[1];
-        temp.v[2] = v[2] + v1.v[2];
+        temp.x_ = x_ + v1.x_;
+        temp.y_ = y_ + v1.y_;
+        temp.z_ = z_ + v1.z_;
         return temp;
     }
 
     const Vector3D &operator - (Vector3D &v1) 
     {
         Vector3D temp;
-        temp.v[0] = v[0] - v1.v[0];
-        temp.v[1] = v[1] - v1.v[1];
-        temp.v[2] = v[2] - v1.v[2];
+        temp.x_ = x_ - v1.x_;
+        temp.y_ = y_ - v1.y_;
+        temp.z_ = z_ - v1.z_;
         return temp;
     }
 
     const Vector3D &operator * (Vector3D &v1) 
     {
         Vector3D temp;
-        temp.v[0] = v[1] * v1.v[2] - v[2] * v1.v[1];
-        temp.v[1] = v[2] * v1.v[0] - v[0] * v1.v[2];
-        temp.v[2] = v[0] * v1.v[1] - v[1] * v1.v[0];
+        temp.x_ = y_ * v1.z_ - z_ * v1.y_;
+        temp.y_ = z_ * v1.x_ - x_ * v1.z_;
+        temp.z_ = x_ * v1.y_ - y_ * v1.x_;
         return temp;
     }
 
     const Vector3D &operator *(double a) 
     {
         Vector3D temp;
-        temp.v[0] = v[0] * a;
-        temp.v[1] = v[1] * a;
-        temp.v[2] = v[2] * a;
+        temp.x_ = x_ * a;
+        temp.y_ = y_ * a;
+        temp.z_ = z_ * a;
         return temp;
     }
 
@@ -53,7 +53,9 @@ public:
     Vector3D Unit();
     void Set(double x, double y, double z);
 
-    float v[3];
+    float x_;
+    float y_;
+    float z_;
 };
 
 #endif // VEC_3D_H_

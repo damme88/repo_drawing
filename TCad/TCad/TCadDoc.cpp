@@ -58,8 +58,23 @@ BOOL TCadDoc::OnNewDocument()
 	return TRUE;
 }
 
+void TCadDoc::AppendEntity(EntityObject* entity)
+{
+    if (entity != NULL)
+    {
+        data_list_.InsertBack(entity);
+    }
+}
 
-
+void TCadDoc::RenderEntity()
+{
+    DataNote<EntityObject*>* temp = data_list_.head();
+    while (temp != NULL)
+    {
+        temp->get_data()->Render();
+        temp = temp->get_next();
+    }
+}
 
 // TCadDoc serialization
 

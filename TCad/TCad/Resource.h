@@ -35,16 +35,36 @@
 #define ID_VIEW_APPLOOK_WINDOWS_7       219
 #define IDS_EDIT_MENU                   306
 #define IDR_RIBBON                      307
+#define IDB_BITMAP1                     310
+#define IDB_GRID                        310
+#define IDC_CUR_DRAW                    312
 #define ID_DRAWING_AXIS                 400
 #define ID_DRAWING_GRID                 401
 #define ID_WRITE_PASTEASHYPERLINK       32770
+#define ID_BTN_GRID                     32775
+#define ID_DRAWING_LINE                 32777
+#define ID_DRAWING_POLYLINE             32778
+#define ID_DRAWING_CIRCLE               32779
+#define ID_VIEW_ISO                     32781
+#define ID_VIEW_LEFT                    32782
+#define ID_VIEW_FRONT                   32783
+#define ID_VIEW_TOP                     32784
+#define ID_VIEW_BOTTOM                  32785
+#define ID_VIEW_RIGHT                   32786
+#define ID_BUTTON7                      32787
+#define ID_VIEW_BACK                    32787
+#define ID_DRAWING_RECT                 32788
+#define ID_DRAWING_ARC                  32789
+#define ID_DRAWING_POINT                32790
+#define ID_COMBO2                       32791
+#define ID_LAYER_COLOR                  32791
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32775
+#define _APS_NEXT_RESOURCE_VALUE        313
+#define _APS_NEXT_COMMAND_VALUE         32792
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

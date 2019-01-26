@@ -8,6 +8,7 @@
 *.so
 *.suo
 *.dylib
+*.aps
 
 # Compiled Static libraries
 *.lai

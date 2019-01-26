@@ -53,21 +53,21 @@ void PCam::ViewDirection()
     double theta_rad = theta_*M_PI / 180.0;
 
     VEC3D vEye;
-    vEye.v[0] = sin(theta_rad)*cos(phi_rad);
-    vEye.v[1] = cos(theta_rad)*cos(phi_rad);
-    vEye.v[2] = sin(phi_rad);
+    vEye.x_ = sin(theta_rad)*cos(phi_rad);
+    vEye.y_ = cos(theta_rad)*cos(phi_rad);
+    vEye.z_ = sin(phi_rad);
      
     VEC3D vUp;
-    vUp.v[0] = up_x_;
-    vUp.v[1] = up_y_;
-    vUp.v[2] = up_z_*cos(phi_rad);
+    vUp.x_ = up_x_;
+    vUp.y_ = up_y_;
+    vUp.z_ = up_z_*cos(phi_rad);
     vUp.Unit();
 
-    gluLookAt(cen_x_ + vEye.v[0],
-        cen_y_ + vEye.v[1],
-        cen_z_ + vEye.v[2],
+    gluLookAt(cen_x_ + vEye.x_,
+        cen_y_ + vEye.y_,
+        cen_z_ + vEye.z_,
         cen_x_ + lx_, cen_y_ + ly_, cen_z_ + lz_,
-        vUp.v[0],
-        vUp.v[1],
-        vUp.v[2]);
+        vUp.x_,
+        vUp.y_,
+        vUp.z_);
 }

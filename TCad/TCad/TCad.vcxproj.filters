@@ -16,6 +16,12 @@
     <Filter Include="Source Files\Camera">
       <UniqueIdentifier>{082f6293-4dc7-4cf1-9dd5-65ed4966fe42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\DataBase">
+      <UniqueIdentifier>{0061827c-0520-434c-945b-451d998227df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntityObj">
+      <UniqueIdentifier>{8b7e4d4d-8123-4911-b3d8-dfb3c89b6375}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -48,6 +54,21 @@
     <ClInclude Include="PCam.h">
       <Filter>Source Files\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="EntityObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TLine.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Object2D.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="TPoint.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="DataList.h">
+      <Filter>Source Files\DataBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TCad.cpp">
@@ -67,6 +88,21 @@
     </ClCompile>
     <ClCompile Include="PCam.cpp">
       <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Object2D.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="TLine.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="TPoint.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="DataList.cpp">
+      <Filter>Source Files\DataBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,12 +141,21 @@
     <Image Include="res\Toolbar256.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\grid2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\UNTITLED.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\ribbon.mfcribbon-ms">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\TCad.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cursor1.cur">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
