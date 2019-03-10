@@ -37,9 +37,21 @@
 #define IDR_RIBBON                      307
 #define IDB_BITMAP1                     310
 #define IDB_GRID                        310
+#define IDD_FORMBAR                     311
 #define IDC_CUR_DRAW                    312
+#define IDD_DLG_BOX                     313
 #define ID_DRAWING_AXIS                 400
 #define ID_DRAWING_GRID                 401
+#define IDC_EDT_LENGTH                  1000
+#define IDC_EDT_WIDTH                   1001
+#define IDC_EDT_HEIGHT                  1002
+#define IDC_LIST_OBJECT                 1003
+#define IDC_BTN_INSERT                  1004
+#define IDC_BTN_REMOVE                  1005
+#define IDC_BTN_CLEAR_ALL               1006
+#define IDC_BTN_CHANGE                  1007
+#define IDC_BTN_EXPORT                  1008
+#define IDC_MFCCOLORBUTTON1             1009
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_BTN_GRID                     32775
 #define ID_DRAWING_LINE                 32777
@@ -56,16 +68,16 @@
 #define ID_DRAWING_RECT                 32788
 #define ID_DRAWING_ARC                  32789
 #define ID_DRAWING_POINT                32790
-#define ID_COMBO2                       32791
-#define ID_LAYER_COLOR                  32791
+#define ID_SHOW_RESET                   32793
+#define ID_BTN_BOX                      32794
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        313
-#define _APS_NEXT_COMMAND_VALUE         32792
-#define _APS_NEXT_CONTROL_VALUE         1000
-#define _APS_NEXT_SYMED_VALUE           310
+#define _APS_NEXT_RESOURCE_VALUE        317
+#define _APS_NEXT_COMMAND_VALUE         32795
+#define _APS_NEXT_CONTROL_VALUE         1010
+#define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

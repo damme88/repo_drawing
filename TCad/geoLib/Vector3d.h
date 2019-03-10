@@ -11,6 +11,7 @@ public:
     ~Vector3D();
 
 public:
+    float distance(Vector3D pt);
     double scalar(const Vector3D & v1);
 
     const Vector3D &operator + (Vector3D &v1) 

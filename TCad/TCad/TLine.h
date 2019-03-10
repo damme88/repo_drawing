@@ -12,6 +12,12 @@ public:
     POINT3D MidPoint() const;
     ~TLine();
     void Render();
+    EntityObject* Clone();
+    POINT3D FindIntersectPoint(const TLine& line);
+    bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)
+    {
+        return true;
+    }
 protected:
     POINT3D pt1_;
     POINT3D pt2_;

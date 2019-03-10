@@ -46,3 +46,12 @@ Vector3D Vector3D::Unit() {
 double Vector3D::abs() {
     return sqrt(x_ * x_ + y_ * y_ + z_ * z_);
 }
+
+float Vector3D::distance(Vector3D pt)
+{
+    float valx = (pt.x_ - x_)*(pt.x_ - x_);
+    float valy = (pt.y_ - y_)*(pt.y_ - y_);
+    float valz = (pt.z_ - z_)*(pt.z_ - z_);
+
+    return sqrt(valx + valy + valz);
+}

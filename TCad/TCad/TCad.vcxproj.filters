@@ -54,9 +54,6 @@
     <ClInclude Include="PCam.h">
       <Filter>Source Files\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="EntityObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TLine.h">
       <Filter>Source Files\EntityObj</Filter>
     </ClInclude>
@@ -68,6 +65,36 @@
     </ClInclude>
     <ClInclude Include="DataList.h">
       <Filter>Source Files\DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="TPolyLine.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="TRectangle.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxObjectDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FormBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TBox.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3D.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="TCircle.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="TArc.h">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityObject.h">
+      <Filter>Source Files\EntityObj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +116,6 @@
     <ClCompile Include="PCam.cpp">
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="EntityObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Object2D.cpp">
       <Filter>Source Files\EntityObj</Filter>
     </ClCompile>
@@ -103,6 +127,36 @@
     </ClCompile>
     <ClCompile Include="DataList.cpp">
       <Filter>Source Files\DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="TPolyLine.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="TRectangle.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxObjectDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FormBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TBox.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3D.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="TCircle.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="TArc.cpp">
+      <Filter>Source Files\EntityObj</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityObject.cpp">
+      <Filter>Source Files\EntityObj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

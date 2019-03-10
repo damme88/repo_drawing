@@ -25,8 +25,13 @@ protected: // create from serialization only
 
 // Attributes
 public:
-    void RenderEntity();
+    void SetSelected(int idx);
+    void RenderEntity(GLenum mode);
     void AppendEntity(EntityObject* entity);
+    bool HasObject();
+    long GetNumberObject();
+    int FindIdxObject(const Vector3D& ppVector, const POINT3D& gl_pt);
+    void DeleteObject();
 // Operations
 public:
 

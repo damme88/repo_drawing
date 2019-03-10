@@ -13,6 +13,8 @@
 //
 
 #pragma once
+#include "FormBar.h"
+#include "TCadView.h"
 
 class MainFrame : public CFrameWndEx
 {
@@ -23,10 +25,10 @@ protected: // create from serialization only
 
 // Attributes
 public:
-
+    CSplitterWnd splitter_;
 // Operations
 public:
-
+    BOOL OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext);
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -44,7 +46,8 @@ protected:  // control bar embedded members
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar  m_wndStatusBar;
-
+    TCadView* tcad_view_;
+    FormBar* form_bar_;
 // Generated message map functions
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -53,6 +56,30 @@ protected:
 	afx_msg void OnFilePrint();
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* pCmdUI);
+    afx_msg void OnDrawingAxis();
+    afx_msg void OnUpdateDrawingAxis(CCmdUI *pCmdUI);
+    afx_msg void OnBtnGrid();
+    afx_msg void OnUpdateBtnGrid(CCmdUI *pCmdUI);
+    //View
+    afx_msg void OnViewIso();
+    afx_msg void OnViewTop();
+    afx_msg void OnViewLeft();
+    afx_msg void OnViewFront();
+    afx_msg void OnViewBottom();
+    afx_msg void OnViewRight();
+    afx_msg void OnViewBack();
+    afx_msg void OnShowReset();
+
+    //Drawing 2d
+    afx_msg void OnDrawingLine();
+    afx_msg void OnDrawingPoint();
+    afx_msg void OnDrawingPolyline();
+    afx_msg void OnDrawingRect();
+    afx_msg void OnDrawingCircle();
+    afx_msg void OnDrawingArc();
+
+    //Drawing 3d
+    afx_msg void OnMakeBox();
 	DECLARE_MESSAGE_MAP()
 
 };

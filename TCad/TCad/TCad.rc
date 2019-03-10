@@ -259,6 +259,34 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
 
+IDD_DLG_BOX DIALOGEX 0, 0, 309, 177
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Box Object 3D"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,195,156,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,252,156,50,14
+    EDITTEXT        IDC_EDT_LENGTH,59,25,71,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDT_WIDTH,59,54,71,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDT_HEIGHT,59,80,73,14,ES_AUTOHSCROLL
+    LTEXT           "Length:",IDC_STATIC,15,27,39,8
+    LTEXT           "Width:",IDC_STATIC,15,57,39,8
+    LTEXT           "Height:",IDC_STATIC,15,82,39,8
+    CONTROL         "",IDC_MFCCOLORBUTTON1,"MfcColorButton",WS_TABSTOP,192,25,95,14
+END
+
+IDD_FORMBAR DIALOGEX 0, 0, 201, 375
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_LIST_OBJECT,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSCROLL | WS_BORDER | WS_TABSTOP,7,24,187,159
+    PUSHBUTTON      "Insert",IDC_BTN_INSERT,118,186,47,38
+    PUSHBUTTON      "Remove",IDC_BTN_REMOVE,7,209,50,14
+    PUSHBUTTON      "Clear All",IDC_BTN_CLEAR_ALL,63,191,50,14
+    PUSHBUTTON      "Change",IDC_BTN_CHANGE,7,191,50,14
+    PUSHBUTTON      "Export",IDC_BTN_EXPORT,63,208,50,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -314,6 +342,22 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
     END
+
+    IDD_DLG_BOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 170
+    END
+
+    IDD_FORMBAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 194
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 368
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -332,6 +376,46 @@ IDR_RIBBON              RT_RIBBON_XML           "res\\ribbon.mfcribbon-ms"
 //
 
 IDC_CUR_DRAW            CURSOR                  "res\\cursor1.cur"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DLG_BOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FORMBAR AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_DLG_BOX DLGINIT
+BEGIN
+    IDC_MFCCOLORBUTTON1, 0x37c, 215, 0
+0x4d3c, 0x4346, 0x6f43, 0x6f6c, 0x4272, 0x7475, 0x6f74, 0x5f6e, 0x6e45, 
+0x6261, 0x656c, 0x744f, 0x6568, 0x4272, 0x7475, 0x6f74, 0x3e6e, 0x5254, 
+0x4555, 0x2f3c, 0x464d, 0x4343, 0x6c6f, 0x726f, 0x7542, 0x7474, 0x6e6f, 
+0x455f, 0x616e, 0x6c62, 0x4f65, 0x6874, 0x7265, 0x7542, 0x7474, 0x6e6f, 
+0x3c3e, 0x464d, 0x4343, 0x6c6f, 0x726f, 0x7542, 0x7474, 0x6e6f, 0x455f, 
+0x616e, 0x6c62, 0x4165, 0x7475, 0x6d6f, 0x7461, 0x6369, 0x7542, 0x7474, 
+0x6e6f, 0x463e, 0x4c41, 0x4553, 0x2f3c, 0x464d, 0x4343, 0x6c6f, 0x726f, 
+0x7542, 0x7474, 0x6e6f, 0x455f, 0x616e, 0x6c62, 0x4165, 0x7475, 0x6d6f, 
+0x7461, 0x6369, 0x7542, 0x7474, 0x6e6f, 0x3c3e, 0x464d, 0x4343, 0x6c6f, 
+0x726f, 0x7542, 0x7474, 0x6e6f, 0x435f, 0x6c6f, 0x6d75, 0x736e, 0x6f43, 
+0x6e75, 0x3e74, 0x3c35, 0x4d2f, 0x4346, 0x6f43, 0x6f6c, 0x4272, 0x7475, 
+0x6f74, 0x5f6e, 0x6f43, 0x756c, 0x6e6d, 0x4373, 0x756f, 0x746e, "\076" 
+    0
+END
 
 
 /////////////////////////////////////////////////////////////////////////////

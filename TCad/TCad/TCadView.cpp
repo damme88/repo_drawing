@@ -21,6 +21,7 @@
 
 #include "TCadDoc.h"
 #include "TCadView.h"
+#include "BoxObjectDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,6 +37,7 @@ BEGIN_MESSAGE_MAP(TCadView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &TCadView::OnFilePrintPreview)
+    //ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &TCadView::OnUpdateBtnGrid)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
     ON_WM_LBUTTONUP()
@@ -44,25 +46,13 @@ BEGIN_MESSAGE_MAP(TCadView, CView)
     ON_WM_MOUSEMOVE()
     ON_WM_MOUSEWHEEL()
     ON_WM_KEYDOWN()
+    ON_WM_MBUTTONDOWN()
+    ON_WM_MBUTTONUP()
     ON_WM_SIZE()
     ON_WM_CREATE()
     ON_WM_ERASEBKGND()
     ON_WM_SETCURSOR()
-    ON_COMMAND(ID_DRAWING_AXIS, &TCadView::OnDrawingAxis)
-    ON_UPDATE_COMMAND_UI(ID_DRAWING_AXIS, &TCadView::OnUpdateDrawingAxis)
-    ON_COMMAND(ID_BTN_GRID, &TCadView::OnBtnGrid)
-    ON_COMMAND(ID_VIEW_ISO, &TCadView::OnViewIso)
-    ON_COMMAND(ID_VIEW_TOP, &TCadView::OnViewTop)
-    ON_COMMAND(ID_VIEW_LEFT, &TCadView::OnViewLeft)
-    ON_COMMAND(ID_VIEW_FRONT, &TCadView::OnViewFront)
-    ON_COMMAND(ID_VIEW_BOTTOM, &TCadView::OnViewBottom)
-    ON_COMMAND(ID_VIEW_RIGHT, &TCadView::OnViewRight)
-    ON_COMMAND(ID_VIEW_BACK, &TCadView::OnViewBack)
-    ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &TCadView::OnUpdateBtnGrid)
-    ON_COMMAND(ID_DRAWING_LINE, &TCadView::OnDrawingLine)
-    ON_UPDATE_COMMAND_UI(ID_DRAWING_LINE, &TCadView::OnUpdateDrawingLine)
-    ON_COMMAND(ID_DRAWING_POINT, &TCadView::OnDrawingPoint)
-    ON_UPDATE_COMMAND_UI(ID_DRAWING_POINT, &TCadView::OnUpdateDrawingPoint)
+    ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // TCadView construction/destruction
@@ -70,10 +60,11 @@ END_MESSAGE_MAP()
 TCadView::TCadView()
 {
 	// TODO: add construction code here
+    entity_obj_ = NULL;
     type_2d_ = Type2D::NONE;
     is_show_axis_ = true;
     rendering_rate_ = 0.5f;
-
+    middle_down_ = FALSE;
     r_btn_down_ = false;
     l_btn_down_ = false;
 
@@ -97,11 +88,15 @@ TCadView::TCadView()
     angle_x_ = 0.0;
     angle_y_ = 0.0;
     angle_z_ = 0.0;
+    xPos_ = (0.0),
+    yPos_ = (0.0),
+    zPos_ = (0.0),
+
+    scaling_ = 1.0;
 
     is_show_axis_ = false ;
     is_show_grid_ = true;
-    is_line_ = false;
-    is_point_ = false;
+    form_bar_ = NULL;
 }
 
 TCadView::~TCadView()
@@ -123,6 +118,7 @@ int TCadView::OnCreate(LPCREATESTRUCT lpcs)
 
     InitOpenGL();
 
+    SetTimer(1000, 100, NULL);
     return 0;
 }
 
@@ -226,27 +222,28 @@ void TCadView::RenderScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glLoadIdentity();
+
+    glTranslatef(xPos_, yPos_, zPos_);
     p_cameral_.ViewDirection();
     DrawAxis();
     DrawAxisSmall();
+    glScalef(scaling_, scaling_, scaling_);
     MakeGrid(100000, 100000, 300);
 
-    //DrawingLine();
-
-    DrawEntityObject();
+    OnLighting();
+    DrawEntityObject(GL_RENDER);
+    OffLighting();
 }
 
 
-void TCadView::DrawEntityObject()
+void TCadView::DrawEntityObject(GLenum mode)
 {
     TCadDoc* pDocument = GetDocument();
     if (pDocument)
     {
-        pDocument->RenderEntity();
+        pDocument->RenderEntity(mode);
     }
 }
-
-
 
 
 void TCadView::DrawAxis()
@@ -404,7 +401,7 @@ void TCadView::OnSize(UINT nType, int cx, int cy)
     // Define viewport = size window
     glViewport(0, 0, cx, cy);
 
-    GLfloat aspect_ratio = (GLdouble)cx / (GLdouble)cy;
+    gldAspect = (GLdouble)cx / (GLdouble)cy;
     ::glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -493,36 +490,55 @@ void TCadView::OnDrawingAxis()
     InvalidateRect(NULL, FALSE);
 }
 
-
-void TCadView::OnUpdateDrawingAxis(CCmdUI *pCmdUI)
-{
-    pCmdUI->SetCheck(is_show_axis_);
-}
-
-
 void TCadView::OnLighting()
 {
-    glEnable(GL_DEPTH_TEST);
-    //glDepthFunc(GL_LESS);
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, pAmbien_);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, pSpecular_);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, pDiff_);
-    glMateriali(GL_FRONT, GL_SHININESS, shininess_);
-
-    GLfloat position[] = { 10000.0f, 10000.0f, 50000.0f, 1.0f };
-    GLfloat global_ambient[] = { 0.8f, 0.8f, 0.8f, 1 };
-
-    float MatAmbientBack[] = { 0.1f, 0.2f, 0.0f, 1.0f };
-    glMaterialfv(GL_BACK, GL_AMBIENT, MatAmbientBack);
-
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_DEPTH_TEST);
+
+    POINT3D pos_cam = p_cameral_.get_pos_cam();
+    GLfloat light_pos[4];
+    light_pos[0] = pos_cam.x_;
+    light_pos[1] = pos_cam.y_;
+    light_pos[2] = pos_cam.z_;
+    light_pos[3] = 0.0;
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
+    //GLfloat ambient[] = { 1.0, 0.0, 0.0, 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, pAmbien_);
+
+    //GLfloat diff_use[] = { 0.0, 0.5, 0.0, 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, pDiff_);
+
+    //GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, pSpecular_);
+
+    //GLfloat shininess = 50.0f;
+    glMateriali(GL_FRONT, GL_SHININESS, shininess_);
+
+    //glEnable(GL_DEPTH_TEST);
+    ////glDepthFunc(GL_LESS);
+
+    //glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, pAmbien_);
+    //glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, pSpecular_);
+    //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, pDiff_);
+    //glMateriali(GL_FRONT, GL_SHININESS, shininess_);
+
+    //GLfloat position[] = { 10000.0f, 10000.0f, 50000.0f, 1.0f };
+    //GLfloat global_ambient[] = { 0.8f, 0.8f, 0.8f, 1 };
+
+    //
+    //float MatAmbientBack[] = { 0.1f, 0.2f, 0.0f, 1.0f };
+    //glMaterialfv(GL_BACK, GL_AMBIENT, MatAmbientBack);
+
+
+    //glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHT0);
     glEnable(GL_NORMALIZE); //this is good command for light
 
-    glShadeModel(GL_SMOOTH);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //glShadeModel(GL_SMOOTH);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 #if 0
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
@@ -562,8 +578,68 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
     {
         pt_list_.push_back(point);
     }
+    else if (type_2d_ == DR_POLY_LINE)
+    {
+        pt_list_.push_back(point);
+    }
+    else if (type_2d_ == DR_RECTANGLE && pt_list_.size() < 2)
+    {
+        pt_list_.push_back(point);
+    }
+    else if (type_2d_ == DR_CIRCLE && pt_list_.size() < 2)
+    {
+        pt_list_.push_back(point);
+    }
+    else if (type_3d_ == BOX_OBJ)
+    {
+        pt_list_.push_back(point);
+    }
+
+    if (type_2d_ == Type2D::NONE && type_3d_ == Type3D::NONE_OBJ)
+    {
+        if (GetDocument()->HasObject())
+        {
+            POINT3D gl_pt;
+            POINT3D origin_pt(0, 0, 0);
+            gl_pt = ConvertWindowToOpenGL(point);
+
+            Vector3D ppVector = GetPPVectorScreen();
+            int idx = FindIndexObject(ppVector, gl_pt);
+            if (idx >= 0)
+            {
+                GetDocument()->SetSelected(idx);
+            }
+        }
+    }
+    
+
 
     CView::OnLButtonDown(nFlags, point);
+}
+
+
+int TCadView::FindIndexObject(Vector3D &ppVector,Vector3D &gl_pt)
+{
+    int idx = GetDocument()->FindIdxObject(ppVector, gl_pt);
+    return idx;
+}
+
+
+
+
+void TCadView::OnTimer(UINT nIDEvent)
+{
+    RedrawWindow();
+    CView::OnTimer(nIDEvent);
+}
+
+void TCadView::OnDestroy()
+{
+    CView::OnDestroy();
+
+    // TODO: Add your message handler code here
+    KillTimer(1000);
+
 }
 
 void TCadView::OnLButtonUp(UINT nFlags, CPoint point) 
@@ -584,6 +660,7 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
         TLine* new_line = new TLine(point_mouse1, point_mouse2);
         new_line->set_type(Object2D::LINE);
         new_line->set_etype(EntityObject::OBJ_2D);
+        new_line->set_pos_cam(p_cameral_.get_pos_cam());
         GetDocument()->AppendEntity(new_line);
         pt_list_.clear();
         InvalidateRect(false);
@@ -604,7 +681,66 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
         pt_list_.clear();
         InvalidateRect(false);
     }
+    else if (type_2d_ == DR_RECTANGLE && pt_list_.size() == 2)
+    {
+        CPoint pt1 = pt_list_.at(0);
+        CPoint pt2 = pt_list_.at(1);
+        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
 
+        POINT3D point1 = ConvertWindowToOpenGL(pt1);
+        POINT3D point2 = ConvertWindowToOpenGL(pt2);
+
+        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
+        POINT3D point_mouse2 = GetMousePtOnPlane(point2, O);
+
+        TRectangle* new_rect = new TRectangle();
+        new_rect->SetPoints(point_mouse1, point_mouse2);
+        new_rect->set_type(Object2D::RECTANGLE);
+        new_rect->set_etype(EntityObject::OBJ_2D);
+        GetDocument()->AppendEntity(new_rect);
+        pt_list_.clear();
+        InvalidateRect(false);
+    }
+    else if (type_2d_ == DR_CIRCLE && pt_list_.size() == 2)
+    {
+        CPoint pt1 = pt_list_.at(0);
+        CPoint pt2 = pt_list_.at(1);
+        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
+
+        POINT3D point1 = ConvertWindowToOpenGL(pt1);
+        POINT3D point2 = ConvertWindowToOpenGL(pt2);
+
+        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
+        POINT3D point_mouse2 = GetMousePtOnPlane(point2, O);
+
+        TCircle* new_circle = new TCircle();
+        new_circle->set_color(K_YELLOW);
+        new_circle->set_pos(point_mouse1);
+        new_circle->set_type(Object2D::CIRCLE);
+        new_circle->set_etype(EntityObject::OBJ_2D);
+        double distance = point_mouse1.distance(point_mouse2);
+        new_circle->set_radius(distance);
+
+        GetDocument()->AppendEntity(new_circle);
+        pt_list_.clear();
+        InvalidateRect(false);
+    }
+    else if (type_3d_ == BOX_OBJ && !pt_list_.empty())
+    {
+        CPoint pt = pt_list_.at(0);
+        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
+        POINT3D point1 = ConvertWindowToOpenGL(pt);
+        POINT3D point_mouse = GetMousePtOnPlane(point1, O);
+
+        if (entity_obj_ != NULL)
+        {
+            EntityObject* clone_obj = entity_obj_->Clone();
+            clone_obj->set_pos(point_mouse);
+            GetDocument()->AppendEntity(clone_obj);
+            pt_list_.clear();
+            InvalidateRect(false);
+        }
+    }
     CView::OnLButtonUp(nFlags, point);
 }
 
@@ -623,15 +759,46 @@ void TCadView::OnRButtonDown(UINT nFlags, CPoint point)
     p_cameral_.SetDownPt(ms_down_pt_);
     SetCapture();
     r_btn_down_ = true;
-    if (pt_list_.size() > 0)
-        pt_list_.clear();
+    ImplementCancel();
+    
     CView::OnRButtonDown(nFlags, point);
 }
 
+void TCadView::ImplementCancel()
+{
+    if (type_2d_ == Type2D::DR_LINE)
+    {
+        if (pt_list_.size() > 0)
+            pt_list_.clear();
+    }
+    else if (type_2d_ == DR_POLY_LINE && pt_list_.size() > 0)
+    {
+        MakePolyLineObject();
+    }
+}
 
+void TCadView::MakePolyLineObject()
+{
+    TPolyLine* new_pline = new TPolyLine();
+    new_pline->set_type(Object2D::POLY_LINE);
+    new_pline->set_etype(EntityObject::OBJ_2D);
+   
+    for (int i = 0; i < pt_list_.size(); ++i)
+    {
+        CPoint pt = pt_list_.at(i);
+        POINT3D O(0, 0, 0);
+        POINT3D gl_pt = ConvertWindowToOpenGL(pt);
+        POINT3D ret_pt = GetMousePtOnPlane(gl_pt, O);
+        new_pline->AddPoint(ret_pt);
+    }
+
+    GetDocument()->AppendEntity(new_pline);
+    pt_list_.clear();
+    InvalidateRect(false);
+}
 BOOL TCadView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-    if (type_2d_ != Type2D::NONE)
+    if (type_2d_ != Type2D::NONE || type_3d_ != Type3D::NONE_OBJ)
     {
        ::SetCursor(AfxGetApp()->LoadCursor(IDC_CUR_DRAW));
        return TRUE;
@@ -654,18 +821,60 @@ void TCadView::OnMouseMove(UINT nFlags, CPoint point)
         ms_down_pt_ = point;
         p_cameral_.SetDownPt(ms_down_pt_);
     }
+
+    if (middle_down_) 
+    {
+        float val1 = (float)(middle_down_pos_.x - point.x);
+        float val2 = (float)(middle_down_pos_.y - point.y);
+        xPos_ -= val1;
+        yPos_ += val2;
+        middle_down_pos_.x = point.x;
+        middle_down_pos_.y = point.y;
+        SendMessage(WM_PAINT, 0, 0);
+        return;
+    }
+}
+
+void TCadView::OnMButtonDown(UINT nFlags, CPoint point) 
+{
+    CView::OnMButtonDown(nFlags, point);
+    SendMessage(WM_PAINT, 0, 0);
+
+    middle_down_ = TRUE;
+    middle_down_pos_ = point;
+}
+
+void TCadView::OnMButtonUp(UINT nFlags, CPoint point) 
+{
+    CView::OnMButtonUp(nFlags, point);
+    ReleaseCapture();
+    middle_down_ = FALSE;
 }
 
 BOOL TCadView::OnMouseWheel(UINT nFlags, short zDetal, CPoint point) 
 {
     BOOL ret = FALSE;
 
+    POINT3D gl_point = ConvertWindowToOpenGL(point);
+    POINT3D ret_pt = GetMousePtOnPlane(gl_point, POINT3D(0, 0, 0));
+
+    POINT3D ptCent = p_cameral_.GetCenterPt();
+    double dis = ptCent.distance(ret_pt);
+   
+
+
     if (zDetal >= 0) 
     {
+        scaling_ *= 1.05f;
+        //double sub_dis = dis*(1.05 - 1);
+        //xPos_ -= 0.5*sub_dis;
+        //yPos_ -= 0.5*sub_dis;
         ret = TRUE;
     }
     else 
     {
+
+        scaling_ /= 1.05f;
         ret = TRUE;
     }
 
@@ -705,23 +914,20 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     switch (nChar) 
     {
     case VK_UP:
-        //y_position_ += 15.0f;
-        InvalidateRect(NULL, FALSE);
+        yPos_ += 10.0f;
         break;
     case VK_DOWN:
-        //y_position_ -= 15.0f;
-        InvalidateRect(NULL, FALSE);
+        yPos_ -= 10.0f;
         break;
     case VK_LEFT:
-        //x_position_ -= 15.0f;
-        InvalidateRect(NULL, FALSE);
+        xPos_ -= 10.0f;
         break;
     case VK_RIGHT:
-        //x_position_ += 15.0f;
-        InvalidateRect(NULL, FALSE);
+        xPos_ += 10.0f;
         break;
-    case VK_DELETE: {
-        //DeleteShelf();
+    case VK_DELETE: 
+    {
+        GetDocument()->DeleteObject();
         InvalidateRect(NULL, FALSE);
         break;
     }
@@ -731,9 +937,13 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         {
             pt_list_.clear();
         }
-        //MainFrame * main_frame = static_cast<MainFrame*>(AfxGetMainWnd());
-        //main_frame->HandleEscape();
+        type_2d_ = Type2D::NONE;
+        type_3d_ = Type3D::NONE_OBJ;
     }
+    break;
+    case VK_RETURN:
+        ImplementEnterDown();
+        break;
     case 71: //G
         is_show_grid_ = !is_show_grid_;
         break;
@@ -749,60 +959,85 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
+void TCadView::ImplementEnterDown()
+{
+    if (type_2d_ == DR_POLY_LINE && pt_list_.size() > 0)
+    {
+        MakePolyLineObject();
+    }
+}
+
 void TCadView::OnBtnGrid()
 {
     is_show_grid_ = !is_show_grid_;
     InvalidateRect(FALSE);
 }
 
-
 void TCadView::OnViewIso()
 {
-    // TODO: Add your command handler code here
+    p_cameral_.set_phi(45.0);
+    p_cameral_.set_theta(45.0);
+    InvalidateRect(false);
+    //::glMatrixMode(GL_MODELVIEW);
+    //::glLoadIdentity();
 }
-
 
 void TCadView::OnViewTop()
 {
-    // TODO: Add your command handler code here
-}
-
-
-void TCadView::OnViewLeft()
-{
-    // TODO: Add your command handler code here
-}
-
-
-void TCadView::OnViewFront()
-{
-    // TODO: Add your command handler code here
+    p_cameral_.set_phi(90.0);
+    p_cameral_.set_theta(90.0);
+    InvalidateRect(false);
+    //::glMatrixMode(GL_MODELVIEW);
+    //::glLoadIdentity();
 }
 
 
 void TCadView::OnViewBottom()
 {
-    // TODO: Add your command handler code here
+    p_cameral_.set_phi(-90.0);
+    p_cameral_.set_theta(-90.0);
+    InvalidateRect(false);
+    //::glMatrixMode(GL_MODELVIEW);
+    //::glLoadIdentity();
 }
 
+void TCadView::OnViewLeft()
+{
+    p_cameral_.set_phi(00.0);
+    p_cameral_.set_theta(180.0);
+    InvalidateRect(false);
+    //::glMatrixMode(GL_MODELVIEW);
+    //::glLoadIdentity();
+}
 
 void TCadView::OnViewRight()
 {
-    // TODO: Add your command handler code here
+    p_cameral_.set_phi(0.0);
+    p_cameral_.set_theta(0.0);
+    InvalidateRect(false);
+    //::glMatrixMode(GL_MODELVIEW);
+    //::glLoadIdentity();
 }
 
+
+void TCadView::OnViewFront()
+{
+    p_cameral_.set_phi(0.0);
+    p_cameral_.set_theta(90.0);
+    InvalidateRect(false);
+    //::glMatrixMode(GL_MODELVIEW);
+    //::glLoadIdentity();
+}
 
 void TCadView::OnViewBack()
 {
-    // TODO: Add your command handler code here
+    p_cameral_.set_phi(0.0);
+    p_cameral_.set_theta(270.0);
+    InvalidateRect(false);
+    //::glMatrixMode(GL_MODELVIEW);
+    //::glLoadIdentity();
 }
 
-
-void TCadView::OnUpdateBtnGrid(CCmdUI *pCmdUI)
-{
-    pCmdUI->SetCheck(is_show_grid_);
-    // TODO: Add your command update UI handler code here
-}
 
 POINT3D TCadView::GetMousePtOnPlane(POINT3D &gl_point,POINT3D &origin_point)
 {
@@ -828,9 +1063,9 @@ VEC3D TCadView::GetPPVectorScreen()
     return pp_vector;
 }
 
-VEC3D TCadView::ConvertWindowToOpenGL(const CPoint &point2D) 
+POINT3D TCadView::ConvertWindowToOpenGL(const CPoint &point2D)
 {
-    VEC3D point_3D;
+    POINT3D point_3D;
     GLint viewport[4];
     GLdouble modelview[16];
     GLdouble projection[16];
@@ -850,49 +1085,30 @@ VEC3D TCadView::ConvertWindowToOpenGL(const CPoint &point2D)
     return point_3D;
 }
 
-void TCadView::OnDrawingLine()
+void TCadView::OnDrawing2d(UINT type)
 {
-    is_line_ = !is_line_;
-    if (is_line_) type_2d_ = Type2D::DR_LINE;
-    else type_2d_ = Type2D::NONE;
-    Update2DObjState(type_2d_);
+    type_2d_ = type;
+    type_3d_ = Type3D::NONE_OBJ;
 }
 
-void TCadView::OnUpdateDrawingLine(CCmdUI *pCmdUI)
+void TCadView::OnShowReset()
 {
-    pCmdUI->SetCheck(is_line_);
+    p_cameral_.set_phi(45.0);
+    p_cameral_.set_theta(45.0);
+    scaling_ = 1.0;
+    p_cameral_.SetCenterPt(POINT3D(0.0, 0.0, 0.0));
+    xPos_ = 0.0;
+    yPos_ = 0.0;
+    zPos_ = 0.0;
+    InvalidateRect(false);
 }
 
-
-void TCadView::OnDrawingPoint()
+void TCadView::MakeEntityObject(EntityObject* ents_obj)
 {
-    is_point_ = !is_point_;
-    if (is_point_) type_2d_ = Type2D::DR_POINT;
-    else type_2d_ = Type2D::NONE;
-
-    Update2DObjState(type_2d_);
-}
-
-
-void TCadView::OnUpdateDrawingPoint(CCmdUI *pCmdUI)
-{
-    pCmdUI->SetCheck(is_point_);
-}
-
-void TCadView::Update2DObjState(UINT type)
-{
-    switch (type)
+    if (ents_obj != NULL)
     {
-    case DR_POINT:
-        is_line_ = false;
-        break;
-    case DR_LINE:
-        is_point_ = false;
-        break;
-    case NONE:
-    default:
-        is_line_ = false;
-        is_point_ = false;
-        break;
+        type_3d_ = Type3D::BOX_OBJ;
+        entity_obj_ = ents_obj;
     }
+    type_2d_ = Type2D::NONE;
 }

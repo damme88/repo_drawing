@@ -4,27 +4,23 @@
 
 PCam::PCam()
 {
-    phi_ = 45;
-    theta_ = 45;
+    phi_ = 30;
+    theta_ = 30;
     zoom_value_ = 0.0;
+    
+    cen_pt_.x_ = 0;
+    cen_pt_.y_ = 0;
+    cen_pt_.z_ = 0;
 
-    eye_x_ = 0.0f;
-    eye_y_ = 0.0f;
-    eye_z_ = 0.0f;
-    cen_x_ = 0.0f;
-    cen_y_ = 0.0f;
-    cen_z_ = 0.0f;
-    up_x_ = 0.0f;
-    up_y_ = 0.0f;
-    up_z_ = 1.0f;
-    lx_ = 0;
-    ly_ = 0;
-    lz_ = 0;
+    vUp_.x_ = 0;
+    vUp_.y_ = 0;
+    vUp_.z_ = 0;
 }
 
 
 PCam::~PCam()
 {
+
 }
 
 void PCam::CalAngle(CPoint point, int cx, int cy)
@@ -56,18 +52,39 @@ void PCam::ViewDirection()
     vEye.x_ = sin(theta_rad)*cos(phi_rad);
     vEye.y_ = cos(theta_rad)*cos(phi_rad);
     vEye.z_ = sin(phi_rad);
-     
+
     VEC3D vUp;
-    vUp.x_ = up_x_;
-    vUp.y_ = up_y_;
-    vUp.z_ = up_z_*cos(phi_rad);
+    VEC3D vZ(0, 0, 1);
+    VEC3D vTemp;
+    vUp = vEye*vTemp;
+    // Tinh toan vector up khi xoay truc toa do z 1 vong tron
+    if ((phi_ >= 0 && phi_ < 90) || (phi_ <= 0 && phi_ > -90) || phi_ > 270 || phi_ < -270)
+    {
+        vTemp = vZ*vEye; // Tich huu huong
+    }
+    else 
+    {
+        vTemp = vEye*vZ;
+    }
+
+    if (vTemp.abs() < 0.01)
+    {
+        vUp.x_ = -sin(phi_rad);
+        vUp.y_ = cos(phi_rad);
+        vUp.z_ = 0.0;
+    }
+    else
+    {
+        vUp = vEye*vTemp;
+    }
     vUp.Unit();
 
-    gluLookAt(cen_x_ + vEye.x_,
-        cen_y_ + vEye.y_,
-        cen_z_ + vEye.z_,
-        cen_x_ + lx_, cen_y_ + ly_, cen_z_ + lz_,
+    gluLookAt(vEye.x_, vEye.y_, vEye.z_,
+        cen_pt_.x_, cen_pt_.y_, cen_pt_.z_,
         vUp.x_,
         vUp.y_,
         vUp.z_);
+
+    pos_cam_ = vEye;
+    vUp_ = vUp;
 }

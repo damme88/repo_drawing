@@ -17,6 +17,12 @@
 #include <vector>
 #include "TLine.h"
 #include "TPoint.h"
+#include "TPolyLine.h"
+#include "TRectangle.h"
+#include "TCircle.h"
+#include "TBox.h"
+#include "TCadDoc.h"
+#include "FormBar.h"
 
 class TCadView : public CView
 {
@@ -43,11 +49,19 @@ public:
     void OnLighting();
     void OffLighting();
     void MakeGrid(double width, double height, double distance);
-    VEC3D ConvertWindowToOpenGL(const CPoint &point2D);
+    POINT3D ConvertWindowToOpenGL(const CPoint &point2D);
     VEC3D GetPPVectorScreen();
     POINT3D GetMousePtOnPlane(POINT3D &gl_point, POINT3D &origin_point);
-    void DrawEntityObject();
-    void Update2DObjState(UINT type);
+    int FindIndexObject(Vector3D &ppVector, Vector3D &gl_point);
+    void DrawEntityObject(GLenum mode);
+    void ImplementCancel();
+    void MakePolyLineObject();
+    void ImplementEnterDown();
+    void SetFormBar(FormBar* fb) { form_bar_ = fb; }
+    void MakeEntityObject(EntityObject* ents_obj);
+    //void CreateBox();
+    bool get_is_gird() const { return is_show_grid_; }
+    bool get_is_show_axis() const { return is_show_axis_; }
 // Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
@@ -66,11 +80,15 @@ public:
 #endif
 
 protected:
+    EntityObject* entity_obj_;
+    FormBar* form_bar_;
     PCam p_cameral_;
     bool r_btn_down_;
     bool l_btn_down_;
     
-
+    GLfloat scaling_;
+    BOOL middle_down_;
+    CPoint middle_down_pos_;
     GLfloat angle_x_;
     GLfloat angle_y_;
     GLfloat angle_z_;
@@ -91,12 +109,18 @@ protected:
     int cx_; // size of window
     int cy_;
 
+    GLdouble xPos_;
+    GLdouble yPos_;
+    GLdouble zPos_;
+
     bool is_show_axis_;
     bool is_show_grid_;
     UINT type_2d_;
-    bool is_line_;
-    bool is_point_;
+    UINT type_3d_;
     std::vector<CPoint> pt_list_;
+
+    GLdouble gldAspect;
+
 // Generated message map functions
 protected:
     afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -107,27 +131,28 @@ protected:
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
     afx_msg BOOL OnMouseWheel(UINT nFlags, short zDetal, CPoint point);
     afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+    afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnMButtonUp(UINT nFlags, CPoint point);
     afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
     afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+    afx_msg void OnTimer(UINT nIDEvent);
+    afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 public:
-    afx_msg void OnDrawingAxis();
-    afx_msg void OnUpdateDrawingAxis(CCmdUI *pCmdUI);
-    afx_msg void OnBtnGrid();
-    afx_msg void OnViewIso();
-    afx_msg void OnViewTop();
-    afx_msg void OnViewLeft();
-    afx_msg void OnViewFront();
-    afx_msg void OnViewBottom();
-    afx_msg void OnViewRight();
-    afx_msg void OnViewBack();
-    afx_msg void OnUpdateBtnGrid(CCmdUI *pCmdUI);
-    afx_msg void OnDrawingLine();
-    afx_msg void OnUpdateDrawingLine(CCmdUI *pCmdUI);
-    afx_msg void OnDrawingPoint();
-    afx_msg void OnUpdateDrawingPoint(CCmdUI *pCmdUI);
+    void OnDrawingAxis();
+    void OnBtnGrid();
+    void OnViewIso();
+    void OnViewTop();
+    void OnViewLeft();
+    void OnViewFront();
+    void OnViewBottom();
+    void OnViewRight();
+    void OnViewBack();
+    void OnShowReset();
+
+    void OnDrawing2d(UINT type);
 };
 
 #ifndef _DEBUG  // debug version in TCadView.cpp

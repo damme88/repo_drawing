@@ -27,8 +27,14 @@ TPoint::~TPoint()
 void TPoint::Render()
 {
     glBegin(GL_POINTS);
+    glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
     glPointSize(3.0);
-    glColor3f(1.0, 1.0, 1.0);
     glVertex3f(pt_.x_, pt_.y_, pt_.z_);
     glEnd();
+}
+
+EntityObject* TPoint::Clone()
+{
+    TPoint* new_enst = new TPoint();
+    return new_enst;
 }

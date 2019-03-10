@@ -111,8 +111,54 @@ public:
         {
             DataNote<T>* temp = p_head_;
             p_head_ = p_head_->get_next();
+            if (p_head_ != NULL)
+                p_head_->set_prev(NULL);
             delete temp;
         }
+    }
+
+    void RemoveEnd()
+    {
+        DataNote<T>* last = p_head_;
+        while (last->get_next() != NULL)
+        {
+            last = last->get_next();
+        }
+
+        DataNote<T>* temp = last->get_prev();
+        if (temp)
+        {
+            temp->set_next(NULL);
+        }
+        
+        delete last;
+        last = NULL;
+    }
+
+    void RemoveObject(DataNote<T>* object)
+    {
+        if (object != NULL)
+        {
+            DataNote<T>* prev = object->get_prev();
+            DataNote<T>* next = object->get_next();
+
+            if (prev == NULL)
+            {
+                RemoveFront();
+            }
+            else if (next == NULL)
+            {
+                RemoveEnd();
+            }
+            else if (prev && next)
+            {
+                prev->set_next(next);
+                next->set_prev(prev);
+                delete object;
+                object = NULL;
+            }
+        }
+        
     }
 
     DataNote<T>* head() { return p_head_; };

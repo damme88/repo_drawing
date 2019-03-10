@@ -11,24 +11,28 @@ public:
     void ViewDirection();
     void CalAngle(CPoint point, int cx, int cy);
     void SetDownPt(CPoint pt) { donw_pt_ = pt; }
+    void set_phi(const double& phi) { phi_ = phi; }
+    void set_theta(const double& theta) { theta_ = theta; }
+    POINT3D get_pos_cam()
+    {
+        return pos_cam_;
+    }
+
+    void SetCenterPt(const POINT3D& cenPt)
+    {
+        cen_pt_ = cenPt;
+    }
+    
+    POINT3D GetCenterPt() const { return cen_pt_; }
 private:
     double phi_;
     double theta_;
 
     double zoom_value_;
-    double eye_x_;
-    double eye_y_;
-    double eye_z_;
-    double lx_;
-    double ly_;
-    double lz_;
-    double cen_x_;
-    double cen_y_;
-    double cen_z_;
 
-    double up_x_;
-    double up_y_;
-    double up_z_;
+    POINT3D pos_cam_;
+    POINT3D cen_pt_;
+    VEC3D vUp_;
     CPoint donw_pt_;
 };
 

@@ -20,6 +20,7 @@
 #endif
 
 #include "TCadDoc.h"
+#include "TLine.h"
 
 #include <propkey.h>
 
@@ -66,7 +67,41 @@ void TCadDoc::AppendEntity(EntityObject* entity)
     }
 }
 
-void TCadDoc::RenderEntity()
+void TCadDoc::DeleteObject()
+{
+    DataNote<EntityObject*>* temp = data_list_.head();
+    while (temp != NULL)
+    {
+        bool is_select = temp->get_data()->get_selected();
+        if (is_select)
+        {
+            DataNote<EntityObject*>* next = temp->get_next();
+            data_list_.RemoveObject(temp);
+            temp = next;
+            continue;
+        }
+        temp = temp->get_next();
+    }
+}
+
+void TCadDoc::SetSelected(int idx)
+{
+   UINT ix = 0;
+   DataNote<EntityObject*>* temp = data_list_.head();
+   while (temp != NULL)
+   {
+       if (ix == idx)
+       {
+           bool is_select = temp->get_data()->get_selected();
+           temp->get_data()->set_selected(!is_select);
+           break;
+       }
+       temp = temp->get_next();
+       ix++;
+   }
+}
+
+void TCadDoc::RenderEntity(GLenum mode)
 {
     DataNote<EntityObject*>* temp = data_list_.head();
     while (temp != NULL)
@@ -74,6 +109,84 @@ void TCadDoc::RenderEntity()
         temp->get_data()->Render();
         temp = temp->get_next();
     }
+}
+
+bool TCadDoc::HasObject()
+{
+    int number = GetNumberObject();
+
+    return (number > 0 ? true : false);
+}
+
+long TCadDoc::GetNumberObject()
+{
+    long count = 0;
+    DataNote<EntityObject*>* temp = data_list_.head();
+    while (temp != NULL)
+    {
+        temp = temp->get_next();
+        count++;
+    }
+    return count;
+}
+
+int TCadDoc::FindIdxObject(const Vector3D& ppVector, const POINT3D& gl_pt)
+{
+    int idx = 0; 
+    int indexFound = -1;
+    bool has_point = false;
+    POINT3D intersectWithPt(0.0, 0.0, 0.0);
+    DataNote<EntityObject*>* pObject = data_list_.head();
+    while (pObject != NULL)
+    {
+        if (pObject->get_data()->get_etype() == EntityObject::OBJ_3D)
+        {
+            POINT3D retPt(0, 0, 0);
+            bool is_select = pObject->get_data()->IsSelectedObject(ppVector, gl_pt, retPt);
+            if (is_select)
+            {
+                if (!has_point)
+                {
+                    //Neu chua tim dc giao diem nao thi gan giao diem = retpt
+                    intersectWithPt = retPt;
+                    has_point = true;
+                    indexFound = idx;
+                }
+                else
+                {
+                    //Neu da tim dc giao diem roi. Nhung giao diem do la object nam o vi tri sau.
+                    // No tim dc truoc vi tuy nam sau nhung chi so idx no lai nam trc
+                    // Kiem tra giao diem da co voi giao diem vua tim dc => 1 vector
+                    // neu vector nay nguoc chieu voi vector vuong goc screen.
+                    // => lay retPt( de  uu tien lua chon object o phia truoc)
+                    Vector3D u = intersectWithPt - retPt;
+                    if (u.scalar(ppVector) < 0)
+                    {
+                        intersectWithPt = retPt;
+                        indexFound = idx;
+                    }
+                }
+
+            }
+        }
+        
+        pObject = pObject->get_next();
+        idx++;
+    }
+
+#ifdef SHOW_LINE_INTERSECTH
+    VEC3D vDir = ppVector;
+    vDir = vDir * 1000;
+    POINT3D p1 = intersectWithPt + vDir;
+
+    TLine* new_line = new TLine(intersectWithPt, p1);
+    new_line->set_color(VEC3D(1.0, 1.0, 1.0));
+    new_line->set_etype(Object2D::LINE);
+    new_line->set_type(EntityObject::OBJ_2D);
+    //new_line->set_pos_cam(p_cameral_.get_pos_cam());
+    AppendEntity(new_line);
+#endif
+    return indexFound;
 }
 
 // TCadDoc serialization
