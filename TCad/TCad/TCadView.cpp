@@ -862,7 +862,7 @@ BOOL TCadView::OnMouseWheel(UINT nFlags, short zDetal, CPoint point)
     double dis = ptCent.distance(ret_pt);
    
 
-
+    // Implement zoom in and zoom out
     if (zDetal >= 0) 
     {
         scaling_ *= 1.05f;

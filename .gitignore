@@ -24,3 +24,5 @@
 *debug/
 *release/
 *ipch/
+/TCad/TCad.VC.VC.opendb
+/TCad/TCad.VC.db
