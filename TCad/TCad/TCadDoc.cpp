@@ -41,7 +41,6 @@ END_MESSAGE_MAP()
 TCadDoc::TCadDoc()
 {
 	// TODO: add one-time construction code here
-
 }
 
 TCadDoc::~TCadDoc()

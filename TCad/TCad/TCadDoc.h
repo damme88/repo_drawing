@@ -54,7 +54,6 @@ public:
 
 protected:
     DataList<EntityObject*> data_list_;
-
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()

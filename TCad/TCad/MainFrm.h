@@ -69,6 +69,7 @@ protected:
     afx_msg void OnViewRight();
     afx_msg void OnViewBack();
     afx_msg void OnShowReset();
+    afx_msg void OnSelect();
 
     //Drawing 2d
     afx_msg void OnDrawingLine();

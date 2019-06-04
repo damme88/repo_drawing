@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(MainFrame, CFrameWndEx)
     ON_COMMAND(ID_DRAWING_CIRCLE, &MainFrame::OnDrawingCircle)
     ON_COMMAND(ID_DRAWING_ARC, &MainFrame::OnDrawingArc)
     ON_COMMAND(ID_BTN_BOX, &MainFrame::OnMakeBox)
+    ON_COMMAND(ID_BTN_SELECT, &MainFrame::OnSelect)
 END_MESSAGE_MAP()
 
 // MainFrame construction/destruction
@@ -359,6 +360,11 @@ void MainFrame::OnDrawingCircle()
 void MainFrame::OnDrawingArc()
 {
     tcad_view_->OnDrawing2d(Type2D::DR_ARC);
+}
+
+void MainFrame::OnSelect()
+{
+    tcad_view_->DoSelect();
 }
 
 void MainFrame::OnMakeBox()

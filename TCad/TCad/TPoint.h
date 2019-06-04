@@ -11,6 +11,7 @@ public:
     TPoint(const POINT3D& pt);
     TPoint(const float& x, const float& y, const float z);
     ~TPoint();
+    void SetPoint(const POINT3D& p) { pt_ = p; }
     void Render();
     EntityObject* Clone();
     bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)

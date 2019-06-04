@@ -4,7 +4,8 @@
 
 TLine::TLine()
 {
-
+    pt1_ = POINT3D(0, 0, 0);
+    pt2_ = POINT3D(0, 0, 0);
 }
 
 TLine::TLine(const POINT3D& p1, const POINT3D& p2)
@@ -99,5 +100,8 @@ void TLine::Render()
 EntityObject* TLine::Clone()
 {
     TLine* new_ents = new TLine();
+    new_ents->pt1_ = this->pt1_;
+    new_ents->pt2_ = this->pt2_;
+
     return new_ents;
 }

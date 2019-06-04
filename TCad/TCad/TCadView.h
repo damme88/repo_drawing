@@ -23,12 +23,19 @@
 #include "TBox.h"
 #include "TCadDoc.h"
 #include "FormBar.h"
+#include "JiggBase.h"
 
 class TCadView : public CView
 {
 protected: // create from serialization only
 	TCadView();
 	DECLARE_DYNCREATE(TCadView)
+
+    enum DrawingMode
+    {
+        NONE = 0,
+        NORMAL_MODE = 1
+    };
 
 // Attributes
 public:
@@ -62,6 +69,7 @@ public:
     //void CreateBox();
     bool get_is_gird() const { return is_show_grid_; }
     bool get_is_show_axis() const { return is_show_axis_; }
+    void ImplementAction(const CPoint& pick_pt);
 // Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
@@ -118,8 +126,14 @@ protected:
     UINT type_2d_;
     UINT type_3d_;
     std::vector<CPoint> pt_list_;
+    //std::vector<CPoint> jig_pt_list_;
+    //EntityObject* p_entity_jig_;
+    JiggBase* p_jig_base_;
 
     GLdouble gldAspect;
+
+    //Drawing style variable
+    DrawingMode drawing_mode_;
 
 // Generated message map functions
 protected:
@@ -151,7 +165,7 @@ public:
     void OnViewRight();
     void OnViewBack();
     void OnShowReset();
-
+    void DoSelect();
     void OnDrawing2d(UINT type);
 };
 
