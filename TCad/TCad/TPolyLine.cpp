@@ -4,7 +4,7 @@
 
 TPolyLine::TPolyLine()
 {
-
+    is_closed_ = false;
 }
 
 TPolyLine::~TPolyLine()

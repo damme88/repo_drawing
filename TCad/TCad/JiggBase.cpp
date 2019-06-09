@@ -28,7 +28,7 @@ JigLine::~JigLine()
     }
 }
 
-void JigLine::AddData(const POINT3D& pt)
+void JigLine::SetData(const POINT3D& pt)
 {
     if (pt_list_.empty())
     {
@@ -50,13 +50,8 @@ void JigLine::MakeJiggObj()
         if (p_line_jig_ == NULL)
         {
             p_line_jig_ = new TLine(pt1, pt2);
-            TLine* p_line = (TLine*)p_line_jig_;
         }
-        else
-        {
-            TLine* p_line = (TLine*)p_line_jig_;
-            p_line->SetPoint(pt1, pt2);
-        }
+        p_line_jig_->SetPoint(pt1, pt2);
     }
 }
 
@@ -110,7 +105,7 @@ JigCircle::~JigCircle()
     }
 }
 
-void JigCircle::AddData(const POINT3D& pt)
+void JigCircle::SetData(const POINT3D& pt)
 {
     if (pt_list_.empty())
     {
@@ -168,6 +163,174 @@ void JigCircle::KeyEvent(int type)
     {
         ;
     }
+    default:
+        break;
+    }
+}
+
+///////////////////////////////// RECTANGLE JIG //////////////////////////////////////
+
+JigRectangle::JigRectangle()
+{
+    p_rect_jig_ = NULL;
+}
+
+JigRectangle::~JigRectangle()
+{
+    if (p_rect_jig_ != NULL)
+    {
+        delete p_rect_jig_;
+        p_rect_jig_ = NULL;
+    }
+}
+
+void JigRectangle::SetData(const POINT3D& pt)
+{
+    if (pt_list_.empty())
+    {
+        pt_list_.push_back(pt);
+    }
+    else
+    {
+        pt_list_.at(0) = pt;
+    }
+}
+
+void JigRectangle::MakeJiggObj()
+{
+    if (!pt_list_.empty())
+    {
+        POINT3D pt1 = base_pt_;
+        POINT3D pt2 = pt_list_.at(0);
+        if (p_rect_jig_ == NULL)
+        {
+            p_rect_jig_ = new TRectangle();
+        }
+        p_rect_jig_->SetPoints(pt1, pt2);
+    }
+}
+
+void JigRectangle::DoJigg()
+{
+    if (p_rect_jig_ != NULL)
+    {
+        p_rect_jig_->Render();
+    }
+
+}
+
+void JigRectangle::KeyEvent(int type)
+{
+    switch (type)
+    {
+    case KEY_ENTER:
+    {
+        state_jigg_ = END_JIG;
+    }
+    break;
+    case KEY_SPACE:
+    {
+        ;//
+    }
+    break;
+    case KEY_ESC:
+    {
+        state_jigg_ = STOP_JIGG;
+        pt_list_.clear();
+    }
+    break;
+    default:
+        break;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+JigPolyLine::JigPolyLine()
+{
+    p_poly_line_ = NULL;
+}
+
+JigPolyLine::~JigPolyLine()
+{
+    if (p_poly_line_ != NULL)
+    {
+        delete p_poly_line_;
+        p_poly_line_ = NULL;
+    }
+}
+
+
+void JigPolyLine::SetData(const POINT3D& pt)
+{
+    if (pt_list_.empty())
+    {
+        pt_list_.push_back(pt);
+    }
+    else
+    {
+        pt_list_.back() = pt;
+    }
+}
+
+void JigPolyLine::AddData(const POINT3D& pt)
+{
+   pt_list_.push_back(pt);
+}
+
+void JigPolyLine::MakeJiggObj()
+{
+    if (!pt_list_.empty())
+    {
+        if (p_poly_line_ == NULL)
+        {
+            p_poly_line_ = new TPolyLine();
+        }
+        //Reset to created again
+        p_poly_line_->FreePoint();
+        p_poly_line_->AddPoint(base_pt_);
+        for (int i = 0; i < pt_list_.size(); ++i)
+        {
+            POINT3D pt = pt_list_.at(i);
+            p_poly_line_->AddPoint(pt);
+        }
+    }
+}
+
+void JigPolyLine::DoJigg()
+{
+    if (p_poly_line_ != NULL)
+    {
+        p_poly_line_->Render();
+    }
+
+}
+
+void JigPolyLine::KeyEvent(int type)
+{
+    switch (type)
+    {
+    case KEY_ENTER:
+    {
+        state_jigg_ = END_JIG;
+    }
+    break;
+    case KEY_SPACE:
+    {
+        ;//
+    }
+    break;
+    case KEY_ESC:
+    {
+        state_jigg_ = STOP_JIGG;
+        pt_list_.clear();
+    }
+    break;
+    case KEY_ADD:
+    {
+
+    }
+    break;
     default:
         break;
     }

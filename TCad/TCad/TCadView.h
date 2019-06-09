@@ -59,11 +59,11 @@ public:
     POINT3D ConvertWindowToOpenGL(const CPoint &point2D);
     VEC3D GetPPVectorScreen();
     POINT3D GetMousePtOnPlane(POINT3D &gl_point, POINT3D &origin_point);
+    POINT3D PointWndToPointPlane(CPoint pt);
     int FindIndexObject(Vector3D &ppVector, Vector3D &gl_point);
     void DrawEntityObject(GLenum mode);
     void ImplementCancel();
-    void MakePolyLineObject();
-    void ImplementEnterDown();
+    void MakePolyLineObject(const bool& is_closed = false);
     void SetFormBar(FormBar* fb) { form_bar_ = fb; }
     void MakeEntityObject(EntityObject* ents_obj);
     //void CreateBox();

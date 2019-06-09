@@ -4,7 +4,8 @@
 
 TRectangle::TRectangle()
 {
-
+    pt1_ = POINT3D(0, 0, 0);
+    pt2_ = POINT3D(0, 0, 0);
 }
 
 TRectangle::~TRectangle()
@@ -21,6 +22,8 @@ void TRectangle::SetPoints(const POINT3D& pt1, const POINT3D& pt2)
 EntityObject* TRectangle::Clone()
 {
     TRectangle* new_rect = new TRectangle();
+    new_rect->pt1_ = this->pt1_;
+    new_rect->pt2_ = this->pt2_;
     return new_rect;
 }
 

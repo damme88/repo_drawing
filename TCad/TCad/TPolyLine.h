@@ -16,8 +16,13 @@ public:
     {
         return true;
     }
+    std::vector<POINT3D> GetPointsList() const { return pt_list_; }
+    void FreePoint() { pt_list_.clear(); }
+    bool IsClosed() const { return is_closed_; }
+    void SetClosed(const bool& isClosed) { is_closed_ = isClosed; }
 protected:
     std::vector<POINT3D> pt_list_;
+    bool is_closed_;
 };
 
 #endif // 

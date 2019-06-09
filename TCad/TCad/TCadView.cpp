@@ -591,9 +591,7 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
             p_jig_base_ = new JigLine();
         }
 
-        POINT3D O(0, 0, 0);
-        POINT3D point1 = ConvertWindowToOpenGL(point);
-        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
+        POINT3D point_mouse1 = PointWndToPointPlane(point); 
         p_jig_base_->set_base_point(point_mouse1);
         pt_list_.push_back(point);
     }
@@ -603,10 +601,36 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
     }
     else if (type_2d_ == DR_POLY_LINE)
     {
+        if (p_jig_base_ == NULL)
+        {
+            p_jig_base_ = new JigPolyLine();
+            POINT3D gl_pt = PointWndToPointPlane(point);
+            p_jig_base_->set_base_point(gl_pt);
+            p_jig_base_->SetData(gl_pt);
+        }
+        else
+        {
+            POINT3D gl_pt_next = PointWndToPointPlane(point);
+            JigPolyLine* pJig = static_cast<JigPolyLine*>(p_jig_base_);
+            if (pJig)
+            {
+                p_jig_base_->SetData(gl_pt_next);
+                pJig->AddData(gl_pt_next);
+            }
+        }
+
         pt_list_.push_back(point);
     }
     else if (type_2d_ == DR_RECTANGLE && pt_list_.size() < 2)
     {
+        if (p_jig_base_ == NULL)
+        {
+            p_jig_base_ = new JigRectangle();
+        }
+
+        POINT3D point_mouse1 = PointWndToPointPlane(point);
+        p_jig_base_->set_base_point(point_mouse1);
+
         pt_list_.push_back(point);
     }
     else if (type_2d_ == DR_CIRCLE && pt_list_.size() < 2)
@@ -616,9 +640,7 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
             p_jig_base_ = new JigCircle();
         }
 
-        POINT3D O(0, 0, 0);
-        POINT3D point1 = ConvertWindowToOpenGL(point);
-        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
+        POINT3D point_mouse1 = PointWndToPointPlane(point);
         p_jig_base_->set_base_point(point_mouse1);
 
         pt_list_.push_back(point);
@@ -719,15 +741,14 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
     }
     else if (type_2d_ == DR_RECTANGLE && pt_list_.size() == 2)
     {
+        delete p_jig_base_;
+        p_jig_base_ = NULL;
+
         CPoint pt1 = pt_list_.at(0);
         CPoint pt2 = pt_list_.at(1);
-        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
 
-        POINT3D point1 = ConvertWindowToOpenGL(pt1);
-        POINT3D point2 = ConvertWindowToOpenGL(pt2);
-
-        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
-        POINT3D point_mouse2 = GetMousePtOnPlane(point2, O);
+        POINT3D point_mouse1 = PointWndToPointPlane(pt1);
+        POINT3D point_mouse2 = PointWndToPointPlane(pt2);
 
         TRectangle* new_rect = new TRectangle();
         new_rect->SetPoints(point_mouse1, point_mouse2);
@@ -744,13 +765,9 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
 
         CPoint pt1 = pt_list_.at(0);
         CPoint pt2 = pt_list_.at(1);
-        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
 
-        POINT3D point1 = ConvertWindowToOpenGL(pt1);
-        POINT3D point2 = ConvertWindowToOpenGL(pt2);
-
-        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
-        POINT3D point_mouse2 = GetMousePtOnPlane(point2, O);
+        POINT3D point_mouse1 = PointWndToPointPlane(pt1);
+        POINT3D point_mouse2 = PointWndToPointPlane(pt2);
 
         TCircle* new_circle = new TCircle();
         new_circle->set_pos(point_mouse1);
@@ -766,9 +783,7 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
     else if (type_3d_ == BOX_OBJ && !pt_list_.empty())
     {
         CPoint pt = pt_list_.at(0);
-        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
-        POINT3D point1 = ConvertWindowToOpenGL(pt);
-        POINT3D point_mouse = GetMousePtOnPlane(point1, O);
+        POINT3D point_mouse = PointWndToPointPlane(pt);
 
         if (entity_obj_ != NULL)
         {
@@ -799,6 +814,12 @@ void TCadView::OnRButtonDown(UINT nFlags, CPoint point)
     r_btn_down_ = true;
     ImplementCancel();
     
+    if (type_2d_ == DR_POLY_LINE)
+    {
+        MakePolyLineObject();
+        delete p_jig_base_;
+        p_jig_base_ = NULL;
+    }
     CView::OnRButtonDown(nFlags, point);
 }
 
@@ -815,19 +836,28 @@ void TCadView::ImplementCancel()
     }
 }
 
-void TCadView::MakePolyLineObject()
+void TCadView::MakePolyLineObject(const bool& is_closed /*= false*/)
 {
     TPolyLine* new_pline = new TPolyLine();
     new_pline->set_type(Object2D::POLY_LINE);
     new_pline->set_etype(EntityObject::OBJ_2D);
    
-    for (int i = 0; i < pt_list_.size(); ++i)
+    int count = pt_list_.size();
+    if (count > 0)
     {
-        CPoint pt = pt_list_.at(i);
-        POINT3D O(0, 0, 0);
-        POINT3D gl_pt = ConvertWindowToOpenGL(pt);
-        POINT3D ret_pt = GetMousePtOnPlane(gl_pt, O);
-        new_pline->AddPoint(ret_pt);
+        for (int i = 0; i < count; ++i)
+        {
+            CPoint pt = pt_list_.at(i);
+            POINT3D ret_pt = PointWndToPointPlane(pt);
+            new_pline->AddPoint(ret_pt);
+        }
+
+        if (is_closed)
+        {
+            POINT3D closed_pt = PointWndToPointPlane(pt_list_.at(0));
+            new_pline->AddPoint(closed_pt);
+        }
+        new_pline->SetClosed(is_closed);
     }
 
     GetDocument()->AppendEntity(new_pline);
@@ -902,12 +932,30 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
                 delete p_jig_base_;
                 p_jig_base_ = NULL;
             }
-            else
+            else if (state == JiggBase::JIGGING)
             {
-                POINT3D O(0, 0, 0);
-                POINT3D point2 = ConvertWindowToOpenGL(pick_pt);
-                POINT3D point_mouse2 = GetMousePtOnPlane(point2, O);
-                p_jig_base_->AddData(point_mouse2);
+                POINT3D gl_pt = PointWndToPointPlane(pick_pt);
+                p_jig_base_->SetData(gl_pt);
+                p_jig_base_->MakeJiggObj();
+            }
+            InvalidateRect(FALSE);
+        }
+    }
+    else if (type_2d_ == DR_POLY_LINE)
+    {
+        if (p_jig_base_)
+        {
+            UINT state = p_jig_base_->GetStateJigg();
+            if (state == JiggBase::END_JIG)
+            {
+                MakePolyLineObject(true);
+                delete p_jig_base_;
+                p_jig_base_ = NULL;
+            }
+            else if (state == JiggBase::JIGGING)
+            {
+                POINT3D gl_pt = PointWndToPointPlane(pick_pt);
+                p_jig_base_->SetData(gl_pt);
                 p_jig_base_->MakeJiggObj();
             }
             InvalidateRect(FALSE);
@@ -917,11 +965,68 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
     {
         if (p_jig_base_)
         {
-            POINT3D O(0, 0, 0);
-            POINT3D point2 = ConvertWindowToOpenGL(pick_pt);
-            POINT3D point_mouse2 = GetMousePtOnPlane(point2, O);
-            p_jig_base_->AddData(point_mouse2);
-            p_jig_base_->MakeJiggObj();
+            UINT state = p_jig_base_->GetStateJigg();
+            if (state == JiggBase::END_JIG)
+            {
+                JigCircle* pCirJig = static_cast<JigCircle*>(p_jig_base_);
+                if (pCirJig != NULL)
+                {
+                    TCircle* cir_jigg = pCirJig->GetObj();
+                    if (cir_jigg != NULL)
+                    {
+                        TCircle* new_cir = (TCircle*)cir_jigg->Clone();
+
+                        new_cir->set_type(Object2D::CIRCLE);
+                        new_cir->set_etype(EntityObject::OBJ_2D);
+                        GetDocument()->AppendEntity(new_cir);
+                        pt_list_.clear();
+                    }
+                }
+
+                delete p_jig_base_;
+                p_jig_base_ = NULL;
+            }
+            else if (state == JiggBase::JIGGING)
+            {
+                POINT3D point_mouse2 = PointWndToPointPlane(pick_pt);
+                p_jig_base_->SetData(point_mouse2);
+                p_jig_base_->MakeJiggObj();
+            }
+            
+            InvalidateRect(FALSE);
+        }
+    }
+    else if (type_2d_ == DR_RECTANGLE)
+    {
+        if (p_jig_base_)
+        {
+            UINT state = p_jig_base_->GetStateJigg();
+            if (state == JiggBase::END_JIG)
+            {
+                JigRectangle* pRectJig = static_cast<JigRectangle*>(p_jig_base_);
+                if (pRectJig != NULL)
+                {
+                    TRectangle* rect_jigg = pRectJig->GetObj();
+                    if (rect_jigg != NULL)
+                    {
+                        TRectangle* new_rect = (TRectangle*)rect_jigg->Clone();
+
+                        new_rect->set_type(Object2D::RECTANGLE);
+                        new_rect->set_etype(EntityObject::OBJ_2D);
+                        GetDocument()->AppendEntity(new_rect);
+                        pt_list_.clear();
+                    }
+                }
+
+                delete p_jig_base_;
+                p_jig_base_ = NULL;
+            }
+            else if (state == JiggBase::JIGGING)
+            {
+                POINT3D point_mouse2 = PointWndToPointPlane(pick_pt);
+                p_jig_base_->SetData(point_mouse2);
+                p_jig_base_->MakeJiggObj();
+            }
             InvalidateRect(FALSE);
         }
     }
@@ -946,9 +1051,7 @@ void TCadView::OnMButtonUp(UINT nFlags, CPoint point)
 BOOL TCadView::OnMouseWheel(UINT nFlags, short zDetal, CPoint point) 
 {
     BOOL ret = FALSE;
-
-    POINT3D gl_point = ConvertWindowToOpenGL(point);
-    POINT3D ret_pt = GetMousePtOnPlane(gl_point, POINT3D(0, 0, 0));
+    POINT3D ret_pt = PointWndToPointPlane(point);
 
     POINT3D ptCent = p_cameral_.GetCenterPt();
     double dis = ptCent.distance(ret_pt);
@@ -1045,10 +1148,10 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         }
         type_2d_ = Type2D::NONE;
         type_3d_ = Type3D::NONE_OBJ;
+        middle_down_ = false;
     }
     break;
     case VK_RETURN:
-        ImplementEnterDown();
         break;
     case 71: //G
         is_show_grid_ = !is_show_grid_;
@@ -1064,14 +1167,6 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     InvalidateRect(FALSE);
 
     CView::OnKeyDown(nChar, nRepCnt, nFlags);
-}
-
-void TCadView::ImplementEnterDown()
-{
-    if (type_2d_ == DR_POLY_LINE && pt_list_.size() > 0)
-    {
-        MakePolyLineObject();
-    }
 }
 
 void TCadView::OnBtnGrid()
@@ -1145,6 +1240,13 @@ void TCadView::OnViewBack()
     //::glLoadIdentity();
 }
 
+POINT3D TCadView::PointWndToPointPlane(CPoint pt)
+{
+    POINT3D O(0, 0, 0);
+    POINT3D point1 = ConvertWindowToOpenGL(pt);
+    POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
+    return point_mouse1;
+}
 
 POINT3D TCadView::GetMousePtOnPlane(POINT3D &gl_point,POINT3D &origin_point)
 {
@@ -1203,6 +1305,7 @@ void TCadView::DoSelect()
 {
     type_2d_ = Type2D::NONE;
     type_3d_ = Type3D::NONE_OBJ;
+    middle_down_ = false;
 }
 
 void TCadView::OnShowReset()
@@ -1215,6 +1318,7 @@ void TCadView::OnShowReset()
     yPos_ = 0.0;
     zPos_ = 0.0;
     InvalidateRect(false);
+    middle_down_ = false;
 }
 
 void TCadView::MakeEntityObject(EntityObject* ents_obj)
