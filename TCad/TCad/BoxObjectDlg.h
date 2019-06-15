@@ -1,7 +1,8 @@
 #pragma once
 #include "afxwin.h"
 #include "afxcolorbutton.h"
-
+#include "TCadView.h"
+#include "TBox.h"
 
 // BoxDlgObject dialog
 
@@ -32,14 +33,20 @@ protected:
     float width_;
     float height_;
     VEC3D v_clor_;
+
+    CMFCColorButton val_color_;
+    bool is_insert_;
+    TCadView* cad_view_;
+
 protected:
     BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	DECLARE_MESSAGE_MAP()
-
 public:
-    afx_msg void OnBnClickedOk();
-    afx_msg void OnBnClickedCancel();
-protected:
-    CMFCColorButton val_color_;
+    bool IsInsert() const { return is_insert_; }
+    void SetView(TCadView* pView) {
+        cad_view_ = pView;
+    }
+public:
+    afx_msg void InsertBox();
 };

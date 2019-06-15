@@ -17,6 +17,7 @@
 #include "MainFrm.h"
 #include "BoxObjectDlg.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -61,6 +62,7 @@ MainFrame::MainFrame()
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
+    show_box_ = false;
 }
 
 MainFrame::~MainFrame()
@@ -99,6 +101,15 @@ int MainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
 
+
+    // GetOwner is an inherited method.
+    UINT style = WS_CHILD | CBRS_RIGHT | CBRS_FLOAT_MULTI;
+    CString strTitle = _T("Box Object Pane");
+    if (!m_object.Create(strTitle, this,CRect(0, 0, 300, 600), TRUE, IDC_OBJECT_PANE, style))
+    {
+        return 0;
+    }
+
 	return 0;
 }
 
@@ -109,24 +120,25 @@ BOOL MainFrame::OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pC
         return FALSE;
     }
 
-    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(FormBar),
-        CSize(250, 400),
+    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(TCadView), CSize(1280, 400), pContext)) {
+        TRACE0("Failed to view 1");
+        return FALSE;
+    }
+
+    if (!splitter_.CreateView(0, 1, RUNTIME_CLASS(FormBar),
+        CSize(150, 400),
         pContext)) {
         TRACE0("Failed to view 0");
         return FALSE;
     }
 
-    if (!splitter_.CreateView(0, 1, RUNTIME_CLASS(TCadView), CSize(800, 400), pContext)) {
-        TRACE0("Failed to view 1");
-        return FALSE;
-    }
-
-    tcad_view_ = reinterpret_cast<TCadView*>(splitter_.GetPane(0, 1));
-    form_bar_ = reinterpret_cast<FormBar*>(splitter_.GetPane(0, 0));
+    tcad_view_ = reinterpret_cast<TCadView*>(splitter_.GetPane(0, 0));
+    form_bar_ = reinterpret_cast<FormBar*>(splitter_.GetPane(0, 1));
     tcad_view_->SetFormBar(form_bar_);
     // Choose BighouseView is activated when start
     splitter_.SetActivePane(0, 1);
 
+    m_object.SetView(tcad_view_);
 
     return TRUE;
 }
@@ -369,22 +381,15 @@ void MainFrame::OnSelect()
 
 void MainFrame::OnMakeBox()
 {
-    BoxObjectDlg box_dlg;
-    if (box_dlg.DoModal() == IDOK)
+    show_box_ = !show_box_;
+    if (show_box_)
     {
-        float length = box_dlg.get_length();
-        float width = box_dlg.get_width();
-        float height = box_dlg.get_height();
-        VEC3D v_color = box_dlg.get_v_color();
-
-        TBox* tbox = new TBox(length, width, height);
-        tbox->set_type(Object3D::BOX_OBJ);
-        tbox->set_etype(EntityObject::OBJ_3D);
-        tbox->set_color(v_color);
-
-        ObjectInfo* new_obj_info = new ObjectInfo();
-        new_obj_info->obj_data_ = tbox;
-        new_obj_info->name_ = tbox->get_info();
-        form_bar_->AddObjectList(new_obj_info);
+        m_object.EnableDocking(CBRS_ALIGN_ANY);
+        DockPane((CBasePane*)&m_object, AFX_IDW_DOCKBAR_LEFT);
+        m_object.ShowPane(TRUE, FALSE, TRUE);
+    }
+    else
+    {
+       m_object.ShowPane(FALSE, FALSE, FALSE);
     }
 }

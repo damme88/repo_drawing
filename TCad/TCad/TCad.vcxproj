@@ -191,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxObjectDlg.h" />
+    <ClInclude Include="BoxObjectPanel.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="DataList.h" />
     <ClInclude Include="EntityObject.h" />
@@ -217,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoxObjectDlg.cpp" />
+    <ClCompile Include="BoxObjectPanel.cpp" />
     <ClCompile Include="DataList.cpp" />
     <ClCompile Include="EntityObject.cpp" />
     <ClCompile Include="FormBar.cpp" />

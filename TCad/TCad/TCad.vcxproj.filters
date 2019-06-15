@@ -25,6 +25,9 @@
     <Filter Include="Source Files\Jigg">
       <UniqueIdentifier>{3f9e8e2c-e891-4af8-b891-0dcdd90be7c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\PanelDocking">
+      <UniqueIdentifier>{239b8ab3-35d8-4c59-adde-daf52b696202}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -102,6 +105,9 @@
     <ClInclude Include="JiggBase.h">
       <Filter>Source Files\Jigg</Filter>
     </ClInclude>
+    <ClInclude Include="BoxObjectPanel.h">
+      <Filter>Source Files\PanelDocking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TCad.cpp">
@@ -166,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="JiggBase.cpp">
       <Filter>Source Files\Jigg</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxObjectPanel.cpp">
+      <Filter>Source Files\PanelDocking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,8 @@ BoxObjectDlg::BoxObjectDlg(const float& l, const float& w, const float& h, CWnd*
     length_ = l;
     width_ = w;
     height_ = h;
+    is_insert_ = false;
+    cad_view_ = NULL;
 }
 
 BoxObjectDlg::BoxObjectDlg(CWnd* pParent /*=NULL*/)
@@ -43,8 +45,7 @@ void BoxObjectDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(BoxObjectDlg, CDialogEx)
-    ON_BN_CLICKED(IDOK, &BoxObjectDlg::OnBnClickedOk)
-    ON_BN_CLICKED(IDCANCEL, &BoxObjectDlg::OnBnClickedCancel)
+    ON_BN_CLICKED(ID_INSERT_BOX, &BoxObjectDlg::InsertBox)
 END_MESSAGE_MAP()
 
 
@@ -61,7 +62,7 @@ BOOL BoxObjectDlg::OnInitDialog()
     return ret;
 }
 // BoxDlgObject message handlers
-void BoxObjectDlg::OnBnClickedOk()
+void BoxObjectDlg::InsertBox()
 {
     CString str;
     edt_box_length_.GetWindowText(str);
@@ -80,11 +81,12 @@ void BoxObjectDlg::OnBnClickedOk()
     v_clor_.y_ = green / 255.0;
     v_clor_.z_ = blue / 255.0;
 
-    CDialogEx::OnOK();
-}
-
-
-void BoxObjectDlg::OnBnClickedCancel()
-{
-    CDialogEx::OnCancel();
+    TBox* tbox = new TBox(length_, width_, height_);
+    tbox->set_type(Object3D::BOX_OBJ);
+    tbox->set_etype(EntityObject::OBJ_3D);
+    tbox->set_color(v_clor_);
+    if (cad_view_ != NULL)
+    {
+        cad_view_->MakeEntityObject(tbox);
+    }
 }

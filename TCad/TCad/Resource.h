@@ -52,6 +52,7 @@
 #define IDC_BTN_CHANGE                  1007
 #define IDC_BTN_EXPORT                  1008
 #define IDC_MFCCOLORBUTTON1             1009
+#define ID_INSERT_BOX                   1010
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_BTN_GRID                     32775
 #define ID_DRAWING_LINE                 32777
@@ -72,6 +73,7 @@
 #define ID_BTN_BOX                      32794
 #define ID_BUTTON2                      32795
 #define ID_BTN_SELECT                   32795
+#define IDC_OBJECT_PANE                 35000
 
 // Next default values for new objects
 // 
@@ -79,7 +81,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        317
 #define _APS_NEXT_COMMAND_VALUE         32796
-#define _APS_NEXT_CONTROL_VALUE         1010
+#define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

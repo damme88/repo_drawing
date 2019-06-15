@@ -15,6 +15,7 @@
 #pragma once
 #include "FormBar.h"
 #include "TCadView.h"
+#include "BoxObjectPanel.h"
 
 class MainFrame : public CFrameWndEx
 {
@@ -48,6 +49,9 @@ protected:  // control bar embedded members
 	CMFCRibbonStatusBar  m_wndStatusBar;
     TCadView* tcad_view_;
     FormBar* form_bar_;
+
+    BoxObjectPanel m_object;
+    bool show_box_;
 // Generated message map functions
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
