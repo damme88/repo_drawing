@@ -89,10 +89,15 @@ POINT3D TLine::FindIntersectPoint(const TLine& line)
 
 void TLine::Render()
 {
+    if (is_selected_)
+        glColor3f(1.0, 0.0, 0);
+    else
+        glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
     glBegin(GL_LINES);
     glLineWidth(0.5);
-    glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(pt1_.x_, pt1_.y_, pt1_.z_);
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(pt2_.x_, pt2_.y_, pt2_.z_);
     glEnd();
 }
@@ -104,4 +109,22 @@ EntityObject* TLine::Clone()
     new_ents->pt2_ = this->pt2_;
 
     return new_ents;
+}
+
+bool TLine::IsSelectedObject(const Vector3D &dir, const POINT3D& pos, POINT3D &p)
+{
+    POINT3D pt = pos;
+    float dis_start = pt.distance(pt1_);
+    float dis_end = pt.distance(pt2_);
+    float dis_line = pt1_.distance(pt2_);
+    if (dis_start < EPSILON) 
+        return true;
+    if (dis_end < EPSILON) 
+        return true;
+
+    double sum_dis = dis_start + dis_end;
+    double sub_dis = abs(dis_line - sum_dis);
+    if (sub_dis < EPSILON_SMALL)
+        return true;
+    return false;
 }

@@ -4,8 +4,7 @@
 #include "stdafx.h"
 #include "TCad.h"
 #include "BoxObjectPanel.h"
-
-
+#include "MainFrm.h"
 // CdockPaneExp
 
 IMPLEMENT_DYNAMIC(BoxObjectPanel, CDockablePane)
@@ -23,6 +22,7 @@ BoxObjectPanel::~BoxObjectPanel()
 BEGIN_MESSAGE_MAP(BoxObjectPanel, CDockablePane)
 ON_WM_CREATE()
 ON_WM_SIZE()
+ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -48,7 +48,6 @@ void BoxObjectPanel::OnSize(UINT nSize, int cx, int cy)
 
     CDockablePane::OnSize(nSize, cx, cy);
 }
-
 // CdockPaneExp message handlers
 
 

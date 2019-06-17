@@ -9,8 +9,6 @@ class TCadView;
 class FormBar : public CFormView
 {
 	DECLARE_DYNCREATE(FormBar)
-public:
-    void AddObjectList(ObjectInfo* obj_info);
 protected:
     std::vector<ObjectInfo*> obj_list_;
 protected:
@@ -33,9 +31,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
-    CListCtrl list_object;
-public:
-    afx_msg void OnBnClickedBtnInsert();
 };
 
 

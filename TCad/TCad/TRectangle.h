@@ -12,10 +12,7 @@ public:
     void Render();
     void SetPoints(const POINT3D& pt1, const POINT3D& pt2);
     EntityObject* Clone();
-    bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)
-    {
-        return true;
-    }
+    bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p);
 protected:
     POINT3D pt1_;
     POINT3D pt2_;

@@ -3,7 +3,6 @@
 #include "TCadView.h"
 
 // CdockPaneExp
-
 class BoxObjectPanel : public CDockablePane
 {
 	DECLARE_DYNAMIC(BoxObjectPanel)
@@ -16,7 +15,6 @@ public:
 public:
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnSize(UINT nSize, int cx, int cy);
-
 protected:
     BoxObjectDlg dialog_box;
     CButton insertBtn_;

@@ -9,7 +9,7 @@ class TCircle : public Object2D
 {
 private:
     float radius_;
-    
+    POINT3D center_pt_;
 public:
     TCircle();
     ~TCircle();
@@ -17,10 +17,7 @@ public:
     EntityObject* Clone();
     float get_radius() const { return radius_; }
     void set_radius(const float& rad) { radius_ = rad; }
-    bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)
-    {
-        return true;
-    }
+    bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p);
 };
 
 #endif

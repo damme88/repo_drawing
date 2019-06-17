@@ -54,7 +54,6 @@ BOOL TCadDoc::OnNewDocument()
 
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
-
 	return TRUE;
 }
 
@@ -78,6 +77,20 @@ void TCadDoc::DeleteObject()
             data_list_.RemoveObject(temp);
             temp = next;
             continue;
+        }
+        temp = temp->get_next();
+    }
+}
+
+void TCadDoc::FreeSelected()
+{
+    DataNote<EntityObject*>* temp = data_list_.head();
+    while (temp != NULL)
+    {
+        bool is_select = temp->get_data()->get_selected();
+        if (is_select)
+        {
+            temp->get_data()->set_selected(false);
         }
         temp = temp->get_next();
     }
@@ -166,6 +179,15 @@ int TCadDoc::FindIdxObject(const Vector3D& ppVector, const POINT3D& gl_pt)
                     }
                 }
 
+            }
+        }
+        else if (pObject->get_data()->get_etype() == EntityObject::OBJ_2D)
+        {
+            POINT3D retPt(0, 0, 0);
+            bool is_select = pObject->get_data()->IsSelectedObject(ppVector, gl_pt, retPt);
+            if (is_select)
+            {
+                indexFound = idx;
             }
         }
         

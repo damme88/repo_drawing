@@ -14,10 +14,7 @@ public:
     void Render();
     EntityObject* Clone();
     POINT3D FindIntersectPoint(const TLine& line);
-    bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)
-    {
-        return true;
-    }
+    bool IsSelectedObject(const Vector3D &dir, const POINT3D& pos, POINT3D &p);
 protected:
     POINT3D pt1_;
     POINT3D pt2_;

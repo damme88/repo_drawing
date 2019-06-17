@@ -28,6 +28,8 @@ BoxObjectDlg::BoxObjectDlg(CWnd* pParent /*=NULL*/)
     length_ = 200;
     width_ = 100;
     height_ = 300;
+
+    cad_view_ = NULL;
 }
 
 BoxObjectDlg::~BoxObjectDlg()
@@ -57,7 +59,7 @@ BOOL BoxObjectDlg::OnInitDialog()
     str.Format(_T("%f"), width_); edt_box_width_.SetWindowText(str);
     str.Format(_T("%f"), height_); edt_box_height_.SetWindowText(str);
 
-    val_color_.SetColor(RGB(255, 0, 0));
+    val_color_.SetColor(RGB(255, 255, 255));
     val_color_.SetColumnsNumber(8);
     return ret;
 }

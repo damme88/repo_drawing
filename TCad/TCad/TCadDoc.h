@@ -25,6 +25,7 @@ protected: // create from serialization only
 
 // Attributes
 public:
+    void FreeSelected();
     void SetSelected(int idx);
     void RenderEntity(GLenum mode);
     void AppendEntity(EntityObject* entity);

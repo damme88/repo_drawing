@@ -12,6 +12,9 @@ const double VALUE_AXIS = 10000.0;
 #define VEC3D Vector3D
 #define POINT3D VEC3D
 
+const double EPSILON = 0.01;
+const double EPSILON_SMALL = 0.1;
+const double EPSILON_LARGE = 8;
 
 #define K_RED       VEC3D(1.0, 0.0, 0.0)
 #define K_GREEN     VEC3D(0.0, 1.0, 0.0)

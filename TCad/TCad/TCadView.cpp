@@ -221,6 +221,11 @@ void TCadView::OnDraw(CDC* /*pDC*/)
     ::SwapBuffers(m_pDC->GetSafeHdc());
 }
 
+void TCadView::OnInitialUpdate()
+{
+    CView::OnInitialUpdate();
+}
+
 void TCadView::RenderScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -489,8 +494,16 @@ void TCadView::Dump(CDumpContext& dc) const
 
 TCadDoc* TCadView::GetDocument() const // non-debug version is inline
 {
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(TCadDoc)));
-	return (TCadDoc*)m_pDocument;
+    CDocument* pDoc = NULL;
+    CWnd* pWndMain = AfxGetMainWnd();
+    ASSERT(pWndMain);
+    ASSERT(pWndMain->IsKindOf(RUNTIME_CLASS(CMDIFrameWnd))); // Not an MDI app.
+    CFrameWnd* pFrame = ((CMDIFrameWnd*)pWndMain)->MDIGetActive();
+    if (NULL != pFrame)
+    {
+        pDoc = pFrame->GetActiveDocument(); // get the active document
+    }
+    return (TCadDoc*)pDoc;
 }
 #endif //_DEBUG
 
@@ -583,6 +596,7 @@ void TCadView::OffLighting()
 void TCadView::OnLButtonDown(UINT nFlags, CPoint point) 
 {
     l_btn_down_ = true;
+    TCadDoc* pDocument = GetDocument();
 
     if (type_2d_ == DR_LINE && pt_list_.size() < 2)
     {
@@ -652,17 +666,21 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
 
     if (type_2d_ == Type2D::NONE && type_3d_ == Type3D::NONE_OBJ)
     {
-        if (GetDocument()->HasObject())
+        if (pDocument->HasObject())
         {
-            POINT3D gl_pt;
-            POINT3D origin_pt(0, 0, 0);
-            gl_pt = ConvertWindowToOpenGL(point);
+            POINT3D gl_pt = PointWndToPointPlane(point);
+            //POINT3D origin_pt(0, 0, 0);
+            gl_pt = PointWndToPointPlane(point);
 
             Vector3D ppVector = GetPPVectorScreen();
             int idx = FindIndexObject(ppVector, gl_pt);
             if (idx >= 0)
             {
-                GetDocument()->SetSelected(idx);
+                pDocument->SetSelected(idx);
+            }
+            else
+            {
+              pDocument->FreeSelected();
             }
         }
     }
@@ -1149,6 +1167,7 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         type_2d_ = Type2D::NONE;
         type_3d_ = Type3D::NONE_OBJ;
         middle_down_ = false;
+        GetDocument()->FreeSelected();
     }
     break;
     case VK_RETURN:
