@@ -108,6 +108,9 @@
     <ClInclude Include="BoxObjectPanel.h">
       <Filter>Source Files\PanelDocking</Filter>
     </ClInclude>
+    <ClInclude Include="ChildFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TCad.cpp">
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="BoxObjectPanel.cpp">
       <Filter>Source Files\PanelDocking</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildFrm.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

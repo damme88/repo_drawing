@@ -17,7 +17,7 @@
 #include "afxdialogex.h"
 #include "TCad.h"
 #include "MainFrm.h"
-
+#include "ChildFrm.h"
 #include "TCadDoc.h"
 #include "TCadView.h"
 
@@ -90,7 +90,7 @@ BOOL TCadApp::InitInstance()
 
 	AfxEnableControlContainer();
 
-	EnableTaskbarInteraction(FALSE);
+	EnableTaskbarInteraction();
 
 	// AfxInitRichEdit2() is required to use RichEdit control	
 	// AfxInitRichEdit2();
@@ -118,22 +118,31 @@ BOOL TCadApp::InitInstance()
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
-	CSingleDocTemplate* pDocTemplate;
-	pDocTemplate = new CSingleDocTemplate(
-		IDR_MAINFRAME,
+    CMultiDocTemplate* pDocTemplate;
+	pDocTemplate = new CMultiDocTemplate(
+		IDR_TCadTYPE,
 		RUNTIME_CLASS(TCadDoc),
-		RUNTIME_CLASS(MainFrame),       // main SDI frame window
+        RUNTIME_CLASS(ChildFrame), // custom MDI child frame
 		RUNTIME_CLASS(TCadView));
 	if (!pDocTemplate)
 		return FALSE;
 	AddDocTemplate(pDocTemplate);
 
+    // create main MDI Frame window
+    MainFrame* pMainFrame = new MainFrame;
+    if (!pMainFrame || !pMainFrame->LoadFrame(IDR_MAINFRAME))
+    {
+        delete pMainFrame;
+        return FALSE;
+    }
+    m_pMainWnd = pMainFrame;
 
 	// Parse command line for standard shell commands, DDE, file open
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
-
+    if (CCommandLineInfo::FileNew == cmdInfo.m_nShellCommand)
+        cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 
 	// Dispatch commands specified on the command line.  Will return FALSE if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
@@ -215,7 +224,8 @@ void TCadApp::SaveCustomState()
 {
 }
 
+BOOL TCadApp::LoadState(LPCTSTR lpszSectionName, CFrameImpl *pFrameImpl)
+{
+    return TRUE;
+}
 // TCadApp message handlers
-
-
-

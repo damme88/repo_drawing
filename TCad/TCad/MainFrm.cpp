@@ -24,10 +24,12 @@
 
 // MainFrame
 
-IMPLEMENT_DYNCREATE(MainFrame, CFrameWndEx)
+IMPLEMENT_DYNCREATE(MainFrame, CMDIFrameWndEx)
 
-BEGIN_MESSAGE_MAP(MainFrame, CFrameWndEx)
+BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_WM_CREATE()
+    ON_WM_CLOSE()
+    ON_COMMAND(ID_WINDOW_MANAGER, &MainFrame::OnWindowManager)
     ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &MainFrame::OnApplicationLook)
     ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &MainFrame::OnUpdateApplicationLook)
     ON_COMMAND(ID_FILE_PRINT, &MainFrame::OnFilePrint)
@@ -35,7 +37,7 @@ BEGIN_MESSAGE_MAP(MainFrame, CFrameWndEx)
     ON_COMMAND(ID_FILE_PRINT_PREVIEW, &MainFrame::OnFilePrintPreview)
     ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &MainFrame::OnUpdateFilePrintPreview)
     ON_COMMAND(ID_DRAWING_AXIS, &MainFrame::OnDrawingAxis)
-    ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateDrawingAxis)
+    //ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateDrawingAxis)
     ON_COMMAND(ID_BTN_GRID, &MainFrame::OnBtnGrid)
     ON_COMMAND(ID_VIEW_ISO, &MainFrame::OnViewIso)
     ON_COMMAND(ID_VIEW_TOP, &MainFrame::OnViewTop)
@@ -45,7 +47,7 @@ BEGIN_MESSAGE_MAP(MainFrame, CFrameWndEx)
     ON_COMMAND(ID_VIEW_RIGHT, &MainFrame::OnViewRight)
     ON_COMMAND(ID_VIEW_BACK, &MainFrame::OnViewBack)
     ON_COMMAND(ID_SHOW_RESET, &MainFrame::OnShowReset)
-    ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateBtnGrid)
+   // ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateBtnGrid)
     ON_COMMAND(ID_DRAWING_LINE, &MainFrame::OnDrawingLine)
     ON_COMMAND(ID_DRAWING_POINT, &MainFrame::OnDrawingPoint)
     ON_COMMAND(ID_DRAWING_POLYLINE, &MainFrame::OnDrawingPolyline)
@@ -67,14 +69,23 @@ MainFrame::MainFrame()
 
 MainFrame::~MainFrame()
 {
+
 }
 
 int MainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFrameWndEx::OnCreate(lpCreateStruct) == -1)
+	if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 	BOOL bNameValid;
+
+    CMDITabInfo mdiTabParams;
+    mdiTabParams.m_style = CMFCTabCtrl::STYLE_3D_ONENOTE; // other styles available...
+    mdiTabParams.m_bActiveTabCloseButton = TRUE;      // set to FALSE to place close button at right of tab area
+    mdiTabParams.m_bTabIcons = FALSE;    // set to TRUE to enable document icons on MDI taba
+    mdiTabParams.m_bAutoColor = TRUE;    // set to FALSE to disable auto-coloring of MDI tabs
+    mdiTabParams.m_bDocumentMenu = TRUE; // enable the document menu at the right edge of the tab area
+    EnableMDITabbedGroups(TRUE, mdiTabParams);
 
 	m_wndRibbonBar.Create(this);
 	m_wndRibbonBar.LoadFromResource(IDR_RIBBON);
@@ -101,6 +112,15 @@ int MainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
 
+    // set the visual manager used to draw all user interface elements
+    CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2008));
+
+    // Enable enhanced windows management dialog
+    EnableWindowsDialog(ID_WINDOW_MANAGER, ID_WINDOW_MANAGER, TRUE);
+
+    // Switch the order of document name and application name on the window title bar. This
+    // improves the usability of the taskbar because the document name is visible with the thumbnail.
+    ModifyStyle(0, FWS_PREFIXTITLE);
 
     // GetOwner is an inherited method.
     UINT style = WS_CHILD | CBRS_RIGHT | CBRS_FLOAT_MULTI;
@@ -109,43 +129,33 @@ int MainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     {
         return 0;
     }
-
 	return 0;
 }
 
-BOOL MainFrame::OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext) 
+TCadView* MainFrame::GetView()
 {
-    if (!splitter_.CreateStatic(this, 1, 2)) {
-        TRACE0("Failed to create Static windows");
-        return FALSE;
+    CMDIFrameWnd* pFrame = ((CMDIFrameWnd*)(AfxGetApp()->m_pMainWnd));
+    if (pFrame)
+    {
+        CMDIChildWnd * pChild = pFrame->MDIGetActive();
+        if (!pChild)
+            return NULL;
+        CView * pView = pChild->GetActiveView();
+        if (!pView)
+            return NULL;
+        // Fail if view is of wrong kind
+        if (!pView->IsKindOf(RUNTIME_CLASS(TCadView)))
+            return NULL;
+
+        return (TCadView *)pView;
     }
-
-    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(TCadView), CSize(1280, 400), pContext)) {
-        TRACE0("Failed to view 1");
-        return FALSE;
-    }
-
-    if (!splitter_.CreateView(0, 1, RUNTIME_CLASS(FormBar),
-        CSize(150, 400),
-        pContext)) {
-        TRACE0("Failed to view 0");
-        return FALSE;
-    }
-
-    tcad_view_ = reinterpret_cast<TCadView*>(splitter_.GetPane(0, 0));
-    form_bar_ = reinterpret_cast<FormBar*>(splitter_.GetPane(0, 1));
-    tcad_view_->SetFormBar(form_bar_);
-    // Choose BighouseView is activated when start
-    splitter_.SetActivePane(0, 1);
-
-    m_object.SetView(tcad_view_);
-
-    return TRUE;
+    return NULL;
 }
+
 
 BOOL MainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	if( !CFrameWndEx::PreCreateWindow(cs) )
+	if( !CMDIFrameWndEx::PreCreateWindow(cs) )
 		return FALSE;
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -158,17 +168,22 @@ BOOL MainFrame::PreCreateWindow(CREATESTRUCT& cs)
 #ifdef _DEBUG
 void MainFrame::AssertValid() const
 {
-	CFrameWndEx::AssertValid();
+    CMDIFrameWndEx::AssertValid();
 }
 
 void MainFrame::Dump(CDumpContext& dc) const
 {
-	CFrameWndEx::Dump(dc);
+    CMDIFrameWndEx::Dump(dc);
 }
 #endif //_DEBUG
 
 
 // MainFrame message handlers
+
+void MainFrame::OnWindowManager()
+{
+    ShowWindowsDialog();
+}
 
 void MainFrame::OnApplicationLook(UINT id)
 {
@@ -278,105 +293,159 @@ void MainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
 
 void MainFrame::OnDrawingAxis()
 {
-    tcad_view_->OnDrawingAxis();
+    if (GetView() != NULL)
+        GetView()->OnDrawingAxis();
 }
 
-void MainFrame::OnUpdateDrawingAxis(CCmdUI *pCmdUI)
-{
-    if (tcad_view_ != NULL)
-    {
-        bool is_show_axis = tcad_view_->get_is_show_axis();
-        pCmdUI->SetCheck(is_show_axis);
-    }
-}
+//void MainFrame::OnUpdateDrawingAxis(CCmdUI *pCmdUI)
+//{
+//    if (GetView() != NULL)
+//    {
+//        bool is_show_axis = GetView()->get_is_show_axis();
+//        pCmdUI->SetCheck(is_show_axis);
+//    }
+//}
 
 void MainFrame::OnBtnGrid()
 {
-    tcad_view_->OnBtnGrid();
+    if (GetView() != NULL)
+    {
+        GetView()->OnBtnGrid();
+    }
+    
 }
 
-void MainFrame::OnUpdateBtnGrid(CCmdUI *pCmdUI)
-{
-    if (tcad_view_ != NULL)
-    {
-       bool is_show_grid = tcad_view_->get_is_gird();
-       pCmdUI->SetCheck(is_show_grid);
-    }
-}
+//void MainFrame::OnUpdateBtnGrid(CCmdUI *pCmdUI)
+//{
+//    if (GetView() != NULL)
+//    {
+//       bool is_show_grid = GetView()->get_is_gird();
+//       pCmdUI->SetCheck(is_show_grid);
+//    }
+//}
 
 void MainFrame::OnViewIso()
 {
-    tcad_view_->OnViewIso();
+    if (GetView() != NULL)
+    {
+
+    }
+    GetView()->OnViewIso();
 }
 
 void MainFrame::OnViewTop()
 {
-    tcad_view_->OnViewTop();
+    if (GetView() != NULL)
+    {
+        GetView()->OnViewTop();
+    }
+    
 }
 
 void MainFrame::OnViewLeft()
 {
-    tcad_view_->OnViewLeft();
+    if (GetView() != NULL)
+    {
+        GetView()->OnViewLeft();
+    }
+   
 }
 
 void MainFrame::OnViewFront()
 {
-    tcad_view_->OnViewFront();
+    if (GetView() != NULL)
+    {
+        GetView()->OnViewRight();
+    }
 }
 
 void MainFrame::OnViewBottom()
 {
-    tcad_view_->OnViewBottom();
+    if (GetView() != NULL)
+    {
+        GetView()->OnViewBottom();
+    }
 }
 
 void MainFrame::OnViewRight()
 {
-    tcad_view_->OnViewRight();
+    if (GetView() != NULL)
+    {
+        GetView()->OnViewRight();
+    }
 }
 
 void MainFrame::OnViewBack()
 {
-    tcad_view_->OnViewBack();
+    if (GetView() != NULL)
+    {
+        GetView()->OnViewBack();
+    }
 }
 
 void MainFrame::OnShowReset()
 {
-    tcad_view_->OnShowReset();
+    if (GetView() != NULL)
+    {
+        GetView()->OnViewIso();
+    }
 }
 
 void MainFrame::OnDrawingLine()
 {
-    tcad_view_->OnDrawing2d(Type2D::DR_LINE);
+    if (GetView() != NULL)
+    {
+        GetView()->OnDrawing2d(Type2D::DR_LINE);
+    }
+    
 }
 
 void MainFrame::OnDrawingPoint()
 {
-    tcad_view_->OnDrawing2d(Type2D::DR_POINT);
+    if (GetView() != NULL)
+    {
+        GetView()->OnDrawing2d(Type2D::DR_POINT);
+    }
 }
 
 void MainFrame::OnDrawingPolyline()
 {
-    tcad_view_->OnDrawing2d(Type2D::DR_POLY_LINE);
+    if (GetView() != NULL)
+    {
+        GetView()->OnDrawing2d(Type2D::DR_POLY_LINE);
+    }
 }
 
 void MainFrame::OnDrawingRect()
 {
-    tcad_view_->OnDrawing2d(Type2D::DR_RECTANGLE);
+    if (GetView() != NULL)
+    {
+        GetView()->OnDrawing2d(Type2D::DR_RECTANGLE);
+    }
 }
 
 void MainFrame::OnDrawingCircle()
 {
-    tcad_view_->OnDrawing2d(Type2D::DR_CIRCLE);
+    if (GetView() != NULL)
+    {
+        GetView()->OnDrawing2d(Type2D::DR_CIRCLE);
+    }
 }
 
 void MainFrame::OnDrawingArc()
 {
-    tcad_view_->OnDrawing2d(Type2D::DR_ARC);
+    if (GetView() != NULL)
+    {
+        GetView()->OnDrawing2d(Type2D::DR_ARC);
+    }
 }
 
 void MainFrame::OnSelect()
 {
-    tcad_view_->DoSelect();
+    if (GetView() != NULL)
+    {
+        GetView()->DoSelect();
+    }
 }
 
 void MainFrame::OnMakeBox()
@@ -384,6 +453,7 @@ void MainFrame::OnMakeBox()
     show_box_ = !show_box_;
     if (show_box_)
     {
+        m_object.SetView(GetView());
         m_object.EnableDocking(CBRS_ALIGN_ANY);
         DockPane((CBasePane*)&m_object, AFX_IDW_DOCKBAR_LEFT);
         m_object.ShowPane(TRUE, FALSE, TRUE);

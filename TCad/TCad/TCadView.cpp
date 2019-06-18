@@ -211,6 +211,9 @@ void TCadView::OnDraw(CDC* /*pDC*/)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+
+    wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+
 	// TODO: add draw code for native data here
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ::glClearColor(0, 0, 0, 1.0f);
@@ -219,6 +222,8 @@ void TCadView::OnDraw(CDC* /*pDC*/)
     glFlush();
     ::glFinish();
     ::SwapBuffers(m_pDC->GetSafeHdc());
+
+    //wglMakeCurrent(NULL, NULL);
 }
 
 void TCadView::OnInitialUpdate()

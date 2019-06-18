@@ -59,7 +59,7 @@ GLuint TBox::MakeBox()
     float z = heigth_;
 
     if (is_selected_) 
-      glColor3f(1.0, 1.0, 0);
+      glColor3f(1.0, 0.0, 0);
     else 
       glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
     //Back

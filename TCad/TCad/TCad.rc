@@ -144,44 +144,17 @@ BEGIN
     BEGIN
         MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
-        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
-        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM "&Close",                      ID_FILE_CLOSE
         MENUITEM SEPARATOR
-        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
-        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
         MENUITEM SEPARATOR
-        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
-    END
-    POPUP "&Edit"
-    BEGIN
-        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
-        MENUITEM SEPARATOR
-        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
-        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
-        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
     END
     POPUP "&View"
     BEGIN
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
-        POPUP "&Application Look"
-        BEGIN
-            MENUITEM "Windows &2000",               ID_VIEW_APPLOOK_WIN_2000
-            MENUITEM "Office &XP",                  ID_VIEW_APPLOOK_OFF_XP
-            MENUITEM "&Windows XP",                 ID_VIEW_APPLOOK_WIN_XP
-            MENUITEM "Office 200&3",                ID_VIEW_APPLOOK_OFF_2003
-            MENUITEM "Visual Studio 200&5",         ID_VIEW_APPLOOK_VS_2005
-            MENUITEM "Visual Studio 200&8",         ID_VIEW_APPLOOK_VS_2008
-            POPUP "Office 200&7"
-            BEGIN
-                MENUITEM "&Blue Style",                 ID_VIEW_APPLOOK_OFF_2007_BLUE
-                MENUITEM "B&lack Style",                ID_VIEW_APPLOOK_OFF_2007_BLACK
-                MENUITEM "&Silver Style",               ID_VIEW_APPLOOK_OFF_2007_SILVER
-                MENUITEM "&Aqua Style",                 ID_VIEW_APPLOOK_OFF_2007_AQUA
-            END
-        END
     END
     POPUP "&Help"
     BEGIN
@@ -216,6 +189,46 @@ BEGIN
     MENUITEM "Office 2007 (&Silver Style)", ID_VIEW_APPLOOK_OFF_2007_SILVER
     MENUITEM "Office 2007 (&Aqua Style)",   ID_VIEW_APPLOOK_OFF_2007_AQUA
     MENUITEM "Win&dows 7",                  ID_VIEW_APPLOOK_WINDOWS_7
+END
+
+IDR_TCadTYPE MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&New Window",                 ID_WINDOW_NEW
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About Temp...",              ID_APP_ABOUT
+    END
 END
 
 
@@ -277,16 +290,10 @@ BEGIN
     GROUPBOX        "",IDC_STATIC,7,325,166,37
 END
 
-IDD_FORMBAR DIALOGEX 0, 0, 201, 375
+IDD_FORMBAR DIALOGEX 0, 0, 600, 150
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_LIST_OBJECT,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSCROLL | WS_BORDER | WS_TABSTOP,7,24,187,159
-    PUSHBUTTON      "Insert",IDC_BTN_INSERT,118,186,47,38
-    PUSHBUTTON      "Remove",IDC_BTN_REMOVE,7,209,50,14
-    PUSHBUTTON      "Clear All",IDC_BTN_CLEAR_ALL,63,191,50,14
-    PUSHBUTTON      "Change",IDC_BTN_CHANGE,7,191,50,14
-    PUSHBUTTON      "Export",IDC_BTN_EXPORT,63,208,50,14
 END
 
 
@@ -356,9 +363,9 @@ BEGIN
     IDD_FORMBAR, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 194
+        RIGHTMARGIN, 593
         TOPMARGIN, 7
-        BOTTOMMARGIN, 368
+        BOTTOMMARGIN, 143
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -433,6 +440,8 @@ END
 STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "TCad\n\nTCad\n\n\nTCad.Document\nTCad.Document"
+    IDR_CadTYPE             "\nTCad\nTCad\n\n\nTCad.Document\nTCad.Document"
+    ID_WINDOW_MANAGER       "&Windows..."
 END
 
 STRINGTABLE
@@ -499,6 +508,11 @@ END
 
 STRINGTABLE
 BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
@@ -538,6 +552,7 @@ STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
 END
 
 STRINGTABLE

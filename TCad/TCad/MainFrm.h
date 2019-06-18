@@ -13,27 +13,23 @@
 //
 
 #pragma once
-#include "FormBar.h"
 #include "TCadView.h"
 #include "BoxObjectPanel.h"
 
-class MainFrame : public CFrameWndEx
+class MainFrame : public CMDIFrameWndEx
 {
-	
-protected: // create from serialization only
-	MainFrame();
-	DECLARE_DYNCREATE(MainFrame)
 
+    DECLARE_DYNCREATE(MainFrame)
+public: // create from serialization only
+	MainFrame();
 // Attributes
 public:
-    CSplitterWnd splitter_;
 // Operations
 public:
-    BOOL OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext);
+    //BOOL OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext);
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-
 // Implementation
 public:
 	virtual ~MainFrame();
@@ -41,20 +37,20 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-
+    TCadView* GetView();
 protected:  // control bar embedded members
 	CMFCRibbonBar     m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar  m_wndStatusBar;
-    TCadView* tcad_view_;
-    FormBar* form_bar_;
+
 
     BoxObjectPanel m_object;
     bool show_box_;
 // Generated message map functions
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+    afx_msg void OnWindowManager();
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	afx_msg void OnFilePrint();
