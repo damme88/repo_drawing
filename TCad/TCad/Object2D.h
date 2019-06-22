@@ -8,7 +8,7 @@ class Object2D : public EntityObject
 public:
     enum Type2D
     {
-        POINT = 0,
+        POINT = 100,
         LINE,
         POLY_LINE,
         RECTANGLE,

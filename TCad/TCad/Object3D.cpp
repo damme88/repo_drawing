@@ -5,6 +5,7 @@
 Object3D::Object3D()
 {
     color_value_.Set(1.0, 1.0, 1.0);
+    g_type_ = NONE_OBJ;
 }
 
 

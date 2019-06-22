@@ -45,9 +45,25 @@ void BoxObjectPanel::OnSize(UINT nSize, int cx, int cy)
         dialog_box.GetWindowRect(rect_obj);
         dialog_box.SetWindowPos(NULL, 0, 0, rect_wnd.Width(), rect_wnd.Height(), SWP_SHOWWINDOW);
     }
-
     CDockablePane::OnSize(nSize, cx, cy);
 }
 // CdockPaneExp message handlers
+
+void BoxObjectPanel::FillData(TBox* pBox, int idx)
+{
+    float width = pBox->get_width();
+    float height = pBox->get_height();
+    float length = pBox->get_length();
+    float angle = pBox->get_angle();
+    VEC3D color = pBox->get_color();
+    
+    dialog_box.SetIdxUpdated(idx);
+    dialog_box.set_width(width);
+    dialog_box.set_height(height);
+    dialog_box.set_length(length);
+    dialog_box.set_angle(angle);
+    dialog_box.set_color(color);
+    dialog_box.UpdateData(FALSE);
+}
 
 

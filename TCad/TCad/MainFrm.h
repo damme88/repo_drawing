@@ -25,6 +25,7 @@ public: // create from serialization only
 // Attributes
 public:
 // Operations
+    void UpdateBox(int idx);
 public:
     //BOOL OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext);
 // Overrides

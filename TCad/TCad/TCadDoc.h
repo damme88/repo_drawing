@@ -32,6 +32,7 @@ public:
     bool HasObject();
     long GetNumberObject();
     int FindIdxObject(const Vector3D& ppVector, const POINT3D& gl_pt);
+    EntityObject* FindEntity(int idx);
     void DeleteObject();
 // Operations
 public:

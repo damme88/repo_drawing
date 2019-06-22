@@ -6,6 +6,8 @@ TLine::TLine()
 {
     pt1_ = POINT3D(0, 0, 0);
     pt2_ = POINT3D(0, 0, 0);
+    g_type_ = LINE;
+    e_type_ = OBJ_2D;
 }
 
 TLine::TLine(const POINT3D& p1, const POINT3D& p2)
@@ -89,6 +91,7 @@ POINT3D TLine::FindIntersectPoint(const TLine& line)
 
 void TLine::Render()
 {
+#ifdef OPENGL_12
     if (is_selected_)
         glColor3f(1.0, 0.0, 0);
     else
@@ -100,6 +103,27 @@ void TLine::Render()
     glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(pt2_.x_, pt2_.y_, pt2_.z_);
     glEnd();
+#else
+    GLfloat arrVertices[6];
+    arrVertices[0] = pt1_.x_;
+    arrVertices[1] = pt1_.y_;
+    arrVertices[2] = pt1_.z_;
+    arrVertices[3] = pt2_.x_;
+    arrVertices[4] = pt2_.y_;
+    arrVertices[5] = pt2_.z_;
+    if (is_selected_)
+        glColor3f(1.0, 0.0, 0);
+    else
+        glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
+    glEnable(GL_LINE_SMOOTH);
+    glLineWidth(1);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glNormal3f(0.0f, 0.0f, 1.0f);
+    glVertexPointer(3, GL_FLOAT, 0, arrVertices);
+    glDrawArrays(GL_LINES, 0, 2);
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+#endif
 }
 
 EntityObject* TLine::Clone()

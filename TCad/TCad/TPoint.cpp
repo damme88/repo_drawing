@@ -10,6 +10,8 @@ TPoint::TPoint()
 TPoint::TPoint(const POINT3D& pt)
 {
     pt_ = pt;
+    g_type_ = POINT;
+    e_type_ = OBJ_2D;
 }
 
 TPoint::TPoint(const float& x, const float& y, const float z)

@@ -6,6 +6,8 @@ TCircle::TCircle()
 {
     radius_ = 0.0;
     center_pt_ = pos_pt_;
+    g_type_ = OBJ_2D;
+    e_type_ = CIRCLE;
 }
 
 

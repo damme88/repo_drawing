@@ -6,6 +6,8 @@ TRectangle::TRectangle()
 {
     pt1_ = POINT3D(0, 0, 0);
     pt2_ = POINT3D(0, 0, 0);
+    g_type_ = RECTANGLE;
+    e_type_ = OBJ_2D;
 }
 
 TRectangle::~TRectangle()

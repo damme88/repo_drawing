@@ -6,6 +6,9 @@
 TBox::TBox()
 {
     e_type_ = OBJ_3D;
+    v_dir_ = VEC3D(1.0, 0.0, 0.0);
+    angle_ = 0.0;
+    g_type_ = BOX_OBJ;
 }
 
 TBox::TBox(const float& length, const float& width, const float& height)
@@ -14,10 +17,21 @@ TBox::TBox(const float& length, const float& width, const float& height)
     width_ = width;
     heigth_ = height;
     e_type_ = OBJ_3D;
+    g_type_ = BOX_OBJ;
+    angle_ = 0.0;
 }
 
 TBox::~TBox()
 {
+}
+
+void TBox::CopyFrom(TBox* obj)
+{
+    this->length_ = obj->length_;
+    this->width_ = obj->width_;
+    this->heigth_ = obj->heigth_;
+    this->color_value_ = obj->color_value_;
+    this->angle_ = obj->angle_;
 }
 
 EntityObject* TBox::Clone()
@@ -27,6 +41,9 @@ EntityObject* TBox::Clone()
     new_obj->width_ = this->width_;
     new_obj->heigth_ = this->heigth_;
     new_obj->color_value_ = this->color_value_;
+    new_obj->angle_ = this->angle_;
+    new_obj->g_type_ = this->g_type_;
+    new_obj->e_type_ = this->e_type_;
     return new_obj;
 }
 
@@ -48,12 +65,15 @@ void TBox::Render()
 {
     glPushMatrix();
     glTranslatef(pos_pt_.x_, pos_pt_.y_, pos_pt_.z_);
+    glRotatef(angle_, 0.0, 0.0, 1.0);
     MakeBox();
     glPopMatrix();
 }
 
 GLuint TBox::MakeBox()
 {
+    VEC3D vZ = VEC3D(0.0, 0.0, 1.0);
+    VEC3D vVer = vZ.CrossProduct(v_dir_);
     float x = length_;
     float y = width_;
     float z = heigth_;
@@ -62,7 +82,7 @@ GLuint TBox::MakeBox()
       glColor3f(1.0, 0.0, 0);
     else 
       glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
-    //Back
+    //Bottom
     glBegin(GL_QUADS);
     glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(0, 0, 0);
@@ -71,7 +91,7 @@ GLuint TBox::MakeBox()
     glVertex3f(0, y, 0);
     glEnd();
 
-    // left
+    // right
     glBegin(GL_QUADS);
     glNormal3f(-1.0f, 0.0f, 0.0f);
     glVertex3f(0, 0, 0);
@@ -80,7 +100,7 @@ GLuint TBox::MakeBox()
     glVertex3f(0, y, 0);
     glEnd();
 
-    //front
+    ////Top
     glBegin(GL_QUADS);
     glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(0, 0, z);
@@ -89,7 +109,7 @@ GLuint TBox::MakeBox()
     glVertex3f(x, 0, z);
     glEnd();
 
-    //// right
+    //// left
     glBegin(GL_QUADS);
     glNormal3f(1.0f, 0.0f, 0.0f);
     glVertex3f(x, 0, z);
@@ -98,15 +118,16 @@ GLuint TBox::MakeBox()
     glVertex3f(x, y, z);
     glEnd();
 
-    //Top
+    //Front
     glBegin(GL_QUADS);
     glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(0, y, 0);
     glVertex3f(x, y, 0);
     glVertex3f(x, y, z);
     glVertex3f(0, y, z);
+    glEnd();
 
-    //Bottom
+    //Back
     glBegin(GL_QUADS);
     glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(0, 0, 0);

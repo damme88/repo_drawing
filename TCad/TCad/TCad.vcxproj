@@ -194,6 +194,7 @@
     <ClInclude Include="BoxObjectPanel.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="Const.h" />
+    <ClInclude Include="CylinderObjectDlg.h" />
     <ClInclude Include="DataList.h" />
     <ClInclude Include="EntityObject.h" />
     <ClInclude Include="FormBar.h" />
@@ -212,6 +213,7 @@
     <ClInclude Include="TCadDoc.h" />
     <ClInclude Include="TCadView.h" />
     <ClInclude Include="TCircle.h" />
+    <ClInclude Include="TDesk.h" />
     <ClInclude Include="TLine.h" />
     <ClInclude Include="TPoint.h" />
     <ClInclude Include="TPolyLine.h" />
@@ -221,6 +223,7 @@
     <ClCompile Include="BoxObjectDlg.cpp" />
     <ClCompile Include="BoxObjectPanel.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
+    <ClCompile Include="CylinderObjectDlg.cpp" />
     <ClCompile Include="DataList.cpp" />
     <ClCompile Include="EntityObject.cpp" />
     <ClCompile Include="FormBar.cpp" />
@@ -242,6 +245,7 @@
     <ClCompile Include="TCadDoc.cpp" />
     <ClCompile Include="TCadView.cpp" />
     <ClCompile Include="TCircle.cpp" />
+    <ClCompile Include="TDesk.cpp" />
     <ClCompile Include="TLine.cpp" />
     <ClCompile Include="TPoint.cpp" />
     <ClCompile Include="TPolyLine.cpp" />

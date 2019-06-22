@@ -55,3 +55,13 @@ float Vector3D::distance(Vector3D pt)
 
     return sqrt(valx + valy + valz);
 }
+
+Vector3D Vector3D::CrossProduct(const Vector3D& v)
+{
+    Vector3D vRet;
+    vRet.x_ = (this->y_*v.z_) - (this->z_*v.y_);
+    vRet.y_ = -((this->x_*v.z_) - (this->z_*v.x_));
+    vRet.z_ = (this->x_*v.y_) - (this->y_*v.x_);
+
+    return vRet;
+}

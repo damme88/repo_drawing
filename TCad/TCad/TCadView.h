@@ -40,7 +40,6 @@ protected: // create from serialization only
 // Attributes
 public:
 	TCadDoc* GetDocument() const;
-
 // Operations
 public:
     int OnCreate(LPCREATESTRUCT lpcs);
@@ -66,6 +65,7 @@ public:
     void MakePolyLineObject(const bool& is_closed = false);
     void SetFormBar(FormBar* fb) { form_bar_ = fb; }
     void MakeEntityObject(EntityObject* ents_obj);
+    void UpdateObject(EntityObject* newObj, int idx);
     //void CreateBox();
     bool get_is_gird() const { return is_show_grid_; }
     bool get_is_show_axis() const { return is_show_axis_; }
@@ -142,6 +142,7 @@ protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
     afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
     afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
     afx_msg BOOL OnMouseWheel(UINT nFlags, short zDetal, CPoint point);

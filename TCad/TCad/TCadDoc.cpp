@@ -113,6 +113,25 @@ void TCadDoc::SetSelected(int idx)
    }
 }
 
+EntityObject* TCadDoc::FindEntity(int idx)
+{
+    UINT ix = 0;
+    EntityObject* pEnt = NULL;
+    DataNote<EntityObject*>* temp = data_list_.head();
+    while (temp != NULL)
+    {
+        if (ix == idx)
+        {
+            pEnt = temp->get_data();
+            break;
+        }
+        temp = temp->get_next();
+        ix++;
+    }
+
+    return pEnt;
+}
+
 void TCadDoc::RenderEntity(GLenum mode)
 {
     DataNote<EntityObject*>* temp = data_list_.head();

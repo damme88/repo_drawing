@@ -53,7 +53,7 @@ public:
     double abs();
     Vector3D Unit();
     void Set(double x, double y, double z);
-
+    Vector3D CrossProduct(const Vector3D& v);
     float x_;
     float y_;
     float z_;

@@ -16,11 +16,16 @@ public:
     float get_length()const { return length_; }
     float get_width()const { return width_; }
     float get_height() const { return heigth_; }
+    void set_angle(const float& angle) { angle_ = angle; };
+    float get_angle() const { return angle_; }
     CString get_info();
+    void CopyFrom(TBox* obj);
 protected:
     float length_;
     float width_;
     float heigth_;
+    VEC3D v_dir_;
+    float angle_;
 };
 
 #endif

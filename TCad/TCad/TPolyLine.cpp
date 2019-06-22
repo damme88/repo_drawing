@@ -39,6 +39,7 @@ void TPolyLine::Render()
     for (int i = 0; i < pt_list_.size(); ++i)
     {
         POINT3D pt = pt_list_.at(i);
+        glNormal3f(0, 0, 1);
         glVertex3f(pt.x_, pt.y_, pt.z_);
     }
     glEnd();

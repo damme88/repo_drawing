@@ -129,6 +129,7 @@ int MainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     {
         return 0;
     }
+
 	return 0;
 }
 
@@ -450,16 +451,42 @@ void MainFrame::OnSelect()
 
 void MainFrame::OnMakeBox()
 {
-    show_box_ = !show_box_;
-    if (show_box_)
+    if (GetView() != NULL)
+    {
+        show_box_ = !show_box_;
+        if (show_box_)
+        {
+            m_object.SetView(GetView());
+            m_object.SetType(0);
+            m_object.InitDlgVal();
+            m_object.EnableDocking(CBRS_ALIGN_ANY);
+            DockPane((CBasePane*)&m_object, AFX_IDW_DOCKBAR_LEFT);
+            m_object.ShowPane(TRUE, FALSE, TRUE);
+        }
+        else
+        {
+            m_object.ShowPane(FALSE, FALSE, FALSE);
+        }
+    }
+}
+
+void MainFrame::UpdateBox(int idx)
+{
+    TCadView* pView = GetView();
+    if (pView)
     {
         m_object.SetView(GetView());
+        m_object.SetType(1);
+        EntityObject* pEntity = pView->GetDocument()->FindEntity(idx);
+        if (pEntity->get_etype() == EntityObject::OBJ_3D)
+        {
+            Object3D* pObj = static_cast<Object3D*>(pEntity);
+            TBox* pBox = static_cast<TBox*>(pObj);
+            m_object.FillData(pBox, idx);
+        }
+
         m_object.EnableDocking(CBRS_ALIGN_ANY);
         DockPane((CBasePane*)&m_object, AFX_IDW_DOCKBAR_LEFT);
         m_object.ShowPane(TRUE, FALSE, TRUE);
-    }
-    else
-    {
-       m_object.ShowPane(FALSE, FALSE, FALSE);
     }
 }

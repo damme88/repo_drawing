@@ -22,6 +22,8 @@
 #include "TCadDoc.h"
 #include "TCadView.h"
 #include "BoxObjectDlg.h"
+#include "MainFrm.h"
+#include "TDesk.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,6 +43,7 @@ BEGIN_MESSAGE_MAP(TCadView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
     ON_WM_LBUTTONUP()
+    ON_WM_LBUTTONDBLCLK()
     ON_WM_RBUTTONDOWN()
     ON_WM_LBUTTONDOWN()
     ON_WM_MOUSEMOVE()
@@ -690,20 +693,44 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
         }
     }
     
-
-
     CView::OnLButtonDown(nFlags, point);
 }
 
+void TCadView::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+    TCadDoc* pDocument = GetDocument();
+    if (pDocument == NULL) return CView::OnLButtonDblClk(nFlags, point);
+
+    if (type_2d_ == Type2D::NONE && type_3d_ == Type3D::NONE_OBJ)
+    {
+        if (pDocument->HasObject())
+        {
+            POINT3D gl_pt = PointWndToPointPlane(point);
+            //POINT3D origin_pt(0, 0, 0);
+            gl_pt = PointWndToPointPlane(point);
+
+            Vector3D ppVector = GetPPVectorScreen();
+            int idx = FindIndexObject(ppVector, gl_pt);
+            if (idx >= 0)
+            {
+                pDocument->SetSelected(idx);
+                MainFrame* pFrameMain = reinterpret_cast<MainFrame*>(AfxGetMainWnd());
+                if (pFrameMain != NULL)
+                {
+                    pFrameMain->UpdateBox(idx);
+                }
+            }
+        }
+    }
+
+    CView::OnLButtonDblClk(nFlags, point);
+}
 
 int TCadView::FindIndexObject(Vector3D &ppVector,Vector3D &gl_pt)
 {
     int idx = GetDocument()->FindIdxObject(ppVector, gl_pt);
     return idx;
 }
-
-
-
 
 void TCadView::OnTimer(UINT nIDEvent)
 {
@@ -730,17 +757,10 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
 
         CPoint pt1 = pt_list_.at(0);
         CPoint pt2 = pt_list_.at(1);
-        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
-
-        POINT3D point1 = ConvertWindowToOpenGL(pt1);
-        POINT3D point2 = ConvertWindowToOpenGL(pt2);
-
-        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
-        POINT3D point_mouse2 = GetMousePtOnPlane(point2, O);
+        POINT3D point_mouse1 = PointWndToPointPlane(pt1);
+        POINT3D point_mouse2 = PointWndToPointPlane(pt2);
 
         TLine* new_line = new TLine(point_mouse1, point_mouse2);
-        new_line->set_type(Object2D::LINE);
-        new_line->set_etype(EntityObject::OBJ_2D);
         new_line->set_pos_cam(p_cameral_.get_pos_cam());
         GetDocument()->AppendEntity(new_line);
         pt_list_.clear();
@@ -749,15 +769,9 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
     else if (type_2d_ == DR_POINT && !pt_list_.empty())
     {
         CPoint pt1 = pt_list_.at(0);
-        POINT3D O(0, 0, 0);   // origin coordinate (0 point)
-
-        POINT3D point1 = ConvertWindowToOpenGL(pt1);
-
-        POINT3D point_mouse1 = GetMousePtOnPlane(point1, O);
+        POINT3D point_mouse1 = PointWndToPointPlane(pt1);
 
         TPoint* new_pt = new TPoint(point_mouse1);
-        new_pt->set_type(Object2D::POINT);
-        new_pt->set_etype(EntityObject::OBJ_2D);
         GetDocument()->AppendEntity(new_pt);
         pt_list_.clear();
         InvalidateRect(false);
@@ -775,8 +789,6 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
 
         TRectangle* new_rect = new TRectangle();
         new_rect->SetPoints(point_mouse1, point_mouse2);
-        new_rect->set_type(Object2D::RECTANGLE);
-        new_rect->set_etype(EntityObject::OBJ_2D);
         GetDocument()->AppendEntity(new_rect);
         pt_list_.clear();
         InvalidateRect(false);
@@ -794,8 +806,6 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
 
         TCircle* new_circle = new TCircle();
         new_circle->set_pos(point_mouse1);
-        new_circle->set_type(Object2D::CIRCLE);
-        new_circle->set_etype(EntityObject::OBJ_2D);
         double distance = point_mouse1.distance(point_mouse2);
         new_circle->set_radius(distance);
 
@@ -816,6 +826,10 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
             pt_list_.clear();
             InvalidateRect(false);
         }
+
+        TDesk* pDesk = new TDesk;
+        pDesk->Init();
+        GetDocument()->AppendEntity(pDesk);
     }
     CView::OnLButtonUp(nFlags, point);
 }
@@ -1353,4 +1367,30 @@ void TCadView::MakeEntityObject(EntityObject* ents_obj)
         entity_obj_ = ents_obj;
     }
     type_2d_ = Type2D::NONE;
+}
+
+void TCadView::UpdateObject(EntityObject* newObj, int idx)
+{
+    EntityObject* pEntity = GetDocument()->FindEntity(idx);
+    if (pEntity != NULL && newObj != NULL)
+    {
+        int type1 = pEntity->get_etype();
+        int type2 = newObj->get_etype();
+
+        if (type2 == EntityObject::OBJ_3D && type2 == EntityObject::OBJ_3D)
+        {
+            Object3D* pObj1 = static_cast <Object3D*>(pEntity);
+            Object3D* pObj2 = static_cast <Object3D*>(newObj);
+            if (pObj1->get_type() == pObj2->get_type())
+            {
+                int type = pObj1->get_type();
+                if (type == Object3D::BOX_OBJ)
+                {
+                    TBox* pBox1 = (TBox*)pEntity;
+                    TBox* pBox2 = (TBox*)newObj;
+                    pBox1->CopyFrom(pBox2);
+                }
+            }
+        }
+    }
 }

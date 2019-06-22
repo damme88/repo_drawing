@@ -37,11 +37,11 @@
 #define ID_VIEW_APPLOOK_WINDOWS_7       219
 #define IDS_EDIT_MENU                   306
 #define IDR_RIBBON                      307
-#define IDB_BITMAP1                     310
 #define IDB_GRID                        310
 #define IDD_FORMBAR                     311
 #define IDC_CUR_DRAW                    312
 #define IDD_DLG_BOX                     313
+#define IDD_DLG_CYLINDER                314
 #define ID_DRAWING_AXIS                 400
 #define ID_DRAWING_GRID                 401
 #define IDC_EDT_LENGTH                  1000
@@ -55,6 +55,15 @@
 #define IDC_BTN_EXPORT                  1008
 #define IDC_MFCCOLORBUTTON1             1009
 #define ID_INSERT_BOX                   1010
+#define IDC_INSERT_BOX_TYPE             1011
+#define IDC_BOX_ANGLE                   1012
+#define ID_UPDATE_BOX                   1013
+#define IDC_EDT_CYLIN_RAD               1014
+#define IDC_EDT__CYLIN_HEIGHT           1015
+#define ID_INSERT_CYLIN                 1016
+#define ID_UPDATE_CYLIN                 1017
+#define IDC_ANGLE_CYLIN                 1018
+#define IDC_CYLIN_COLOR                 1019
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_BTN_GRID                     32775
 #define ID_DRAWING_LINE                 32777
@@ -66,16 +75,13 @@
 #define ID_VIEW_TOP                     32784
 #define ID_VIEW_BOTTOM                  32785
 #define ID_VIEW_RIGHT                   32786
-#define ID_BUTTON7                      32787
 #define ID_VIEW_BACK                    32787
 #define ID_DRAWING_RECT                 32788
 #define ID_DRAWING_ARC                  32789
 #define ID_DRAWING_POINT                32790
 #define ID_SHOW_RESET                   32793
 #define ID_BTN_BOX                      32794
-#define ID_BUTTON2                      32795
 #define ID_BTN_SELECT                   32795
-#define ID_FILE_CLOSE32796              32796
 #define IDC_OBJECT_PANE                 35000
 
 // Next default values for new objects
@@ -84,7 +90,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        320
 #define _APS_NEXT_COMMAND_VALUE         32797
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif
