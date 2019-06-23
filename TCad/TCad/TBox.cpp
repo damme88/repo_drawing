@@ -141,3 +141,28 @@ GLuint TBox::MakeBox()
     bbmax_pt_ = POINT3D(bbmin_pt_.x_ + length_, bbmin_pt_.y_ + width_, bbmin_pt_.z_ + heigth_);
     return 1;
 }
+
+void TBox::Serialize(CArchive &ar)
+{
+    Object3D::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << length_;
+        ar << width_;
+        ar << heigth_;
+        ar << angle_;
+        ar << v_dir_.x_;
+        ar << v_dir_.y_;
+        ar << v_dir_.z_;
+    }
+    else
+    {
+        ar >> length_;
+        ar >> width_;
+        ar >> heigth_;
+        ar >> angle_;
+        ar >> v_dir_.x_;
+        ar >> v_dir_.y_;
+        ar >> v_dir_.z_;
+    }
+}

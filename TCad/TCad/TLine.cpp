@@ -14,6 +14,8 @@ TLine::TLine(const POINT3D& p1, const POINT3D& p2)
 {
     pt1_ = p1;
     pt2_ = p2;
+    g_type_ = LINE;
+    e_type_ = OBJ_2D;
 }
 
 TLine::~TLine()
@@ -151,4 +153,27 @@ bool TLine::IsSelectedObject(const Vector3D &dir, const POINT3D& pos, POINT3D &p
     if (sub_dis < EPSILON_SMALL)
         return true;
     return false;
+}
+
+void TLine::Serialize(CArchive &ar)
+{
+    Object2D::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << pt1_.x_;
+        ar << pt1_.y_;
+        ar << pt1_.z_;
+        ar << pt2_.x_;
+        ar << pt2_.y_;
+        ar << pt2_.z_;
+    }
+    else
+    {
+        ar >> pt1_.x_;
+        ar >> pt1_.y_;
+        ar >> pt1_.z_;
+        ar >> pt2_.x_;
+        ar >> pt2_.y_;
+        ar >> pt2_.z_;
+    }
 }

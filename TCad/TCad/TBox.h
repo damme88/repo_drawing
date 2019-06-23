@@ -13,6 +13,7 @@ public:
     void Render();
     GLuint MakeBox();
     EntityObject* Clone();
+    void Serialize(CArchive &ar);
     float get_length()const { return length_; }
     float get_width()const { return width_; }
     float get_height() const { return heigth_; }

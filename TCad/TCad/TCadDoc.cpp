@@ -21,6 +21,11 @@
 
 #include "TCadDoc.h"
 #include "TLine.h"
+#include "TCircle.h"
+#include "TPoint.h"
+#include "TRectangle.h"
+#include "TPolyLine.h"
+#include "TBox.h"
 
 #include <propkey.h>
 
@@ -33,6 +38,8 @@
 IMPLEMENT_DYNCREATE(TCadDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(TCadDoc, CDocument)
+    ON_COMMAND(ID_FILE_SAVE, &TCadDoc::OnFileSave)
+    ON_COMMAND(ID_FILE_SAVE_AS, &TCadDoc::OnFileSaveAs)
 END_MESSAGE_MAP()
 
 
@@ -235,10 +242,69 @@ void TCadDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		// TODO: add storing code here
+        int nCount = GetNumberObject();
+        ar << nCount;
+        DataNote<EntityObject*>* temp = data_list_.head();
+        while (temp != NULL)
+        {
+            EntityObject* pEntity = temp->get_data();
+            if (pEntity->get_etype() == EntityObject::OBJ_2D)
+            {
+                Object2D* pObj2d = static_cast<Object2D*>(pEntity);
+                int type = pObj2d->get_type();
+                ar << type;
+            }
+            else if (pEntity->get_etype() == EntityObject::OBJ_3D)
+            {
+                Object3D* pObj3d = static_cast<Object3D*>(pEntity);
+                int type = pObj3d->get_type();
+                ar << type;
+            }
+            pEntity->Serialize(ar);
+            temp = temp->get_next();
+        }
 	}
 	else
 	{
+        int nCount = 0;
+        ar >> nCount;
+
+        for (int i = 0; i < nCount; i++)
+        {
+            int nType = 0;
+            ar >> nType;
+            EntityObject* pEntity = NULL;
+            if (nType == Object2D::POINT)
+            {
+                pEntity = new TPoint();
+            }
+            else if (nType == Object2D::LINE)
+            {
+                pEntity = new TLine();
+            }
+            else if (nType == Object2D::CIRCLE)
+            {
+                pEntity = new TCircle();
+            }
+            else if (nType == Object2D::POLY_LINE)
+            {
+                pEntity = new TPolyLine();
+            }
+            else if (nType == Object2D::RECTANGLE)
+            {
+                pEntity = new TRectangle();
+            }
+            else if (nType == Object3D::BOX_OBJ)
+            {
+                pEntity = new TBox();
+            }
+
+            if (pEntity != NULL)
+            {
+                pEntity->Serialize(ar);
+                AppendEntity(pEntity);
+            }
+        }
 		// TODO: add loading code here
 	}
 }
@@ -313,3 +379,40 @@ void TCadDoc::Dump(CDumpContext& dc) const
 
 
 // TCadDoc commands
+void TCadDoc::OnFileSave()
+{
+    CString doc_name_str = this->GetPathName();
+    bool is_exist = CheckExistPath(doc_name_str);
+    if (is_exist)
+    {
+        CDocument::DoSave(doc_name_str);
+    }
+    else
+    {
+        OnFileSaveAs();
+    }
+}
+
+void TCadDoc::OnFileSaveAs()
+{
+    char strFilter[] = { "Text Files (*.tcd)|*.tcd|" };
+    CFileDialog FileDlg(FALSE, CString(".tcd"), NULL, 0, CString(strFilter));
+    if (FileDlg.DoModal() == IDOK)
+    {
+        CString strName = FileDlg.GetFileName(); //filename
+        CString strPath = FileDlg.GetFolderPath(); //filepath (folders)
+        strPath += (_T("\\")) + strName;
+        CDocument::DoSave(strPath);
+    }
+}
+
+bool TCadDoc::CheckExistPath(CString path)
+{
+    CFile fil;
+    if (fil.Open(path, CFile::modeRead | CFile::shareDenyNone))
+    {
+        fil.Close();
+        return true;
+    }
+    return false;
+}

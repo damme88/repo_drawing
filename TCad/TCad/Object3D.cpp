@@ -13,6 +13,25 @@ Object3D::~Object3D()
 {
 }
 
+void Object3D::Serialize(CArchive &ar)
+{
+    EntityObject::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << g_type_;
+        ar << color_value_.x_;
+        ar << color_value_.y_;
+        ar << color_value_.z_;
+    }
+    else
+    {
+        ar >> g_type_;
+        ar >> color_value_.x_;
+        ar >> color_value_.y_;
+        ar >> color_value_.z_;
+    }
+}
+
 bool Object3D::IsSelectedObject(const VEC3D &ppVector, const POINT3D& clickPt, POINT3D &retPt)
 {
     bool ret = LineCutBoundingBox(ppVector, clickPt, retPt);

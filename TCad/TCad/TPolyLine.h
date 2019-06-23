@@ -18,6 +18,7 @@ public:
     void FreePoint() { pt_list_.clear(); }
     bool IsClosed() const { return is_closed_; }
     void SetClosed(const bool& isClosed) { is_closed_ = isClosed; }
+    void Serialize(CArchive &ar);
 protected:
     std::vector<POINT3D> pt_list_;
     bool is_closed_;

@@ -27,8 +27,17 @@ public:
     void set_color(VEC3D color) { color_value_ = color; }
     VEC3D get_color() const { return color_value_; }
 
-    virtual void Render() = 0;
-    virtual EntityObject* Clone() = 0;
+    virtual void Render()
+    {
+        ;
+    }
+    virtual EntityObject* Clone()
+    {
+        return NULL;
+    }
+
+    virtual void Serialize(CArchive &ar);
+
     virtual bool IsSelectedObject(const VEC3D& ppVector, const POINT3D& clickPt, POINT3D &retPt);
 
     bool LineCutBoundingBox(const VEC3D& ppVector, const POINT3D& clickPt, POINT3D &retPt);

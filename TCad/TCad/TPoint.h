@@ -14,10 +14,8 @@ public:
     void SetPoint(const POINT3D& p) { pt_ = p; }
     void Render();
     EntityObject* Clone();
-    bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)
-    {
-        return true;
-    }
+    bool IsSelectedObject(const Vector3D &dir, const POINT3D& pos, POINT3D &p);
+    void Serialize(CArchive &ar);
 private:
     POINT3D pt_;
 };

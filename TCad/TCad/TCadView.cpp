@@ -827,9 +827,9 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
             InvalidateRect(false);
         }
 
-        TDesk* pDesk = new TDesk;
-        pDesk->Init();
-        GetDocument()->AppendEntity(pDesk);
+        //TDesk* pDesk = new TDesk;
+        //pDesk->Init();
+        //GetDocument()->AppendEntity(pDesk);
     }
     CView::OnLButtonUp(nFlags, point);
 }

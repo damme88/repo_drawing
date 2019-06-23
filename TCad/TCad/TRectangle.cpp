@@ -133,3 +133,26 @@ bool TRectangle::IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vect
     }
     return ret;
 }
+
+void TRectangle::Serialize(CArchive &ar)
+{
+    Object2D::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << pt1_.x_;
+        ar << pt1_.y_;
+        ar << pt1_.z_;
+        ar << pt2_.x_;
+        ar << pt2_.y_;
+        ar << pt2_.z_;
+    }
+    else
+    {
+        ar >> pt1_.x_;
+        ar >> pt1_.y_;
+        ar >> pt1_.z_;
+        ar >> pt2_.x_;
+        ar >> pt2_.y_;
+        ar >> pt2_.z_;
+    }
+}

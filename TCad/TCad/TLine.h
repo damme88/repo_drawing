@@ -13,6 +13,7 @@ public:
     ~TLine();
     void Render();
     EntityObject* Clone();
+    void Serialize(CArchive &ar);
     POINT3D FindIntersectPoint(const TLine& line);
     bool IsSelectedObject(const Vector3D &dir, const POINT3D& pos, POINT3D &p);
 protected:

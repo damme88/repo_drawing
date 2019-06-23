@@ -18,6 +18,7 @@ public:
     float get_radius() const { return radius_; }
     void set_radius(const float& rad) { radius_ = rad; }
     bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p);
+    void Serialize(CArchive& ar);
 };
 
 #endif

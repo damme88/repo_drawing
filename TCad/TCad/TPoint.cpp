@@ -40,3 +40,31 @@ EntityObject* TPoint::Clone()
     TPoint* new_enst = new TPoint();
     return new_enst;
 }
+
+bool TPoint::IsSelectedObject(const Vector3D &dir, const POINT3D& pos, POINT3D &p)
+{
+    bool ret = false;
+    double dis = pt_.distance(pos);
+    if (dis < EPSILON_SMALL)
+    {
+        ret = true;
+    }
+    return ret;
+}
+
+void TPoint::Serialize(CArchive &ar)
+{
+    Object2D::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << pt_.x_;
+        ar << pt_.y_;
+        ar << pt_.z_;
+    }
+    else
+    {
+        ar >> pt_.x_;
+        ar >> pt_.y_;
+        ar >> pt_.z_;
+    }
+}

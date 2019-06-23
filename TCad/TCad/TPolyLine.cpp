@@ -5,6 +5,8 @@
 TPolyLine::TPolyLine()
 {
     is_closed_ = false;
+    e_type_ = OBJ_2D;
+    g_type_ = POLY_LINE;
 }
 
 TPolyLine::~TPolyLine()
@@ -82,4 +84,35 @@ bool TPolyLine::IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vecto
     }
 
     return ret;
+}
+
+void TPolyLine::Serialize(CArchive &ar)
+{
+    Object2D::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << is_closed_;
+        int nPt = pt_list_.size();
+        ar << nPt;
+        for (int i = 0; i < nPt; ++i)
+        {
+            ar << pt_list_.at(i).x_;
+            ar << pt_list_.at(i).y_;
+            ar << pt_list_.at(i).z_;
+        }
+    }
+    else
+    {
+        ar >> is_closed_;
+        int nPt = 0;
+        ar >> nPt;
+        for (int i = 0; i < nPt; ++i)
+        {
+            POINT3D pt;
+            ar >> pt.x_;
+            ar >> pt.y_;
+            ar >> pt.z_;
+            pt_list_.push_back(pt);
+        }
+    }
 }

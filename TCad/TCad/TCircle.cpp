@@ -6,8 +6,8 @@ TCircle::TCircle()
 {
     radius_ = 0.0;
     center_pt_ = pos_pt_;
-    g_type_ = OBJ_2D;
-    e_type_ = CIRCLE;
+    e_type_  = OBJ_2D;
+    g_type_ = CIRCLE;
 }
 
 
@@ -60,4 +60,23 @@ bool TCircle::IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3
         return true;
     }
     return false;
+}
+
+void TCircle::Serialize(CArchive &ar)
+{
+    Object2D::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << radius_;
+        ar << center_pt_.x_;
+        ar << center_pt_.y_;
+        ar << center_pt_.z_;
+    }
+    else
+    {
+        ar >> radius_;
+        ar >> center_pt_.x_;
+        ar >> center_pt_.y_;
+        ar >> center_pt_.z_;
+    }
 }

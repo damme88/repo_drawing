@@ -25,6 +25,7 @@ protected: // create from serialization only
 
 // Attributes
 public:
+    bool CheckExistPath(CString path);
     void FreeSelected();
     void SetSelected(int idx);
     void RenderEntity(GLenum mode);
@@ -39,7 +40,10 @@ public:
 
 // Overrides
 public:
+
 	virtual BOOL OnNewDocument();
+    virtual void OnFileSave();
+    virtual void OnFileSaveAs();
 	virtual void Serialize(CArchive& ar);
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();

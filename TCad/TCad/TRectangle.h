@@ -13,6 +13,7 @@ public:
     void SetPoints(const POINT3D& pt1, const POINT3D& pt2);
     EntityObject* Clone();
     bool IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p);
+    void Serialize(CArchive &ar);
 protected:
     POINT3D pt1_;
     POINT3D pt2_;

@@ -48,6 +48,7 @@
 #include "Const.h"
 #include"..\openLib\include\gl\glut.h"
 #include "..\openLib\include\glm\glm\vec3.hpp"
+#include <afx.h>
 
 
 
