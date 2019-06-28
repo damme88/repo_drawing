@@ -29,6 +29,10 @@ IMPLEMENT_DYNCREATE(MainFrame, CMDIFrameWndEx)
 BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_WM_CREATE()
     ON_WM_CLOSE()
+    ON_COMMAND(ID_EDIT_UNDO, OnEditUndo)
+    ON_UPDATE_COMMAND_UI(ID_EDIT_UNDO, OnUpdateEditUndo)
+    ON_UPDATE_COMMAND_UI(ID_EDIT_REDO, OnUpdateEditRedo)
+    ON_COMMAND(ID_EDIT_REDO, OnEditRedo)
     ON_COMMAND(ID_WINDOW_MANAGER, &MainFrame::OnWindowManager)
     ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &MainFrame::OnApplicationLook)
     ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &MainFrame::OnUpdateApplicationLook)
@@ -37,23 +41,14 @@ BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_COMMAND(ID_FILE_PRINT_PREVIEW, &MainFrame::OnFilePrintPreview)
     ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &MainFrame::OnUpdateFilePrintPreview)
     ON_COMMAND(ID_DRAWING_AXIS, &MainFrame::OnDrawingAxis)
-    //ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateDrawingAxis)
+    ON_UPDATE_COMMAND_UI(ID_DRAWING_AXIS, &MainFrame::OnUpdateDrawingAxis)
     ON_COMMAND(ID_BTN_GRID, &MainFrame::OnBtnGrid)
-    ON_COMMAND(ID_VIEW_ISO, &MainFrame::OnViewIso)
-    ON_COMMAND(ID_VIEW_TOP, &MainFrame::OnViewTop)
-    ON_COMMAND(ID_VIEW_LEFT, &MainFrame::OnViewLeft)
-    ON_COMMAND(ID_VIEW_FRONT, &MainFrame::OnViewFront)
-    ON_COMMAND(ID_VIEW_BOTTOM, &MainFrame::OnViewBottom)
-    ON_COMMAND(ID_VIEW_RIGHT, &MainFrame::OnViewRight)
-    ON_COMMAND(ID_VIEW_BACK, &MainFrame::OnViewBack)
+    ON_COMMAND_RANGE(ID_VIEW_ISO, ID_VIEW_BACK, &MainFrame::OnHandleView)
+    ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_ISO, ID_VIEW_BACK, &MainFrame::OnUpdateViewEye)
     ON_COMMAND(ID_SHOW_RESET, &MainFrame::OnShowReset)
-   // ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateBtnGrid)
-    ON_COMMAND(ID_DRAWING_LINE, &MainFrame::OnDrawingLine)
-    ON_COMMAND(ID_DRAWING_POINT, &MainFrame::OnDrawingPoint)
-    ON_COMMAND(ID_DRAWING_POLYLINE, &MainFrame::OnDrawingPolyline)
-    ON_COMMAND(ID_DRAWING_RECT, &MainFrame::OnDrawingRect)
-    ON_COMMAND(ID_DRAWING_CIRCLE, &MainFrame::OnDrawingCircle)
-    ON_COMMAND(ID_DRAWING_ARC, &MainFrame::OnDrawingArc)
+    ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateBtnGrid)
+    ON_COMMAND_RANGE(ID_DRAWING_LINE, ID_DRAWING_POINT, &MainFrame::OnHandle2D)
+    ON_UPDATE_COMMAND_UI_RANGE(ID_DRAWING_LINE, ID_DRAWING_POINT, &MainFrame::OnUpdate2DObj)
     ON_COMMAND(ID_BTN_BOX, &MainFrame::OnMakeBox)
     ON_COMMAND(ID_BTN_SELECT, &MainFrame::OnSelect)
 END_MESSAGE_MAP()
@@ -65,6 +60,8 @@ MainFrame::MainFrame()
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
     show_box_ = false;
+    view_id_ = ID_VIEW_ISO;
+    drawing2d_id_ = 0;
 }
 
 MainFrame::~MainFrame()
@@ -288,7 +285,15 @@ void MainFrame::OnFilePrintPreview()
 
 void MainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(IsPrintPreview());
+    if (GetView() != NULL)
+    {
+        pCmdUI->Enable(TRUE);
+        pCmdUI->SetCheck(IsPrintPreview());
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
+    }
 }
 
 
@@ -298,14 +303,19 @@ void MainFrame::OnDrawingAxis()
         GetView()->OnDrawingAxis();
 }
 
-//void MainFrame::OnUpdateDrawingAxis(CCmdUI *pCmdUI)
-//{
-//    if (GetView() != NULL)
-//    {
-//        bool is_show_axis = GetView()->get_is_show_axis();
-//        pCmdUI->SetCheck(is_show_axis);
-//    }
-//}
+void MainFrame::OnUpdateDrawingAxis(CCmdUI *pCmdUI)
+{
+    if (GetView() != NULL)
+    {
+        bool is_show_axis = GetView()->get_is_show_axis();
+        pCmdUI->SetCheck(is_show_axis);
+        pCmdUI->Enable(TRUE);
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
+    }
+}
 
 void MainFrame::OnBtnGrid()
 {
@@ -316,71 +326,85 @@ void MainFrame::OnBtnGrid()
     
 }
 
-//void MainFrame::OnUpdateBtnGrid(CCmdUI *pCmdUI)
-//{
-//    if (GetView() != NULL)
-//    {
-//       bool is_show_grid = GetView()->get_is_gird();
-//       pCmdUI->SetCheck(is_show_grid);
-//    }
-//}
-
-void MainFrame::OnViewIso()
+void MainFrame::OnUpdateBtnGrid(CCmdUI *pCmdUI)
 {
     if (GetView() != NULL)
     {
-
+       bool is_show_grid = GetView()->get_is_gird();
+       pCmdUI->SetCheck(is_show_grid);
+       pCmdUI->Enable(TRUE);
     }
-    GetView()->OnViewIso();
-}
-
-void MainFrame::OnViewTop()
-{
-    if (GetView() != NULL)
+    else
     {
-        GetView()->OnViewTop();
-    }
-    
-}
-
-void MainFrame::OnViewLeft()
-{
-    if (GetView() != NULL)
-    {
-        GetView()->OnViewLeft();
-    }
-   
-}
-
-void MainFrame::OnViewFront()
-{
-    if (GetView() != NULL)
-    {
-        GetView()->OnViewRight();
+        pCmdUI->Enable(FALSE);
     }
 }
 
-void MainFrame::OnViewBottom()
+void MainFrame::OnHandleView(UINT nId)
 {
     if (GetView() != NULL)
     {
-        GetView()->OnViewBottom();
+        TCadView* pView = GetView();
+        switch (nId)
+        {
+        case ID_VIEW_TOP:
+        {
+            pView->OnViewTop();
+            view_id_ = ID_VIEW_TOP;
+            break;
+        }
+        case ID_VIEW_LEFT:
+        {
+            pView->OnViewLeft();
+            view_id_ = ID_VIEW_LEFT;
+            break;
+        }
+        case ID_VIEW_RIGHT:
+        {
+            pView->OnViewRight();
+            view_id_ = ID_VIEW_RIGHT;
+            break;
+        }
+        case ID_VIEW_BOTTOM:
+        {
+            pView->OnViewBottom();
+            view_id_ = ID_VIEW_BOTTOM;
+            break;
+        }
+        case ID_VIEW_FRONT:
+        {
+            pView->OnViewFront();
+            view_id_ = ID_VIEW_FRONT;
+            break;
+        }
+        case ID_VIEW_BACK:
+        {
+            pView->OnViewBack();
+            view_id_ = ID_VIEW_BACK;
+            break;
+        }
+        default:
+        {
+            pView->OnViewIso();
+            view_id_ = ID_VIEW_ISO;
+            break;
+        }
+        }
     }
 }
 
-void MainFrame::OnViewRight()
+void MainFrame::OnUpdateViewEye(CCmdUI* pCmdUI)
 {
+    int nId = pCmdUI->m_nID;
     if (GetView() != NULL)
     {
-        GetView()->OnViewRight();
+        pCmdUI->Enable(TRUE);
+        BOOL state = (view_id_ == pCmdUI->m_nID ? TRUE : FALSE);
+        pCmdUI->SetCheck(state);
     }
-}
-
-void MainFrame::OnViewBack()
-{
-    if (GetView() != NULL)
+    else
     {
-        GetView()->OnViewBack();
+        pCmdUI->Enable(FALSE);
     }
 }
 
@@ -392,60 +416,79 @@ void MainFrame::OnShowReset()
     }
 }
 
-void MainFrame::OnDrawingLine()
+void MainFrame::OnHandle2D(UINT nId)
 {
     if (GetView() != NULL)
     {
-        GetView()->OnDrawing2d(Type2D::DR_LINE);
+        TCadView* pView = GetView();
+        switch (nId)
+        {
+        case ID_DRAWING_LINE:
+        {
+            pView->OnDrawing2d(Type2D::DR_LINE);
+            drawing2d_id_ = ID_DRAWING_LINE;
+            break;
+        }
+        case ID_DRAWING_POLYLINE:
+        {
+            pView->OnDrawing2d(Type2D::DR_POLY_LINE);
+            drawing2d_id_ = ID_DRAWING_POLYLINE;
+            break;
+        }
+        case ID_DRAWING_CIRCLE:
+        {
+            pView->OnDrawing2d(Type2D::DR_CIRCLE);
+            drawing2d_id_ = ID_DRAWING_CIRCLE;
+            break;
+        }
+        case ID_DRAWING_RECT:
+        {
+            pView->OnDrawing2d(Type2D::DR_RECTANGLE);
+            drawing2d_id_ = ID_DRAWING_RECT;
+            break;
+        }
+        case ID_DRAWING_ARC:
+        {
+            pView->OnDrawing2d(Type2D::DR_ARC);
+            drawing2d_id_ = ID_DRAWING_ARC;
+            break;
+        }
+        case ID_DRAWING_POINT:
+        {
+            pView->OnDrawing2d(Type2D::DR_POINT);
+            drawing2d_id_ = ID_DRAWING_POINT;
+            break;
+        }
+        default:
+        {
+            drawing2d_id_ = 0;
+            break;
+        }
+        }
     }
-    
 }
 
-void MainFrame::OnDrawingPoint()
+void MainFrame::OnUpdate2DObj(CCmdUI* pCmdUI)
 {
     if (GetView() != NULL)
     {
-        GetView()->OnDrawing2d(Type2D::DR_POINT);
+        bool state = (drawing2d_id_ == pCmdUI->m_nID ? TRUE : FALSE);
+        pCmdUI->SetCheck(state);
+        pCmdUI->Enable(TRUE);
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
     }
 }
 
-void MainFrame::OnDrawingPolyline()
-{
-    if (GetView() != NULL)
-    {
-        GetView()->OnDrawing2d(Type2D::DR_POLY_LINE);
-    }
-}
-
-void MainFrame::OnDrawingRect()
-{
-    if (GetView() != NULL)
-    {
-        GetView()->OnDrawing2d(Type2D::DR_RECTANGLE);
-    }
-}
-
-void MainFrame::OnDrawingCircle()
-{
-    if (GetView() != NULL)
-    {
-        GetView()->OnDrawing2d(Type2D::DR_CIRCLE);
-    }
-}
-
-void MainFrame::OnDrawingArc()
-{
-    if (GetView() != NULL)
-    {
-        GetView()->OnDrawing2d(Type2D::DR_ARC);
-    }
-}
 
 void MainFrame::OnSelect()
 {
     if (GetView() != NULL)
     {
         GetView()->DoSelect();
+        drawing2d_id_ = 0;
     }
 }
 
@@ -488,5 +531,45 @@ void MainFrame::UpdateBox(int idx)
         m_object.EnableDocking(CBRS_ALIGN_ANY);
         DockPane((CBasePane*)&m_object, AFX_IDW_DOCKBAR_LEFT);
         m_object.ShowPane(TRUE, FALSE, TRUE);
+    }
+}
+
+void MainFrame::OnEditUndo()
+{
+    TCadDoc* pDoc = NULL;
+    pDoc = GetView()->GetDocument();
+    if (pDoc)
+    {
+        pDoc->UndoData();
+    }
+}
+
+void MainFrame::OnUpdateEditUndo(CCmdUI *pCmdUI)
+{
+    TCadDoc	*pDoc = GetView()->GetDocument();
+    if (pDoc)
+    {
+        bool state = pDoc->GetOnUndoState();
+        pCmdUI->Enable(state);
+    }
+}
+
+void MainFrame::OnEditRedo()
+{
+    TCadDoc* pDoc = NULL;
+    pDoc = GetView()->GetDocument();
+    if (pDoc)
+    {
+        pDoc->RedoData();
+    }
+}
+
+void MainFrame::OnUpdateEditRedo(CCmdUI *pCmdUI)
+{
+    TCadDoc	*pDoc = GetView()->GetDocument();
+    if (pDoc)
+    {
+        bool state = pDoc->GetOnRedoState();
+        pCmdUI->Enable(state);
     }
 }

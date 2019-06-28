@@ -80,6 +80,19 @@ BOOL ChildFrame::OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *p
     return TRUE;
 }
 
+
+MainFrame* ChildFrame::GetMainframe()
+{
+    return (MainFrame*)GetParentFrame();
+}
+
+void ChildFrame::FreeObjSelected()
+{
+    if (GetMainframe() != NULL)
+    {
+        GetMainframe()->SetStateDrawing2d(0);
+    }
+}
 // ChildFrame diagnostics
 
 #ifdef _DEBUG

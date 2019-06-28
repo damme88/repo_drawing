@@ -26,6 +26,7 @@ public: // create from serialization only
 public:
 // Operations
     void UpdateBox(int idx);
+    void SetStateDrawing2d(const INT& state) { drawing2d_id_ = state; }
 public:
     //BOOL OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext);
 // Overrides
@@ -48,9 +49,15 @@ protected:  // control bar embedded members
 
     BoxObjectPanel m_object;
     bool show_box_;
+    INT view_id_;
+    INT drawing2d_id_;
 // Generated message map functions
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+    afx_msg void OnEditUndo();
+    afx_msg void OnEditRedo();
+    afx_msg void OnUpdateEditUndo(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateEditRedo(CCmdUI *pCmdUI);
     afx_msg void OnWindowManager();
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
@@ -59,16 +66,17 @@ protected:
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* pCmdUI);
     afx_msg void OnDrawingAxis();
     afx_msg void OnUpdateDrawingAxis(CCmdUI *pCmdUI);
+
     afx_msg void OnBtnGrid();
     afx_msg void OnUpdateBtnGrid(CCmdUI *pCmdUI);
     //View
-    afx_msg void OnViewIso();
-    afx_msg void OnViewTop();
-    afx_msg void OnViewLeft();
-    afx_msg void OnViewFront();
-    afx_msg void OnViewBottom();
-    afx_msg void OnViewRight();
-    afx_msg void OnViewBack();
+    afx_msg void OnHandleView(UINT nId);
+    afx_msg void OnUpdateViewEye(CCmdUI* pCmdUI);
+    //2d
+    afx_msg void OnHandle2D(UINT nId);
+    afx_msg void OnUpdate2DObj(CCmdUI* pCmdUI);
+
+    //Basic
     afx_msg void OnShowReset();
     afx_msg void OnSelect();
 

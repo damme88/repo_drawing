@@ -130,9 +130,32 @@ public:
         {
             temp->set_next(NULL);
         }
+
+        if (last == p_head_)
+        {
+            delete last;
+            last = NULL;
+            p_head_ = NULL;
+        }
+        else
+        {
+            delete last;
+            last = NULL;
+        }
+    }
+
+    DataNote<T>* GetLast()
+    {
+        DataNote<T>* last = p_head_;
+        if (last != NULL)
+        {
+            while (last->get_next() != NULL)
+            {
+                last = last->get_next();
+            }
+        }
         
-        delete last;
-        last = NULL;
+        return last;
     }
 
     void RemoveObject(DataNote<T>* object)
@@ -163,7 +186,7 @@ public:
 
     DataNote<T>* head() { return p_head_; };
 
-public:
+private:
     DataNote<T>* p_head_;
 };
 

@@ -28,6 +28,9 @@
     <Filter Include="Source Files\PanelDocking">
       <UniqueIdentifier>{239b8ab3-35d8-4c59-adde-daf52b696202}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UndoRedo">
+      <UniqueIdentifier>{65eaa6c7-803a-4da6-a840-1615084dd709}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -117,6 +120,9 @@
     <ClInclude Include="CylinderObjectDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataStack.h">
+      <Filter>Source Files\DataBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TCad.cpp">
@@ -193,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="CylinderObjectDlg.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStack.cpp">
+      <Filter>Source Files\DataBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

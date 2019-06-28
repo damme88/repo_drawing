@@ -24,6 +24,7 @@
 #include "BoxObjectDlg.h"
 #include "MainFrm.h"
 #include "TDesk.h"
+#include "ChildFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -254,6 +255,10 @@ void TCadView::RenderScene()
 
 void TCadView::DrawEntityObject(GLenum mode)
 {
+
+    //Check undo/redo
+    ImplementUndoRedo();
+    //Implement undo/redo
     //if (drawing_mode_ == JIG_MODE)
     //{
         if (p_jig_base_ != NULL)
@@ -272,6 +277,10 @@ void TCadView::DrawEntityObject(GLenum mode)
     
 }
 
+void TCadView::ImplementUndoRedo()
+{
+
+}
 
 void TCadView::DrawAxis()
 {
@@ -512,6 +521,11 @@ TCadDoc* TCadView::GetDocument() const // non-debug version is inline
         pDoc = pFrame->GetActiveDocument(); // get the active document
     }
     return (TCadDoc*)pDoc;
+}
+
+ChildFrame* TCadView::GetChildFrame() const
+{
+    return(ChildFrame*)GetParentFrame();
 }
 #endif //_DEBUG
 
@@ -1187,6 +1201,10 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         type_3d_ = Type3D::NONE_OBJ;
         middle_down_ = false;
         GetDocument()->FreeSelected();
+        if (GetChildFrame() != NULL)
+        {
+            GetChildFrame()->FreeObjSelected();
+        }
     }
     break;
     case VK_RETURN:

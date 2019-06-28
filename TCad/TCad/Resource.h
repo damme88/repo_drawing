@@ -82,6 +82,7 @@
 #define ID_SHOW_RESET                   32793
 #define ID_BTN_BOX                      32794
 #define ID_BTN_SELECT                   32795
+#define ID_EDIT_REDO32799               32799
 #define IDC_OBJECT_PANE                 35000
 
 // Next default values for new objects
@@ -89,7 +90,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        320
-#define _APS_NEXT_COMMAND_VALUE         32797
+#define _APS_NEXT_COMMAND_VALUE         32800
 #define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           312
 #endif

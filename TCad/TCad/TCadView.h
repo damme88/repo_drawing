@@ -25,6 +25,7 @@
 #include "FormBar.h"
 #include "JiggBase.h"
 
+class ChildFrame;
 class TCadView : public CView
 {
 protected: // create from serialization only
@@ -40,6 +41,7 @@ protected: // create from serialization only
 // Attributes
 public:
 	TCadDoc* GetDocument() const;
+    ChildFrame* GetChildFrame() const;
 // Operations
 public:
     int OnCreate(LPCREATESTRUCT lpcs);
@@ -70,6 +72,7 @@ public:
     bool get_is_gird() const { return is_show_grid_; }
     bool get_is_show_axis() const { return is_show_axis_; }
     void ImplementAction(const CPoint& pick_pt);
+    void ImplementUndoRedo();
 // Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view

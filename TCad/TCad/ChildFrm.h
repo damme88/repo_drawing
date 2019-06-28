@@ -26,7 +26,8 @@ public:
 
 // Attributes
 public:
-
+    MainFrame* GetMainframe();
+    void FreeObjSelected();
 // Operations
 public:
 

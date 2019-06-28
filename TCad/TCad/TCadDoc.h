@@ -16,6 +16,8 @@
 #pragma once
 #include "DataList.h"
 #include "EntityObject.h"
+#include "DataStack.h"
+
 
 class TCadDoc : public CDocument
 {
@@ -23,6 +25,17 @@ protected: // create from serialization only
 	TCadDoc();
 	DECLARE_DYNCREATE(TCadDoc)
 
+private:
+    BOOL on_undo_;
+    BOOL on_redo_;
+public:
+
+    Stack<EntityObject*> data_stack_;
+    void UndoData();
+    void RedoData();
+    bool GetOnUndoState() const { return on_undo_; }
+    bool GetOnRedoState() const { return on_redo_; }
+    UINT undo_limit_;
 // Attributes
 public:
     bool CheckExistPath(CString path);

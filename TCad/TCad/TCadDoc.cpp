@@ -26,7 +26,6 @@
 #include "TRectangle.h"
 #include "TPolyLine.h"
 #include "TBox.h"
-
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -48,6 +47,9 @@ END_MESSAGE_MAP()
 TCadDoc::TCadDoc()
 {
 	// TODO: add one-time construction code here
+    on_undo_ = false;
+    on_redo_ = false;
+    undo_limit_ = 0;
 }
 
 TCadDoc::~TCadDoc()
@@ -69,6 +71,8 @@ void TCadDoc::AppendEntity(EntityObject* entity)
     if (entity != NULL)
     {
         data_list_.InsertBack(entity);
+
+        if (on_undo_ == false) on_undo_ = true;
     }
 }
 
@@ -377,6 +381,59 @@ void TCadDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
+void TCadDoc::UndoData()
+{
+    DataNote<EntityObject*>* pNodeEnd = data_list_.GetLast();
+    if (pNodeEnd != NULL)
+    {
+        EntityObject* pObjEnd = pNodeEnd->get_data();
+        if (pObjEnd != NULL)
+        {
+            if (undo_limit_ < 10)
+            {
+                undo_limit_++;
+                EntityObject* clone_obj = pObjEnd->Clone();
+                data_stack_.push(clone_obj);
+                data_list_.RemoveEnd();
+
+                if (on_redo_ == false) on_redo_ = true;
+                if (HasObject() == false)
+                {
+                    on_undo_ = false;
+                }
+            }
+            else
+            {
+                on_undo_ = false;
+            }
+        }
+    }
+}
+
+void TCadDoc::RedoData()
+{
+    NodeData<EntityObject*>* nodeData = data_stack_.GetLast();
+    if (nodeData != NULL)
+    {
+        EntityObject* redoObj = nodeData->get_data();
+        if (redoObj)
+        {
+            EntityObject* clone_obj = redoObj->Clone();
+            if (clone_obj != NULL)
+            {
+                AppendEntity(clone_obj);
+                delete redoObj;
+                redoObj = NULL;
+                data_stack_.pop();
+
+                if (data_stack_.head() == NULL)
+                {
+                    on_redo_ = false;
+                }
+            }
+        }
+    }
+}
 
 // TCadDoc commands
 void TCadDoc::OnFileSave()
