@@ -90,7 +90,7 @@ void ChildFrame::FreeObjSelected()
 {
     if (GetMainframe() != NULL)
     {
-        GetMainframe()->SetStateDrawing2d(0);
+        GetMainframe()->SetStateDrawing(0);
     }
 }
 // ChildFrame diagnostics

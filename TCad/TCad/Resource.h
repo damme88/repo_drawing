@@ -64,25 +64,28 @@
 #define ID_UPDATE_CYLIN                 1017
 #define IDC_ANGLE_CYLIN                 1018
 #define IDC_CYLIN_COLOR                 1019
+#define ID_SHOW_RESET                   2000
+#define ID_BTN_SELECT                   2001
+#define ID_BTN_GRID                     2002
 #define ID_WRITE_PASTEASHYPERLINK       32770
-#define ID_BTN_GRID                     32775
-#define ID_DRAWING_LINE                 32777
-#define ID_DRAWING_POLYLINE             32778
-#define ID_DRAWING_CIRCLE               32779
-#define ID_VIEW_ISO                     32781
-#define ID_VIEW_LEFT                    32782
-#define ID_VIEW_FRONT                   32783
-#define ID_VIEW_TOP                     32784
-#define ID_VIEW_BOTTOM                  32785
-#define ID_VIEW_RIGHT                   32786
-#define ID_VIEW_BACK                    32787
-#define ID_DRAWING_RECT                 32788
-#define ID_DRAWING_ARC                  32789
-#define ID_DRAWING_POINT                32790
-#define ID_SHOW_RESET                   32793
-#define ID_BTN_BOX                      32794
-#define ID_BTN_SELECT                   32795
-#define ID_EDIT_REDO32799               32799
+#define ID_VIEW_ISO                     32810
+#define ID_VIEW_LEFT                    32811
+#define ID_VIEW_RIGHT                   32812
+#define ID_VIEW_TOP                     32813
+#define ID_VIEW_BOTTOM                  32814
+#define ID_VIEW_FRONT                   32815
+#define ID_VIEW_BACK                    32816
+#define ID_DRAWING_POINT                32850
+#define ID_DRAWING_LINE                 32851
+#define ID_DRAWING_POLYLINE             32852
+#define ID_DRAWING_CIRCLE               32853
+#define ID_DRAWING_RECT                 32854
+#define ID_DRAWING_ARC                  32855
+#define ID_BTN_SPHERE                   32800
+#define ID_BTN_CYLINDER                 32801
+#define ID_BTN_CONE                     32802
+#define ID_BTN_PYRAMID                  32803
+#define ID_BTN_BOX                      32804
 #define IDC_OBJECT_PANE                 35000
 
 // Next default values for new objects
@@ -90,7 +93,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        320
-#define _APS_NEXT_COMMAND_VALUE         32800
+#define _APS_NEXT_COMMAND_VALUE         32801
 #define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           312
 #endif

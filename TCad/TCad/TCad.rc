@@ -636,19 +636,25 @@ END
 
 STRINGTABLE
 BEGIN
+    ID_DRAWING_POINT        "Drawing Point"
     ID_DRAWING_LINE         "Draw single line on XOY Plane"
     ID_DRAWING_POLYLINE     "Drawing Poly Line"
     ID_DRAWING_CIRCLE       "Drawing Circle"
+    ID_DRAWING_RECT         "Drawing Rectangle"
+    ID_DRAWING_ARC          "Drawing Arc"
+END
+
+STRINGTABLE
+BEGIN
     ID_VIEW_ISO             "View Iso Type"
     ID_VIEW_LEFT            "View Left"
+    ID_VIEW_RIGHT           "View Right"
     ID_VIEW_FRONT           "View Front"
 END
 
 STRINGTABLE
 BEGIN
-    ID_DRAWING_RECT         "Drawing Rectangle"
-    ID_DRAWING_ARC          "Drawing Arc"
-    ID_DRAWING_POINT        "Drawing Point"
+    ID_SHOW_RESET           "Reset view again"
 END
 
 #endif    // English (United States) resources

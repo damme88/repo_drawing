@@ -26,7 +26,8 @@ public: // create from serialization only
 public:
 // Operations
     void UpdateBox(int idx);
-    void SetStateDrawing2d(const INT& state) { drawing2d_id_ = state; }
+    void OnMakeBox();
+    void SetStateDrawing(const INT& state);
 public:
     //BOOL OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext);
 // Overrides
@@ -51,6 +52,7 @@ protected:  // control bar embedded members
     bool show_box_;
     INT view_id_;
     INT drawing2d_id_;
+    INT drawing3d_id_;
 // Generated message map functions
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -78,18 +80,12 @@ protected:
 
     //Basic
     afx_msg void OnShowReset();
+    afx_msg void OnUpdateReset(CCmdUI* pCmdUI);
     afx_msg void OnSelect();
-
-    //Drawing 2d
-    afx_msg void OnDrawingLine();
-    afx_msg void OnDrawingPoint();
-    afx_msg void OnDrawingPolyline();
-    afx_msg void OnDrawingRect();
-    afx_msg void OnDrawingCircle();
-    afx_msg void OnDrawingArc();
-
+    afx_msg void OnUpdateSelect(CCmdUI* pCmdUI);
     //Drawing 3d
-    afx_msg void OnMakeBox();
+    afx_msg void OnHandle3D(UINT nId);
+    afx_msg void OnUpdate3DObj(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 };

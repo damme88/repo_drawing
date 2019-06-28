@@ -29,10 +29,6 @@ IMPLEMENT_DYNCREATE(MainFrame, CMDIFrameWndEx)
 BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_WM_CREATE()
     ON_WM_CLOSE()
-    ON_COMMAND(ID_EDIT_UNDO, OnEditUndo)
-    ON_UPDATE_COMMAND_UI(ID_EDIT_UNDO, OnUpdateEditUndo)
-    ON_UPDATE_COMMAND_UI(ID_EDIT_REDO, OnUpdateEditRedo)
-    ON_COMMAND(ID_EDIT_REDO, OnEditRedo)
     ON_COMMAND(ID_WINDOW_MANAGER, &MainFrame::OnWindowManager)
     ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &MainFrame::OnApplicationLook)
     ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &MainFrame::OnUpdateApplicationLook)
@@ -42,15 +38,22 @@ BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &MainFrame::OnUpdateFilePrintPreview)
     ON_COMMAND(ID_DRAWING_AXIS, &MainFrame::OnDrawingAxis)
     ON_UPDATE_COMMAND_UI(ID_DRAWING_AXIS, &MainFrame::OnUpdateDrawingAxis)
+    ON_COMMAND(ID_SHOW_RESET, &MainFrame::OnShowReset)
+    ON_UPDATE_COMMAND_UI(ID_SHOW_RESET, &MainFrame::OnUpdateReset)
+    ON_COMMAND(ID_BTN_SELECT, &MainFrame::OnSelect)
+    ON_UPDATE_COMMAND_UI(ID_BTN_SELECT, &MainFrame::OnUpdateSelect)
     ON_COMMAND(ID_BTN_GRID, &MainFrame::OnBtnGrid)
+    ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateBtnGrid)
+    ON_COMMAND(ID_EDIT_UNDO, OnEditUndo)
+    ON_UPDATE_COMMAND_UI(ID_EDIT_UNDO, OnUpdateEditUndo)
+    ON_COMMAND(ID_EDIT_REDO, OnEditRedo)
+    ON_UPDATE_COMMAND_UI(ID_EDIT_REDO, OnUpdateEditRedo)
     ON_COMMAND_RANGE(ID_VIEW_ISO, ID_VIEW_BACK, &MainFrame::OnHandleView)
     ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_ISO, ID_VIEW_BACK, &MainFrame::OnUpdateViewEye)
-    ON_COMMAND(ID_SHOW_RESET, &MainFrame::OnShowReset)
-    ON_UPDATE_COMMAND_UI(ID_BTN_GRID, &MainFrame::OnUpdateBtnGrid)
-    ON_COMMAND_RANGE(ID_DRAWING_LINE, ID_DRAWING_POINT, &MainFrame::OnHandle2D)
-    ON_UPDATE_COMMAND_UI_RANGE(ID_DRAWING_LINE, ID_DRAWING_POINT, &MainFrame::OnUpdate2DObj)
-    ON_COMMAND(ID_BTN_BOX, &MainFrame::OnMakeBox)
-    ON_COMMAND(ID_BTN_SELECT, &MainFrame::OnSelect)
+    ON_COMMAND_RANGE(ID_DRAWING_POINT, ID_DRAWING_ARC, &MainFrame::OnHandle2D)
+    ON_UPDATE_COMMAND_UI_RANGE(ID_DRAWING_POINT, ID_DRAWING_ARC, &MainFrame::OnUpdate2DObj)
+    ON_COMMAND_RANGE(ID_BTN_SPHERE, ID_BTN_BOX, &MainFrame::OnHandle3D)
+    ON_UPDATE_COMMAND_UI_RANGE(ID_BTN_SPHERE, ID_BTN_BOX, &MainFrame::OnUpdate3DObj)
 END_MESSAGE_MAP()
 
 // MainFrame construction/destruction
@@ -62,6 +65,7 @@ MainFrame::MainFrame()
     show_box_ = false;
     view_id_ = ID_VIEW_ISO;
     drawing2d_id_ = 0;
+    drawing3d_id_ = 0;
 }
 
 MainFrame::~MainFrame()
@@ -416,6 +420,18 @@ void MainFrame::OnShowReset()
     }
 }
 
+void MainFrame::OnUpdateReset(CCmdUI* pCmdUI)
+{
+    if (GetView() != NULL)
+    {
+        pCmdUI->Enable(TRUE);
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
+    }
+}
+
 void MainFrame::OnHandle2D(UINT nId)
 {
     if (GetView() != NULL)
@@ -483,12 +499,80 @@ void MainFrame::OnUpdate2DObj(CCmdUI* pCmdUI)
 }
 
 
+void MainFrame::OnHandle3D(UINT nId)
+{
+    if (GetView() != NULL)
+    {
+        TCadView* pView = GetView();
+        switch (nId)
+        {
+        case ID_BTN_SPHERE:
+        {
+            drawing3d_id_ = ID_BTN_SPHERE;
+            break;
+        }
+        case ID_BTN_CYLINDER:
+        {
+            drawing3d_id_ = ID_BTN_CYLINDER;
+            break;
+        }
+        case ID_BTN_CONE:
+        {
+            drawing3d_id_ = ID_BTN_CONE;
+            break;
+        }
+        case ID_BTN_PYRAMID:
+        {
+            drawing3d_id_ = ID_BTN_PYRAMID;
+            break;
+        }
+        case ID_BTN_BOX:
+        {
+            OnMakeBox();
+            drawing3d_id_ = ID_BTN_BOX;
+            break;
+        }
+        default:
+        {
+            drawing3d_id_ = 0;
+            break;
+        }
+        }
+    }
+}
+
+void MainFrame::OnUpdate3DObj(CCmdUI* pCmdUI)
+{
+    if (GetView() != NULL)
+    {
+        bool state = (drawing3d_id_ == pCmdUI->m_nID ? TRUE : FALSE);
+        pCmdUI->SetCheck(state);
+        pCmdUI->Enable(TRUE);
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
+    }
+}
+
 void MainFrame::OnSelect()
 {
     if (GetView() != NULL)
     {
         GetView()->DoSelect();
         drawing2d_id_ = 0;
+    }
+}
+
+void MainFrame::OnUpdateSelect(CCmdUI* pCmdUI)
+{
+    if (GetView() != NULL)
+    {
+        pCmdUI->Enable(TRUE);
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
     }
 }
 
@@ -534,6 +618,12 @@ void MainFrame::UpdateBox(int idx)
     }
 }
 
+void MainFrame::SetStateDrawing(const INT& state) 
+{ 
+    drawing2d_id_ = state; 
+    drawing3d_id_ = state; 
+}
+
 void MainFrame::OnEditUndo()
 {
     TCadDoc* pDoc = NULL;
@@ -546,30 +636,48 @@ void MainFrame::OnEditUndo()
 
 void MainFrame::OnUpdateEditUndo(CCmdUI *pCmdUI)
 {
-    TCadDoc	*pDoc = GetView()->GetDocument();
-    if (pDoc)
+    if (GetView() != NULL)
     {
-        bool state = pDoc->GetOnUndoState();
-        pCmdUI->Enable(state);
+        TCadDoc	*pDoc = GetView()->GetDocument();
+        if (pDoc)
+        {
+            bool state = pDoc->GetOnUndoState();
+            pCmdUI->Enable(state);
+        }
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
     }
 }
 
 void MainFrame::OnEditRedo()
 {
-    TCadDoc* pDoc = NULL;
-    pDoc = GetView()->GetDocument();
-    if (pDoc)
+    if (GetView() != NULL)
     {
-        pDoc->RedoData();
+        TCadDoc* pDoc = NULL;
+        pDoc = GetView()->GetDocument();
+        if (pDoc)
+        {
+            pDoc->RedoData();
+        }
     }
 }
 
 void MainFrame::OnUpdateEditRedo(CCmdUI *pCmdUI)
 {
-    TCadDoc	*pDoc = GetView()->GetDocument();
-    if (pDoc)
+    if (GetView() != NULL)
     {
-        bool state = pDoc->GetOnRedoState();
-        pCmdUI->Enable(state);
+        TCadDoc	*pDoc = GetView()->GetDocument();
+        if (pDoc)
+        {
+            bool state = pDoc->GetOnRedoState();
+            pCmdUI->Enable(state);
+        }
+    }
+    else
+    {
+        pCmdUI->Enable(FALSE);
     }
 }
+
