@@ -34,3 +34,16 @@ void Object2D::Serialize(CArchive &ar)
         ar >> color_value_.z_;
     }
 }
+
+void Object2D::DoGripPoint()
+{
+    EntityObject::DoGripPoint();
+    return;
+}
+
+
+void Object2D::GetGripPoint(const POINT3D& pt)
+{
+    EntityObject::GetGripPoint(pt);
+    return;
+}

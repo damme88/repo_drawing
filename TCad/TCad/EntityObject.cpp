@@ -9,6 +9,7 @@ EntityObject::EntityObject()
 {
     is_selected_ = false;
     e_type_ = NONE;
+    on_grip_point_ = false;
 }
 
 
@@ -55,4 +56,14 @@ EntityObject* EntityObject::Clone()
  bool EntityObject::IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)
  {
      return false;
+ }
+
+ void EntityObject::DoGripPoint()
+ {
+     return;
+ }
+
+ void EntityObject::GetGripPoint(const POINT3D& pt)
+ {
+     return;
  }

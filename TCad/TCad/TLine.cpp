@@ -23,6 +23,29 @@ TLine::~TLine()
 
 }
 
+void TLine::Serialize(CArchive &ar)
+{
+    Object2D::Serialize(ar);
+    if (ar.IsStoring())
+    {
+        ar << pt1_.x_;
+        ar << pt1_.y_;
+        ar << pt1_.z_;
+        ar << pt2_.x_;
+        ar << pt2_.y_;
+        ar << pt2_.z_;
+    }
+    else
+    {
+        ar >> pt1_.x_;
+        ar >> pt1_.y_;
+        ar >> pt1_.z_;
+        ar >> pt2_.x_;
+        ar >> pt2_.y_;
+        ar >> pt2_.z_;
+    }
+}
+
 void TLine::SetPoint(const POINT3D& p1, const POINT3D& p2)
 {
     pt1_ = p1;
@@ -106,6 +129,7 @@ void TLine::Render()
     glVertex3f(pt2_.x_, pt2_.y_, pt2_.z_);
     glEnd();
 #else
+    glEnable(GL_LINE_STIPPLE);
     GLfloat arrVertices[6];
     arrVertices[0] = pt1_.x_;
     arrVertices[1] = pt1_.y_;
@@ -118,12 +142,19 @@ void TLine::Render()
     else
         glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
     glEnable(GL_LINE_SMOOTH);
-    glLineWidth(1);
+    glLineWidth(0.5);
+    glLineStipple(1, 0xFFFF);
     glEnableClientState(GL_VERTEX_ARRAY);
     glNormal3f(0.0f, 0.0f, 1.0f);
     glVertexPointer(3, GL_FLOAT, 0, arrVertices);
     glDrawArrays(GL_LINES, 0, 2);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    glDisable(GL_LINE_STIPPLE);
+    if (is_selected_)
+    {
+        m_GripInfo.Render();
+    }
 
 #endif
 }
@@ -155,25 +186,23 @@ bool TLine::IsSelectedObject(const Vector3D &dir, const POINT3D& pos, POINT3D &p
     return false;
 }
 
-void TLine::Serialize(CArchive &ar)
+void TLine::DoGripPoint()
 {
-    Object2D::Serialize(ar);
-    if (ar.IsStoring())
+    Object2D::DoGripPoint();
+    if (is_selected_ == true)
     {
-        ar << pt1_.x_;
-        ar << pt1_.y_;
-        ar << pt1_.z_;
-        ar << pt2_.x_;
-        ar << pt2_.y_;
-        ar << pt2_.z_;
+        m_GripInfo.AddGrip(pt1_);
+        m_GripInfo.AddGrip(pt2_);
     }
     else
     {
-        ar >> pt1_.x_;
-        ar >> pt1_.y_;
-        ar >> pt1_.z_;
-        ar >> pt2_.x_;
-        ar >> pt2_.y_;
-        ar >> pt2_.z_;
+        m_GripInfo.RemoveAll();
     }
+}
+
+void TLine::GetGripPoint(const POINT3D& pt)
+{
+    Object2D::GetGripPoint(pt);
+    int type = m_GripInfo.CheckGripPoint(pt);
+    on_grip_point_ = (type == 1 ? true : false);
 }

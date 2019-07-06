@@ -127,11 +127,11 @@ protected:
 
     bool is_show_axis_;
     bool is_show_grid_;
+    bool is_grip_;
+    EntityObject* pObjGripping_;
     UINT type_2d_;
     UINT type_3d_;
     std::vector<CPoint> pt_list_;
-    //std::vector<CPoint> jig_pt_list_;
-    //EntityObject* p_entity_jig_;
     JiggBase* p_jig_base_;
 
     GLdouble gldAspect;

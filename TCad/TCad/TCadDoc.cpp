@@ -115,13 +115,48 @@ void TCadDoc::SetSelected(int idx)
    {
        if (ix == idx)
        {
-           bool is_select = temp->get_data()->get_selected();
-           temp->get_data()->set_selected(!is_select);
-           break;
+           EntityObject* pObject = temp->get_data();
+           if (pObject != NULL)
+           {
+               bool is_select = pObject->get_selected();
+               pObject->set_selected(!is_select);
+
+               //Call gript point
+               pObject->DoGripPoint();
+               break;
+           }
+           
        }
        temp = temp->get_next();
        ix++;
    }
+}
+
+EntityObject* TCadDoc::ImplementGripPoint(const POINT3D& pt)
+{
+    DataNote<EntityObject*>* temp = data_list_.head();
+    while (temp != NULL)
+    {
+        EntityObject* pObject = temp->get_data();
+        if (pObject != NULL)
+        {
+            bool is_select = pObject->get_selected();
+            if (is_select == true)
+            {
+                pObject->GetGripPoint(pt);
+                if (pObject->get_on_grip() == true)
+                {
+                    break;
+                }
+            }
+        }
+        temp = temp->get_next();
+    }
+    if (temp != NULL)
+    {
+        return temp->get_data();
+    }
+    return NULL;
 }
 
 EntityObject* TCadDoc::FindEntity(int idx)

@@ -37,6 +37,7 @@ public:
     virtual void KeyEvent(int type) = 0;
     void set_base_point(const POINT3D& pt) { base_pt_ = pt; }
     UINT GetStateJigg() const { return state_jigg_; }
+    void SetStartJigg(const UINT& state) { state_jigg_ = state; }
 protected:
     POINT3D base_pt_;
     UINT state_jigg_;

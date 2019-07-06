@@ -31,6 +31,9 @@
     <Filter Include="Source Files\UndoRedo">
       <UniqueIdentifier>{65eaa6c7-803a-4da6-a840-1615084dd709}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GripPoint">
+      <UniqueIdentifier>{11762605-5b3b-42b5-b7d1-d8e767eb1aa5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -123,6 +126,9 @@
     <ClInclude Include="DataStack.h">
       <Filter>Source Files\DataBase</Filter>
     </ClInclude>
+    <ClInclude Include="TGripPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TCad.cpp">
@@ -202,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="DataStack.cpp">
       <Filter>Source Files\DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="TGripPoint.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

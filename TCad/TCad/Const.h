@@ -22,6 +22,7 @@ const double EPSILON_LARGE = 8;
 #define K_BLUE      VEC3D(0.0, 0.0, 1.0)
 #define K_YELLOW    VEC3D(1.0, 1.0, 0.0)
 #define K_PINK      VEC3D(1.0, 0.0, 1.0)
+#define K_WHITE     VEC3D(1.0, 1.0, 1.0)
 
 enum Type2D
 {

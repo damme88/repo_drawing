@@ -42,6 +42,7 @@
 #define IDC_CUR_DRAW                    312
 #define IDD_DLG_BOX                     313
 #define IDD_DLG_CYLINDER                314
+#define IDD_DLG_SETTING                 320
 #define ID_DRAWING_AXIS                 400
 #define ID_DRAWING_GRID                 401
 #define IDC_EDT_LENGTH                  1000
@@ -54,6 +55,8 @@
 #define IDC_BTN_CHANGE                  1007
 #define IDC_BTN_EXPORT                  1008
 #define IDC_MFCCOLORBUTTON1             1009
+#define IDC_BOX_COLOR                   1009
+#define IDC_SETUP_COLOR_2D              1009
 #define ID_INSERT_BOX                   1010
 #define IDC_INSERT_BOX_TYPE             1011
 #define IDC_BOX_ANGLE                   1012
@@ -68,6 +71,12 @@
 #define ID_BTN_SELECT                   2001
 #define ID_BTN_GRID                     2002
 #define ID_WRITE_PASTEASHYPERLINK       32770
+#define ID_BTN_SPHERE                   32800
+#define ID_BTN_CYLINDER                 32801
+#define ID_BTN_CONE                     32802
+#define ID_APP_SETUP                    32802
+#define ID_BTN_PYRAMID                  32803
+#define ID_BTN_BOX                      32804
 #define ID_VIEW_ISO                     32810
 #define ID_VIEW_LEFT                    32811
 #define ID_VIEW_RIGHT                   32812
@@ -81,19 +90,14 @@
 #define ID_DRAWING_CIRCLE               32853
 #define ID_DRAWING_RECT                 32854
 #define ID_DRAWING_ARC                  32855
-#define ID_BTN_SPHERE                   32800
-#define ID_BTN_CYLINDER                 32801
-#define ID_BTN_CONE                     32802
-#define ID_BTN_PYRAMID                  32803
-#define ID_BTN_BOX                      32804
 #define IDC_OBJECT_PANE                 35000
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        320
-#define _APS_NEXT_COMMAND_VALUE         32801
+#define _APS_NEXT_RESOURCE_VALUE        323
+#define _APS_NEXT_COMMAND_VALUE         32803
 #define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           312
 #endif

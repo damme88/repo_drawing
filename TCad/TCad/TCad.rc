@@ -285,7 +285,7 @@ BEGIN
     LTEXT           "Length:",IDC_STATIC,13,27,27,8
     LTEXT           "Width:",IDC_STATIC,13,48,27,8
     LTEXT           "Height:",IDC_STATIC,13,66,28,8
-    CONTROL         "",IDC_MFCCOLORBUTTON1,"MfcColorButton",WS_TABSTOP,45,108,72,14
+    CONTROL         "",IDC_BOX_COLOR,"MfcColorButton",WS_TABSTOP,45,108,72,14
     GROUPBOX        "Size",IDC_STATIC,7,11,166,77
     LTEXT           "Color:",IDC_STATIC,15,111,28,8
     GROUPBOX        "Style",IDC_STATIC,7,98,165,77
@@ -320,6 +320,17 @@ BEGIN
     EDITTEXT        IDC_ANGLE_CYLIN,46,128,71,14,ES_AUTOHSCROLL
     LTEXT           "Angle:",IDC_STATIC,15,130,28,8
     DEFPUSHBUTTON   "Update",ID_UPDATE_CYLIN,103,329,59,18
+END
+
+IDD_DLG_SETTING DIALOGEX 0, 0, 309, 177
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Setup"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,198,156,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,252,156,50,14
+    CONTROL         "",IDC_SETUP_COLOR_2D,"MfcColorButton",WS_TABSTOP,42,61,66,14
+    LTEXT           "Color:",IDC_STATIC,7,64,20,8
 END
 
 
@@ -401,6 +412,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 362
     END
+
+    IDD_DLG_SETTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 170
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -441,6 +460,11 @@ BEGIN
     0
 END
 
+IDD_DLG_SETTING AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -449,7 +473,7 @@ END
 
 IDD_DLG_BOX DLGINIT
 BEGIN
-    IDC_MFCCOLORBUTTON1, 0x37c, 215, 0
+    IDC_BOX_COLOR, 0x37c, 215, 0
 0x4d3c, 0x4346, 0x6f43, 0x6f6c, 0x4272, 0x7475, 0x6f74, 0x5f6e, 0x6e45, 
 0x6261, 0x656c, 0x744f, 0x6568, 0x4272, 0x7475, 0x6f74, 0x3e6e, 0x5254, 
 0x4555, 0x2f3c, 0x464d, 0x4343, 0x6c6f, 0x726f, 0x7542, 0x7474, 0x6e6f, 
@@ -468,6 +492,24 @@ END
 IDD_DLG_CYLINDER DLGINIT
 BEGIN
     IDC_CYLIN_COLOR, 0x37c, 215, 0
+0x4d3c, 0x4346, 0x6f43, 0x6f6c, 0x4272, 0x7475, 0x6f74, 0x5f6e, 0x6e45, 
+0x6261, 0x656c, 0x744f, 0x6568, 0x4272, 0x7475, 0x6f74, 0x3e6e, 0x5254, 
+0x4555, 0x2f3c, 0x464d, 0x4343, 0x6c6f, 0x726f, 0x7542, 0x7474, 0x6e6f, 
+0x455f, 0x616e, 0x6c62, 0x4f65, 0x6874, 0x7265, 0x7542, 0x7474, 0x6e6f, 
+0x3c3e, 0x464d, 0x4343, 0x6c6f, 0x726f, 0x7542, 0x7474, 0x6e6f, 0x455f, 
+0x616e, 0x6c62, 0x4165, 0x7475, 0x6d6f, 0x7461, 0x6369, 0x7542, 0x7474, 
+0x6e6f, 0x463e, 0x4c41, 0x4553, 0x2f3c, 0x464d, 0x4343, 0x6c6f, 0x726f, 
+0x7542, 0x7474, 0x6e6f, 0x455f, 0x616e, 0x6c62, 0x4165, 0x7475, 0x6d6f, 
+0x7461, 0x6369, 0x7542, 0x7474, 0x6e6f, 0x3c3e, 0x464d, 0x4343, 0x6c6f, 
+0x726f, 0x7542, 0x7474, 0x6e6f, 0x435f, 0x6c6f, 0x6d75, 0x736e, 0x6f43, 
+0x6e75, 0x3e74, 0x3c35, 0x4d2f, 0x4346, 0x6f43, 0x6f6c, 0x4272, 0x7475, 
+0x6f74, 0x5f6e, 0x6f43, 0x756c, 0x6e6d, 0x4373, 0x756f, 0x746e, "\076" 
+    0
+END
+
+IDD_DLG_SETTING DLGINIT
+BEGIN
+    IDC_SETUP_COLOR_2D, 0x37c, 215, 0
 0x4d3c, 0x4346, 0x6f43, 0x6f6c, 0x4272, 0x7475, 0x6f74, 0x5f6e, 0x6e45, 
 0x6261, 0x656c, 0x744f, 0x6568, 0x4272, 0x7475, 0x6f74, 0x3e6e, 0x5254, 
 0x4555, 0x2f3c, 0x464d, 0x4343, 0x6c6f, 0x726f, 0x7542, 0x7474, 0x6e6f, 
@@ -646,6 +688,7 @@ END
 
 STRINGTABLE
 BEGIN
+    ID_APP_SETUP            "Setup settings for application"
     ID_VIEW_ISO             "View Iso Type"
     ID_VIEW_LEFT            "View Left"
     ID_VIEW_RIGHT           "View Right"

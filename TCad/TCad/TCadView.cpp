@@ -65,6 +65,7 @@ TCadView::TCadView()
 {
 	// TODO: add construction code here
     entity_obj_ = NULL;
+    is_grip_ = false;
     type_2d_ = Type2D::NONE;
     is_show_axis_ = true;
     rendering_rate_ = 0.5f;
@@ -104,6 +105,7 @@ TCadView::TCadView()
     form_bar_ = NULL;
 
     drawing_mode_ = DrawingMode::NORMAL_MODE;
+    pObjGripping_ = NULL;
 }
 
 TCadView::~TCadView()
@@ -620,7 +622,7 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
     l_btn_down_ = true;
     TCadDoc* pDocument = GetDocument();
 
-    if (type_2d_ == DR_LINE && pt_list_.size() < 2)
+    if ((type_2d_ == DR_LINE || is_grip_ == true) && pt_list_.size() < 2)
     {
         if (p_jig_base_ == NULL)
         {
@@ -686,6 +688,7 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
         pt_list_.push_back(point);
     }
 
+    //Select object
     if (type_2d_ == Type2D::NONE && type_3d_ == Type3D::NONE_OBJ)
     {
         if (pDocument->HasObject())
@@ -700,9 +703,48 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
             {
                 pDocument->SetSelected(idx);
             }
-            else
+            //else
+            //{
+            //  pDocument->FreeSelected();
+            //}
+
+            if (pObjGripping_ == NULL)
             {
-              pDocument->FreeSelected();
+                pObjGripping_ = pDocument->ImplementGripPoint(gl_pt);
+                if (pObjGripping_ != NULL)
+                {
+                    if (pObjGripping_->get_etype() == EntityObject::OBJ_2D)
+                    {
+                        Object2D* p2DObj = STATIC_DOWNCAST(Object2D, pObjGripping_);
+                        if (p2DObj != NULL)
+                        {
+                            int type = p2DObj->get_type();
+                            switch (type)
+                            {
+                            case Object2D::LINE:
+                            {
+                                TLine* pline = STATIC_DOWNCAST(TLine, p2DObj);
+                                p_jig_base_ = new JigLine();
+                                POINT3D pt1 = pline->get_start_point();
+                                POINT3D pt2 = pline->get_end_point();
+                                if (pt1.distance(gl_pt) > pt2.distance(gl_pt))
+                                {
+                                    p_jig_base_->set_base_point(pt1);
+                                }
+                                else
+                                {
+                                    p_jig_base_->set_base_point(pt2);
+                                }
+                                is_grip_ = true;
+                                type_2d_ = Type2D::DR_LINE;
+                                break;
+                            }
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -764,19 +806,26 @@ void TCadView::OnDestroy()
 void TCadView::OnLButtonUp(UINT nFlags, CPoint point) 
 {
     l_btn_down_ = false;
-    if (type_2d_ == DR_LINE && pt_list_.size() == 2)
+    if ((type_2d_ == DR_LINE && pt_list_.size() == 2) || (is_grip_ == true && pt_list_.size() == 1))
     {
-        delete p_jig_base_;
-        p_jig_base_ = NULL;
+        if (is_grip_ == true)
+        {
+            p_jig_base_->SetStartJigg(JiggBase::END_JIG);
+        }
+        else
+        {
+            delete p_jig_base_;
+            p_jig_base_ = NULL;
 
-        CPoint pt1 = pt_list_.at(0);
-        CPoint pt2 = pt_list_.at(1);
-        POINT3D point_mouse1 = PointWndToPointPlane(pt1);
-        POINT3D point_mouse2 = PointWndToPointPlane(pt2);
+            CPoint pt1 = pt_list_.at(0);
+            CPoint pt2 = pt_list_.at(1);
+            POINT3D point_mouse1 = PointWndToPointPlane(pt1);
+            POINT3D point_mouse2 = PointWndToPointPlane(pt2);
 
-        TLine* new_line = new TLine(point_mouse1, point_mouse2);
-        new_line->set_pos_cam(p_cameral_.get_pos_cam());
-        GetDocument()->AppendEntity(new_line);
+            TLine* new_line = new TLine(point_mouse1, point_mouse2);
+            new_line->set_pos_cam(p_cameral_.get_pos_cam());
+            GetDocument()->AppendEntity(new_line);
+        }
         pt_list_.clear();
         InvalidateRect(false);
     }
@@ -958,28 +1007,54 @@ void TCadView::OnMouseMove(UINT nFlags, CPoint point)
 
 void TCadView::ImplementAction(const CPoint& pick_pt)
 {
-    if (type_2d_ == DR_LINE)
+    if (type_2d_ == DR_LINE || is_grip_ == true)
     {
         if (p_jig_base_)
         {
             UINT state = p_jig_base_->GetStateJigg();
             if (state == JiggBase::END_JIG)
             {
-                JigLine* pLineJig = static_cast<JigLine*>(p_jig_base_);
-                if (pLineJig != NULL)
+                if (is_grip_ == true)
                 {
-                    TLine* line_jigg = pLineJig->GetObj();
-                    if (line_jigg != NULL)
+                    is_grip_ = false;
+                    type_2d_ = Type2D::NONE;
+                    JigLine* pLineJig = static_cast<JigLine*>(p_jig_base_);
+                    Object2D* pObj2d = static_cast<Object2D*>(pObjGripping_);
+                    if (pLineJig != NULL && pObj2d)
                     {
-                        TLine* new_line = (TLine*)line_jigg->Clone();
-                        new_line->set_type(Object2D::LINE);
-                        new_line->set_etype(EntityObject::OBJ_2D);
-                        new_line->set_pos_cam(p_cameral_.get_pos_cam());
-                        GetDocument()->AppendEntity(new_line);
-                        pt_list_.clear();
+                        TLine* line_jigg = pLineJig->GetObj();
+                        TLine* line_update = static_cast<TLine*>(pObj2d);
+                        if (line_jigg != NULL && line_update != NULL)
+                        {
+                            line_update->SetPoint(line_jigg->get_start_point(), line_jigg->get_end_point());
+                            line_update->set_selected(false);
+                            line_update->FreeGripInfo();
+                            pt_list_.clear();
+                            line_update = NULL;
+                            pObjGripping_ = NULL;
+                        }
+                    }
+
+                    delete p_jig_base_;
+                    p_jig_base_ = NULL;
+                }
+                else
+                {
+                    JigLine* pLineJig = static_cast<JigLine*>(p_jig_base_);
+                    if (pLineJig != NULL)
+                    {
+                        TLine* line_jigg = pLineJig->GetObj();
+                        if (line_jigg != NULL)
+                        {
+                            TLine* new_line = (TLine*)line_jigg->Clone();
+                            new_line->set_type(Object2D::LINE);
+                            new_line->set_etype(EntityObject::OBJ_2D);
+                            new_line->set_pos_cam(p_cameral_.get_pos_cam());
+                            GetDocument()->AppendEntity(new_line);
+                            pt_list_.clear();
+                        }
                     }
                 }
-               
                 delete p_jig_base_;
                 p_jig_base_ = NULL;
             }

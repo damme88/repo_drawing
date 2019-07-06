@@ -215,6 +215,7 @@
     <ClInclude Include="TCadView.h" />
     <ClInclude Include="TCircle.h" />
     <ClInclude Include="TDesk.h" />
+    <ClInclude Include="TGripPoint.h" />
     <ClInclude Include="TLine.h" />
     <ClInclude Include="TPoint.h" />
     <ClInclude Include="TPolyLine.h" />
@@ -248,6 +249,7 @@
     <ClCompile Include="TCadView.cpp" />
     <ClCompile Include="TCircle.cpp" />
     <ClCompile Include="TDesk.cpp" />
+    <ClCompile Include="TGripPoint.cpp" />
     <ClCompile Include="TLine.cpp" />
     <ClCompile Include="TPoint.cpp" />
     <ClCompile Include="TPolyLine.cpp" />

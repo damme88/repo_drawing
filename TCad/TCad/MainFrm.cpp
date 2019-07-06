@@ -680,4 +680,3 @@ void MainFrame::OnUpdateEditRedo(CCmdUI *pCmdUI)
         pCmdUI->Enable(FALSE);
     }
 }
-

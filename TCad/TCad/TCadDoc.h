@@ -38,6 +38,7 @@ public:
     UINT undo_limit_;
 // Attributes
 public:
+    EntityObject* ImplementGripPoint(const POINT3D& pt);
     bool CheckExistPath(CString path);
     void FreeSelected();
     void SetSelected(int idx);
