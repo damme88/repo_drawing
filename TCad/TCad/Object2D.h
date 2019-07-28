@@ -2,6 +2,7 @@
 #define OBJECT_2D_H_
 #include "stdafx.h"
 #include "EntityObject.h"
+#include "SettingInfo.h"
 
 class Object2D : public EntityObject
 {
@@ -32,6 +33,8 @@ public:
 protected:
     UINT g_type_;
     VEC3D color_value_;
+    INT style_;
+    float width_;
 };
 
 #endif

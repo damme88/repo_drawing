@@ -206,6 +206,8 @@
     <ClInclude Include="ObjectInfo.h" />
     <ClInclude Include="PCam.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SettingDlg.h" />
+    <ClInclude Include="SettingInfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TArc.h" />
     <ClInclude Include="targetver.h" />
@@ -236,6 +238,8 @@
     <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="ObjectInfo.cpp" />
     <ClCompile Include="PCam.cpp" />
+    <ClCompile Include="SettingDlg.cpp" />
+    <ClCompile Include="SettingInfo.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -274,7 +278,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\cursor1.cur" />
-    <None Include="res\ribbon.mfcribbon-ms" />
+    <None Include="res\ribbon.mfcribbon-ms">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="res\TCad.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

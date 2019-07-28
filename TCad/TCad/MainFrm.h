@@ -15,6 +15,7 @@
 #pragma once
 #include "TCadView.h"
 #include "BoxObjectPanel.h"
+#include "SettingInfo.h"
 
 class MainFrame : public CMDIFrameWndEx
 {
@@ -66,6 +67,9 @@ protected:
 	afx_msg void OnFilePrint();
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* pCmdUI);
+    //Setting
+    afx_msg void OnSettingInfo();
+
     afx_msg void OnDrawingAxis();
     afx_msg void OnUpdateDrawingAxis(CCmdUI *pCmdUI);
 

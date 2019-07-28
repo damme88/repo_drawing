@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_COMMAND(ID_FILE_PRINT_DIRECT, &MainFrame::OnFilePrint)
     ON_COMMAND(ID_FILE_PRINT_PREVIEW, &MainFrame::OnFilePrintPreview)
     ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &MainFrame::OnUpdateFilePrintPreview)
+    ON_COMMAND(ID_APP_SETTING, &MainFrame::OnSettingInfo)
     ON_COMMAND(ID_DRAWING_AXIS, &MainFrame::OnDrawingAxis)
     ON_UPDATE_COMMAND_UI(ID_DRAWING_AXIS, &MainFrame::OnUpdateDrawingAxis)
     ON_COMMAND(ID_SHOW_RESET, &MainFrame::OnShowReset)
@@ -300,6 +301,13 @@ void MainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
     }
 }
 
+void MainFrame::OnSettingInfo()
+{
+    if (GetView() != NULL)
+    {
+        GetView()->OnSettingInfo();
+    }
+}
 
 void MainFrame::OnDrawingAxis()
 {

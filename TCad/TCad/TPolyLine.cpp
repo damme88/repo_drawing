@@ -27,7 +27,12 @@ void TPolyLine::SetPointAt(const int& idx, const POINT3D& pt)
 
 void TPolyLine::Render()
 {
+    style_ = SettingInfo::getInstance()->GetStyle();
+    color_value_ = SettingInfo::getInstance()->color_;
+    width_ = SettingInfo::getInstance()->width_;
+
     glBegin(GL_LINE_STRIP);
+    glEnable(GL_LINE_STIPPLE);
     if (is_selected_)
     {
         glColor3f(1.0, 0.0, 0.0);
@@ -37,14 +42,17 @@ void TPolyLine::Render()
         glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
     }
     
-    glLineWidth(0.5);
+    glLineWidth(width_);
+    glLineStipple(1, style_);
     for (int i = 0; i < pt_list_.size(); ++i)
     {
         POINT3D pt = pt_list_.at(i);
         glNormal3f(0, 0, 1);
         glVertex3f(pt.x_, pt.y_, pt.z_);
     }
+    glDisable(GL_LINE_STIPPLE);
     glEnd();
+
 }
 
 EntityObject* TPolyLine::Clone()

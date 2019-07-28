@@ -7,7 +7,7 @@
 #define LASTER_VERSION 0x0005 
 #define USE_VIEW_TYPE_1
 const double VALUE_AXIS = 10000.0;
-#define M_PI 3.1415
+#define M_PI 3.1415926535897
 #define BUFSIZE 512
 
 #define VEC3D Vector3D
@@ -51,4 +51,20 @@ enum Type3D
     OCTAGON_OBJ,
 };
 
+
+#define ST_SOLID_DEF            0xFFFF
+#define ST_DOTTED_DEF           0xAAAA
+#define ST_DASH_DEF             0x00FF
+#define ST_DASH_DOT_DEF         0x0C0F
+
+enum StyleLine
+{
+    ST_SOLID = 300,
+    ST_DOTTED,
+    ST_DASHED,
+    ST_DASH_DOT,
+    ST_DASH_DOT_DOT,
+    ST_FINE_DOT,
+    ST_USER_PATTERN
+};
 #endif // 

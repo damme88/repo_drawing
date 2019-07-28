@@ -56,7 +56,6 @@
 #define IDC_BTN_EXPORT                  1008
 #define IDC_MFCCOLORBUTTON1             1009
 #define IDC_BOX_COLOR                   1009
-#define IDC_SETUP_COLOR_2D              1009
 #define ID_INSERT_BOX                   1010
 #define IDC_INSERT_BOX_TYPE             1011
 #define IDC_BOX_ANGLE                   1012
@@ -67,6 +66,10 @@
 #define ID_UPDATE_CYLIN                 1017
 #define IDC_ANGLE_CYLIN                 1018
 #define IDC_CYLIN_COLOR                 1019
+#define ID_APP_SETTING                  1500
+#define IDC_SETTING_WIDTH               1501
+#define IDC_SETTING_STYLE               1502
+#define IDC_SETTING_COLOR_2D            1503
 #define ID_SHOW_RESET                   2000
 #define ID_BTN_SELECT                   2001
 #define ID_BTN_GRID                     2002
@@ -74,7 +77,6 @@
 #define ID_BTN_SPHERE                   32800
 #define ID_BTN_CYLINDER                 32801
 #define ID_BTN_CONE                     32802
-#define ID_APP_SETUP                    32802
 #define ID_BTN_PYRAMID                  32803
 #define ID_BTN_BOX                      32804
 #define ID_VIEW_ISO                     32810
@@ -97,8 +99,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        323
-#define _APS_NEXT_COMMAND_VALUE         32803
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_COMMAND_VALUE         32804
+#define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

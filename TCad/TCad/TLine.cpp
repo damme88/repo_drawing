@@ -116,6 +116,9 @@ POINT3D TLine::FindIntersectPoint(const TLine& line)
 
 void TLine::Render()
 {
+    style_ = SettingInfo::getInstance()->GetStyle();
+    color_value_ = SettingInfo::getInstance()->color_;
+    width_ = SettingInfo::getInstance()->width_;
 #ifdef OPENGL_12
     if (is_selected_)
         glColor3f(1.0, 0.0, 0);
@@ -142,8 +145,8 @@ void TLine::Render()
     else
         glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
     glEnable(GL_LINE_SMOOTH);
-    glLineWidth(0.5);
-    glLineStipple(1, 0xFFFF);
+    glLineWidth(width_);
+    glLineStipple(1, style_);
     glEnableClientState(GL_VERTEX_ARRAY);
     glNormal3f(0.0f, 0.0f, 1.0f);
     glVertexPointer(3, GL_FLOAT, 0, arrVertices);

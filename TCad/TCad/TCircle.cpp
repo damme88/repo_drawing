@@ -26,9 +26,18 @@ EntityObject* TCircle::Clone()
 
 void TCircle::Render()
 {
+    style_ = SettingInfo::getInstance()->GetStyle();
+    color_value_ = SettingInfo::getInstance()->color_;
+    width_ = SettingInfo::getInstance()->width_;
+
     glPushMatrix();
     glTranslatef(pos_pt_.x_, pos_pt_.y_, pos_pt_.z_);
+
+    glEnable(GL_LINE_STIPPLE);
     glBegin(GL_LINE_LOOP);
+
+    glLineWidth(width_);
+    glLineStipple(1, style_);
     if (is_selected_)
     {
         glColor3f(1.0, 0.0, 0.0);
@@ -47,6 +56,7 @@ void TCircle::Render()
         glVertex2d(x*radius_, y*radius_);
     }
     glEnd();
+    glDisable(GL_LINE_STIPPLE);
     glPopMatrix();
 }
 

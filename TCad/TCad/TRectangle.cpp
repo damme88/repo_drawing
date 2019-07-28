@@ -31,6 +31,10 @@ EntityObject* TRectangle::Clone()
 
 void TRectangle::Render()
 {
+    style_ = SettingInfo::getInstance()->GetStyle();
+    color_value_ = SettingInfo::getInstance()->color_;
+    width_ = SettingInfo::getInstance()->width_;
+
     VEC3D vNormal = pos_cam_ - POINT3D(0, 0, 0);
     vNormal.Unit();
     POINT3D pt_bottom;
@@ -43,6 +47,10 @@ void TRectangle::Render()
     pt_top.y_ = pt1_.y_;
     pt_top.z_ = 0.0;
     glBegin(GL_LINE_LOOP);
+    glEnable(GL_LINE_STIPPLE);
+    glLineWidth(width_);
+    glLineStipple(1, style_);
+
     if (is_selected_)
     {
         glColor3f(1.0, 0.0, 0.0);
@@ -56,7 +64,9 @@ void TRectangle::Render()
     glVertex3f(pt_top.x_, pt_top.y_, pt_top.z_);
     glVertex3f(pt2_.x_, pt2_.y_, pt2_.z_);
     glVertex3f(pt_bottom.x_, pt_bottom.y_, pt_bottom.z_);
+    glDisable(GL_LINE_STIPPLE);
     glEnd();
+
 }
 
 bool TRectangle::IsSelectedObject(const Vector3D &dir, const Vector3D& pos, Vector3D &p)

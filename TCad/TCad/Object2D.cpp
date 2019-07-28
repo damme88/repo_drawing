@@ -7,6 +7,8 @@ Object2D::Object2D()
     e_type_ = OBJ_2D;
     pos_pt_.Set(0.0, 0.0, 0.0);
     color_value_.Set(1.0, 1.0, 1.0);
+    width_ = 0.1;
+    style_ = ST_SOLID_DEF;
 }
 
 

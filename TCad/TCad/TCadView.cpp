@@ -535,6 +535,20 @@ ChildFrame* TCadView::GetChildFrame() const
 // TCadView message handlers
 
 
+void TCadView::OnSettingInfo()
+{
+    SettingDlg dlg;
+    if (dlg.DoModal() == IDOK)
+    {
+        float width = dlg.GetWidth();
+        UINT style = dlg.GetStyle();
+        VEC3D vColor = dlg.GetColor();
+        SettingInfo::getInstance()->style_ = style;
+        SettingInfo::getInstance()->width_ = width;
+        SettingInfo::getInstance()->color_ = vColor;
+    }
+}
+
 void TCadView::OnDrawingAxis()
 {
     is_show_axis_ = !is_show_axis_;
@@ -694,9 +708,6 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
         if (pDocument->HasObject())
         {
             POINT3D gl_pt = PointWndToPointPlane(point);
-            //POINT3D origin_pt(0, 0, 0);
-            gl_pt = PointWndToPointPlane(point);
-
             Vector3D ppVector = GetPPVectorScreen();
             int idx = FindIndexObject(ppVector, gl_pt);
             if (idx >= 0)
@@ -814,17 +825,19 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
         }
         else
         {
+            JigLine* pLineJig = static_cast<JigLine*>(p_jig_base_);
+            if (pLineJig != NULL)
+            {
+                TLine* line_jigg = pLineJig->GetObj();
+                if (line_jigg != NULL)
+                {
+                    TLine* new_line = new TLine(line_jigg->get_start_point(), line_jigg->get_end_point());
+                    new_line->set_pos_cam(p_cameral_.get_pos_cam());
+                    GetDocument()->AppendEntity(new_line);
+                }
+            }
             delete p_jig_base_;
             p_jig_base_ = NULL;
-
-            CPoint pt1 = pt_list_.at(0);
-            CPoint pt2 = pt_list_.at(1);
-            POINT3D point_mouse1 = PointWndToPointPlane(pt1);
-            POINT3D point_mouse2 = PointWndToPointPlane(pt2);
-
-            TLine* new_line = new TLine(point_mouse1, point_mouse2);
-            new_line->set_pos_cam(p_cameral_.get_pos_cam());
-            GetDocument()->AppendEntity(new_line);
         }
         pt_list_.clear();
         InvalidateRect(false);
@@ -1060,7 +1073,8 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
             }
             else if (state == JiggBase::JIGGING)
             {
-                POINT3D gl_pt = PointWndToPointPlane(pick_pt);
+                POINT3D gl_pt;
+                bool is_z = CheckZVector(pick_pt, gl_pt);
                 p_jig_base_->SetData(gl_pt);
                 p_jig_base_->MakeJiggObj();
             }
@@ -1486,4 +1500,35 @@ void TCadView::UpdateObject(EntityObject* newObj, int idx)
             }
         }
     }
+}
+bool TCadView::CheckZVector(CPoint pick_pt, POINT3D& retPt)
+{
+    bool is_z = false;
+
+    POINT3D pt1 = p_jig_base_->get_base_point();
+    POINT3D pt_new = ConvertWindowToOpenGL(pick_pt);
+    pt1.z_ = pt_new.z_;
+
+    POINT3D pt_0 = pt1;
+    pt_0.z_ = 0;
+    pt1 = GetMousePtOnPlane(pt1, POINT3D(0, 0, 0));
+
+    VEC3D vec1 = pt1 - pt_0;
+    vec1 = vec1.Unit();
+
+    POINT3D pt_2 = PointWndToPointPlane(pick_pt);
+    VEC3D vec2 = pt_2 - pt_0;
+    vec2.Unit();
+    double length = pt_2.distance(pt_0);
+    double angle = vec1.AngleTo(vec2);
+    double limit = M_PI*0.01;
+
+    retPt = PointWndToPointPlane(pick_pt);
+    if (angle < limit)
+    {
+        retPt = POINT3D(pt_0.x_, pt_0.y_, length);
+        is_z = true;
+    }
+
+    return is_z;
 }

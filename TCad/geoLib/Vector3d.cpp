@@ -65,3 +65,15 @@ Vector3D Vector3D::CrossProduct(const Vector3D& v)
 
     return vRet;
 }
+
+double Vector3D::AngleTo(Vector3D& v)
+{
+    double dot = this->x_*v.x_ + this->y_*v.y_ + this->z_*v.z_;
+    double val1 = this->x_*this->x_;
+    double val2 = this->y_*this->y_;
+    double val3 = this->z_*this->z_;
+    double length1 = val1 + val2 + val3;
+    double length2 = v.x_*v.x_ + v.y_*v.y_ + v.z_*v.z_;
+    double angle = acos(dot / sqrt(length1*length2));
+    return angle;
+}

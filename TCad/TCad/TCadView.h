@@ -24,6 +24,7 @@
 #include "TCadDoc.h"
 #include "FormBar.h"
 #include "JiggBase.h"
+#include "SettingDlg.h"
 
 class ChildFrame;
 class TCadView : public CView
@@ -160,6 +161,7 @@ protected:
     afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 public:
+    void OnSettingInfo();
     void OnDrawingAxis();
     void OnBtnGrid();
     void OnViewIso();
@@ -172,6 +174,10 @@ public:
     void OnShowReset();
     void DoSelect();
     void OnDrawing2d(UINT type);
+
+public:
+    //Ultil function
+    bool CheckZVector(CPoint pt, POINT3D& retPt);
 };
 
 #ifndef _DEBUG  // debug version in TCadView.cpp
