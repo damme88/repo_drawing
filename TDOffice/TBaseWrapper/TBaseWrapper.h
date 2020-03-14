@@ -23,7 +23,16 @@ namespace TBWrapper {
         case WM_IME_SETCONTEXT:
             if (LOWORD(_wParam) > 0)
                 SetFocus(_hWnd);
-
+        case WM_LBUTTONDOWN:
+            break;
+        case WM_LBUTTONUP:
+            break;
+        case WM_RBUTTONDOWN:
+            break;
+        case WM_RBUTTONUP:
+            break;
+        case WM_MOUSEMOVE:
+            break;
             return 0;
 
         default:

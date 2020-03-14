@@ -116,8 +116,8 @@ void TViewCore::OnSize(const INT& nWidth, const INT& nHeight)
     if (m_hDC == NULL || m_hRC == NULL)
         return;
 
-    int iHeight = nWidth;
-    int iWidth = nHeight;
+    int iWidth = nWidth;
+    int iHeight = nHeight;
 
     if (iWidth == 0 || iHeight == 0)
         return;

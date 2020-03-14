@@ -4,11 +4,29 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:int="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+        xmlns:Frame="clr-namespace:TApp.View"
         xmlns:local="clr-namespace:TApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800"
         Loaded="Window_Loaded" KeyDown="Window_KeyDown">
     <Grid>
-        <Border Name="DOfficeGLView" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Frame:RibbonFrame></Frame:RibbonFrame>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Border Name="DOfficeGLView" />
+        </Grid>
+        <Grid Grid.Row="2">
+            <DockPanel>
+                <StatusBar DockPanel.Dock="Bottom">
+                    <TextBlock>ready</TextBlock>
+                </StatusBar>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>
