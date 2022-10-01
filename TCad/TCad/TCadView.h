@@ -21,6 +21,7 @@
 #include "TRectangle.h"
 #include "TCircle.h"
 #include "TBox.h"
+#include "TRoom.h"
 #include "TCadDoc.h"
 #include "FormBar.h"
 #include "JiggBase.h"
@@ -39,6 +40,11 @@ protected: // create from serialization only
         NORMAL_MODE = 1
     };
 
+    enum ViewMode
+    {
+        VIEW_2D = 0,
+        VIEW_3D = 1,
+    };
 // Attributes
 public:
 	TCadDoc* GetDocument() const;
@@ -74,6 +80,8 @@ public:
     bool get_is_show_axis() const { return is_show_axis_; }
     void ImplementAction(const CPoint& pick_pt);
     void ImplementUndoRedo();
+    void SetViewMode(const UINT& view_mode) { m_ViewMode = view_mode; };
+    UINT GetViewMode() const { return m_ViewMode; }
 // Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
@@ -93,6 +101,9 @@ public:
 #endif
 
 protected:
+
+    UINT m_ViewMode;   // 2D/3D
+
     EntityObject* entity_obj_;
     FormBar* form_bar_;
     PCam p_cameral_;

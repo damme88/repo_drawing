@@ -35,6 +35,7 @@ enum Type2D
     DR_CIRCLE,
     DR_ARC,
     DR_ELIP,
+    DR_ROOM,
 };
 
 enum Type3D

@@ -79,6 +79,8 @@
 #define ID_BTN_CONE                     32802
 #define ID_BTN_PYRAMID                  32803
 #define ID_BTN_BOX                      32804
+#define ID_BTN_VIEW_3D                  32805
+#define ID_BTN_ROOM                     32806
 #define ID_VIEW_ISO                     32810
 #define ID_VIEW_LEFT                    32811
 #define ID_VIEW_RIGHT                   32812
@@ -99,7 +101,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        323
-#define _APS_NEXT_COMMAND_VALUE         32804
+#define _APS_NEXT_COMMAND_VALUE         32806
 #define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           312
 #endif

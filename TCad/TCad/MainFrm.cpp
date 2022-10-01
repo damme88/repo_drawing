@@ -55,6 +55,8 @@ BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_UPDATE_COMMAND_UI_RANGE(ID_DRAWING_POINT, ID_DRAWING_ARC, &MainFrame::OnUpdate2DObj)
     ON_COMMAND_RANGE(ID_BTN_SPHERE, ID_BTN_BOX, &MainFrame::OnHandle3D)
     ON_UPDATE_COMMAND_UI_RANGE(ID_BTN_SPHERE, ID_BTN_BOX, &MainFrame::OnUpdate3DObj)
+    ON_COMMAND(ID_BTN_VIEW_3D, &MainFrame::ShowView3D)
+    ON_COMMAND(ID_BTN_ROOM, &MainFrame::OnMakeRoom)
 END_MESSAGE_MAP()
 
 // MainFrame construction/destruction
@@ -506,6 +508,36 @@ void MainFrame::OnUpdate2DObj(CCmdUI* pCmdUI)
     }
 }
 
+void MainFrame::ShowView3D()
+{
+    TCadView* pView = GetView();
+    if (pView != NULL)
+    {
+        if (pView->GetViewMode() == TCadView::VIEW_2D)
+        {
+            pView->SetViewMode(TCadView::VIEW_3D);
+            pView->OnViewLeft();
+        }
+        else
+        {
+            pView->SetViewMode(TCadView::VIEW_2D);
+        }
+        pView->Invalidate();
+    }
+}
+
+
+void MainFrame::OnMakeRoom()
+{
+    if (GetView() != NULL)
+    {
+        TCadView* pView = GetView();
+        if (pView != NULL)
+        {
+            pView->OnDrawing2d(Type2D::DR_ROOM);
+        }
+    }
+}
 
 void MainFrame::OnHandle3D(UINT nId)
 {

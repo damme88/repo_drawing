@@ -32,8 +32,8 @@ void PCam::CalAngle(CPoint point, int cx, int cy)
     theta_ += anglex;
     if (theta_ > 360)
         theta_ -= 360;
-    if (theta_ < 360);
-    theta_ += 360;
+    if (theta_ < 360)
+        theta_ += 360;
 
     float angley = iy * 180.0f / cy;
     phi_ += angley;
@@ -54,31 +54,39 @@ void PCam::ViewDirection()
     vEye.z_ = sin(phi_rad);
 
     VEC3D vUp;
-    VEC3D vZ(0, 0, 1);
-    VEC3D vTemp;
-    vUp = vEye*vTemp;
-    // Tinh toan vector up khi xoay truc toa do z 1 vong tron
-    if ((phi_ >= 0 && phi_ < 90) || (phi_ <= 0 && phi_ > -90) || phi_ > 270 || phi_ < -270)
+    if (m_ViewMode == 0)
     {
-        vTemp = vZ*vEye; // Tich huu huong
-    }
-    else 
-    {
-        vTemp = vEye*vZ;
-    }
-
-    if (vTemp.abs() < 0.01)
-    {
-        vUp.x_ = -sin(phi_rad);
-        vUp.y_ = cos(phi_rad);
-        vUp.z_ = 0.0;
+        vUp = VEC3D(0, 0, 1);
     }
     else
     {
+        VEC3D vZ(0, 0, 1);
+        VEC3D vTemp;
         vUp = vEye*vTemp;
-    }
-    vUp.Unit();
+        // Tinh toan vector up khi xoay truc toa do z 1 vong tron
+        if ((phi_ >= 0 && phi_ < 90) || (phi_ <= 0 && phi_ > -90) || phi_ > 270 || phi_ < -270)
+        {
+            vTemp = vZ*vEye; // Tich huu huong
+        }
+        else
+        {
+            vTemp = vEye*vZ;
+        }
 
+        if (vTemp.abs() < 0.01)
+        {
+            vUp.x_ = -sin(phi_rad);
+            vUp.y_ = cos(phi_rad);
+            vUp.z_ = 0.0;
+        }
+        else
+        {
+            vUp = vEye*vTemp;
+        }
+        vUp.Unit();
+    }
+    
+    
     gluLookAt(vEye.x_, vEye.y_, vEye.z_,
         cen_pt_.x_, cen_pt_.y_, cen_pt_.z_,
         vUp.x_,

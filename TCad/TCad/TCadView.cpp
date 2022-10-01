@@ -106,6 +106,9 @@ TCadView::TCadView()
 
     drawing_mode_ = DrawingMode::NORMAL_MODE;
     pObjGripping_ = NULL;
+
+    m_ViewMode = VIEW_2D;
+    p_cameral_.SetViewMode(m_ViewMode);
 }
 
 TCadView::~TCadView()
@@ -243,15 +246,32 @@ void TCadView::RenderScene()
     glLoadIdentity();
 
     glTranslatef(xPos_, yPos_, zPos_);
+
+    if (m_ViewMode == VIEW_2D)
+    {
+        p_cameral_.set_phi(90.0);
+        p_cameral_.set_theta(180.0);
+    }
+
     p_cameral_.ViewDirection();
+
     DrawAxis();
     DrawAxisSmall();
     glScalef(scaling_, scaling_, scaling_);
-    MakeGrid(100000, 100000, 300);
+    //MakeGrid(100000, 100000, 100);
 
-    OnLighting();
-    DrawEntityObject(GL_RENDER);
-    OffLighting();
+    if (m_ViewMode == VIEW_2D)
+    {
+        DrawEntityObject(GL_RENDER);
+    }
+    else
+    {
+        OnLighting();
+        glutSolidTeapot(10.0);
+        DrawEntityObject(GL_RENDER);
+        OffLighting();
+    }
+    
 }
 
 
@@ -452,14 +472,14 @@ void TCadView::OnSize(UINT nType, int cx, int cy)
 
 void TCadView::SetViewFrustum()
 {
-    double left_ = -(double)cx_ *0.5 / rendering_rate_;
-    double right_ = (double)cx_ *0.5 / rendering_rate_;
-    double top_ = (double)cy_ *0.5 / rendering_rate_;
-    double bottom_ = -(double)cy_ *0.5 / rendering_rate_;
+    double left = -(double)cx_ *0.5 / rendering_rate_;
+    double right = (double)cx_ *0.5 / rendering_rate_;
+    double top = (double)cy_ *0.5 / rendering_rate_;
+    double bottom = -(double)cy_ *0.5 / rendering_rate_;
 
     double zfar = 20000 / rendering_rate_;
     zfar = max(20000, rendering_rate_);
-    glOrtho(left_, right_, bottom_, top_, -zfar, zfar);
+    glOrtho(left, right, bottom, top, -zfar, zfar);
 }
 
 BOOL TCadView::OnEraseBkgnd(CDC* pDC)
@@ -685,6 +705,17 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
 
         pt_list_.push_back(point);
     }
+    else if (type_2d_ == DR_ROOM && pt_list_.size() < 2)
+    {
+        if (p_jig_base_ == NULL)
+        {
+            p_jig_base_ = new JigRectangle();
+        }
+        POINT3D point_mouse1 = PointWndToPointPlane(point);
+        p_jig_base_->set_base_point(point_mouse1);
+
+        pt_list_.push_back(point);
+    }
     else if (type_2d_ == DR_CIRCLE && pt_list_.size() < 2)
     {
         if (p_jig_base_ == NULL)
@@ -869,6 +900,23 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
         pt_list_.clear();
         InvalidateRect(false);
     }
+    else if (type_2d_ == DR_ROOM && pt_list_.size() == 2)
+    {
+        delete p_jig_base_;
+        p_jig_base_ = NULL;
+
+        CPoint pt1 = pt_list_.at(0);
+        CPoint pt2 = pt_list_.at(1);
+
+        POINT3D point_mouse1 = PointWndToPointPlane(pt1);
+        POINT3D point_mouse2 = PointWndToPointPlane(pt2);
+
+        TRoom* new_room = new TRoom();
+        new_room->SetPoints(point_mouse1, point_mouse2);
+        GetDocument()->AppendEntity(new_room);
+        pt_list_.clear();
+        InvalidateRect(false);
+    }
     else if (type_2d_ == DR_CIRCLE && pt_list_.size() == 2)
     {
         delete p_jig_base_;
@@ -990,11 +1038,14 @@ BOOL TCadView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void TCadView::OnMouseMove(UINT nFlags, CPoint point) 
 {
-    if (r_btn_down_) 
+    if (m_ViewMode == VIEW_3D)
     {
-        p_cameral_.CalAngle(point, cx_, cy_);
+        if (r_btn_down_)
+        {
+            p_cameral_.CalAngle(point, cx_, cy_);
+        }
     }
-
+    
     InvalidateRect(NULL, FALSE);
     CView::OnMouseMove(nFlags, point);
     if (GetCapture() == this) 
@@ -1136,7 +1187,8 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
             InvalidateRect(FALSE);
         }
     }
-    else if (type_2d_ == DR_RECTANGLE)
+    else if (type_2d_ == DR_RECTANGLE ||
+             type_2d_ == DR_ROOM)
     {
         if (p_jig_base_)
         {
@@ -1334,8 +1386,8 @@ void TCadView::OnViewTop()
     p_cameral_.set_phi(90.0);
     p_cameral_.set_theta(90.0);
     InvalidateRect(false);
-    //::glMatrixMode(GL_MODELVIEW);
-    //::glLoadIdentity();
+    ::glMatrixMode(GL_MODELVIEW);
+    ::glLoadIdentity();
 }
 
 

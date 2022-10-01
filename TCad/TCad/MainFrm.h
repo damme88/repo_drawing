@@ -87,9 +87,11 @@ protected:
     afx_msg void OnUpdateReset(CCmdUI* pCmdUI);
     afx_msg void OnSelect();
     afx_msg void OnUpdateSelect(CCmdUI* pCmdUI);
+    afx_msg void OnMakeRoom();
     //Drawing 3d
     afx_msg void OnHandle3D(UINT nId);
     afx_msg void OnUpdate3DObj(CCmdUI* pCmdUI);
+    afx_msg void ShowView3D();
 	DECLARE_MESSAGE_MAP()
 
 };

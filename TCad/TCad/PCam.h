@@ -24,6 +24,7 @@ public:
     }
     
     POINT3D GetCenterPt() const { return cen_pt_; }
+    void SetViewMode(const UINT& view_mode) { m_ViewMode = view_mode; }
 private:
     double phi_;
     double theta_;
@@ -34,6 +35,7 @@ private:
     POINT3D cen_pt_;
     VEC3D vUp_;
     CPoint donw_pt_;
+    UINT m_ViewMode;
 };
 
 #endif

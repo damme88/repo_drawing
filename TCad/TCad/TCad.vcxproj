@@ -222,6 +222,7 @@
     <ClInclude Include="TPoint.h" />
     <ClInclude Include="TPolyLine.h" />
     <ClInclude Include="TRectangle.h" />
+    <ClInclude Include="TRoom.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoxObjectDlg.cpp" />
@@ -258,6 +259,7 @@
     <ClCompile Include="TPoint.cpp" />
     <ClCompile Include="TPolyLine.cpp" />
     <ClCompile Include="TRectangle.cpp" />
+    <ClCompile Include="TRoom.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TCad.rc" />
