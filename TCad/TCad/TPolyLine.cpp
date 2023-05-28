@@ -28,7 +28,6 @@ void TPolyLine::SetPointAt(const int& idx, const POINT3D& pt)
 void TPolyLine::Render()
 {
     style_ = SettingInfo::getInstance()->GetStyle();
-    color_value_ = SettingInfo::getInstance()->color_;
     width_ = SettingInfo::getInstance()->width_;
 
     glBegin(GL_LINE_STRIP);

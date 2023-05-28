@@ -56,26 +56,34 @@ BOOL ChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 
 BOOL ChildFrame::OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext)
 {
-    if (!splitter_.CreateStatic(this, 2, 1)) {
+    if (!splitter_.CreateStatic(this, 1, 2)) 
+    {
         TRACE0("Failed to create Static windows");
         return FALSE;
     }
 
-    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(TCadView), CSize(1280, 600), pContext)) {
-        TRACE0("Failed to view 1");
-        return FALSE;
-    }
+    CRect rect;
+    GetClientRect(rect);
+    INT width = rect.Width();
+    INT height = rect.Height();
 
-    if (!splitter_.CreateView(1, 0, RUNTIME_CLASS(FormBar),
-        CSize(1280, 400),
-        pContext)) {
+    if (!splitter_.CreateView(0, 0, RUNTIME_CLASS(FormBar), CSize(width*0.25, height), pContext))
+    {
         TRACE0("Failed to view 0");
         return FALSE;
     }
 
-    tcad_view_ = reinterpret_cast<TCadView*>(splitter_.GetPane(0, 0));
-    form_bar_ = reinterpret_cast<FormBar*>(splitter_.GetPane(1, 0));
+    if (!splitter_.CreateView(0, 1, RUNTIME_CLASS(TCadView), CSize(width*0.75, height), pContext))
+    {
+        TRACE0("Failed to view 1");
+        return FALSE;
+    }
+
+    tcad_view_ = reinterpret_cast<TCadView*>(splitter_.GetPane(0, 1));
+    form_bar_ = reinterpret_cast<FormBar*>(splitter_.GetPane(0, 0));
     tcad_view_->SetFormBar(form_bar_);
+    form_bar_->SetTCadView(tcad_view_);
+
     splitter_.SetActivePane(0, 0);
     return TRUE;
 }

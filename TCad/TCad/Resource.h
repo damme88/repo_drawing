@@ -54,7 +54,6 @@
 #define IDC_BTN_CLEAR_ALL               1006
 #define IDC_BTN_CHANGE                  1007
 #define IDC_BTN_EXPORT                  1008
-#define IDC_MFCCOLORBUTTON1             1009
 #define IDC_BOX_COLOR                   1009
 #define ID_INSERT_BOX                   1010
 #define IDC_INSERT_BOX_TYPE             1011
@@ -66,28 +65,18 @@
 #define ID_UPDATE_CYLIN                 1017
 #define IDC_ANGLE_CYLIN                 1018
 #define IDC_CYLIN_COLOR                 1019
+#define IDC_MFCCOLORBUTTON_BASE         1022
 #define ID_APP_SETTING                  1500
 #define IDC_SETTING_WIDTH               1501
 #define IDC_SETTING_STYLE               1502
 #define IDC_SETTING_COLOR_2D            1503
-#define ID_SHOW_RESET                   2000
 #define ID_BTN_SELECT                   2001
 #define ID_BTN_GRID                     2002
 #define ID_WRITE_PASTEASHYPERLINK       32770
-#define ID_BTN_SPHERE                   32800
-#define ID_BTN_CYLINDER                 32801
-#define ID_BTN_CONE                     32802
-#define ID_BTN_PYRAMID                  32803
-#define ID_BTN_BOX                      32804
-#define ID_BTN_VIEW_3D                  32805
-#define ID_BTN_ROOM                     32806
-#define ID_VIEW_ISO                     32810
-#define ID_VIEW_LEFT                    32811
-#define ID_VIEW_RIGHT                   32812
-#define ID_VIEW_TOP                     32813
-#define ID_VIEW_BOTTOM                  32814
-#define ID_VIEW_FRONT                   32815
-#define ID_VIEW_BACK                    32816
+#define ID_DRAWING_TRIANGLE             32807
+#define ID_DRAWING_POLYGON              32808
+#define ID_ELIPSE                       32809
+#define ID_OPTION_COLOR                 32813
 #define ID_DRAWING_POINT                32850
 #define ID_DRAWING_LINE                 32851
 #define ID_DRAWING_POLYLINE             32852
@@ -100,9 +89,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        323
-#define _APS_NEXT_COMMAND_VALUE         32806
-#define _APS_NEXT_CONTROL_VALUE         1022
+#define _APS_NEXT_RESOURCE_VALUE        327
+#define _APS_NEXT_COMMAND_VALUE         32819
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

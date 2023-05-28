@@ -117,7 +117,6 @@ POINT3D TLine::FindIntersectPoint(const TLine& line)
 void TLine::Render()
 {
     style_ = SettingInfo::getInstance()->GetStyle();
-    color_value_ = SettingInfo::getInstance()->color_;
     width_ = SettingInfo::getInstance()->width_;
 #ifdef OPENGL_12
     if (is_selected_)

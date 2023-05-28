@@ -25,7 +25,6 @@
 #include "TPoint.h"
 #include "TRectangle.h"
 #include "TPolyLine.h"
-#include "TBox.h"
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -293,12 +292,6 @@ void TCadDoc::Serialize(CArchive& ar)
                 int type = pObj2d->get_type();
                 ar << type;
             }
-            else if (pEntity->get_etype() == EntityObject::OBJ_3D)
-            {
-                Object3D* pObj3d = static_cast<Object3D*>(pEntity);
-                int type = pObj3d->get_type();
-                ar << type;
-            }
             pEntity->Serialize(ar);
             temp = temp->get_next();
         }
@@ -332,10 +325,6 @@ void TCadDoc::Serialize(CArchive& ar)
             else if (nType == Object2D::RECTANGLE)
             {
                 pEntity = new TRectangle();
-            }
-            else if (nType == Object3D::BOX_OBJ)
-            {
-                pEntity = new TBox();
             }
 
             if (pEntity != NULL)

@@ -5,7 +5,7 @@ SettingInfo* SettingInfo::instance_ = NULL;
 
 SettingInfo::SettingInfo()
 {
-    width_ = 0.5;
+    width_ = 0.01;
     style_ = 0;
     color_ = VEC3D(1.0, 1.0, 1.0);
 }

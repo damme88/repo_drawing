@@ -84,20 +84,11 @@
     <ClInclude Include="TRectangle.h">
       <Filter>Source Files\EntityObj</Filter>
     </ClInclude>
-    <ClInclude Include="BoxObjectDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FormBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectInfo.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TBox.h">
-      <Filter>Source Files\EntityObj</Filter>
-    </ClInclude>
-    <ClInclude Include="Object3D.h">
-      <Filter>Source Files\EntityObj</Filter>
     </ClInclude>
     <ClInclude Include="TCircle.h">
       <Filter>Source Files\EntityObj</Filter>
@@ -111,16 +102,7 @@
     <ClInclude Include="JiggBase.h">
       <Filter>Source Files\Jigg</Filter>
     </ClInclude>
-    <ClInclude Include="BoxObjectPanel.h">
-      <Filter>Source Files\PanelDocking</Filter>
-    </ClInclude>
     <ClInclude Include="ChildFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TDesk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CylinderObjectDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataStack.h">
@@ -135,8 +117,8 @@
     <ClInclude Include="SettingInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TRoom.h">
-      <Filter>Source Files\EntityObj</Filter>
+    <ClInclude Include="MapGrid.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -176,20 +158,11 @@
     <ClCompile Include="TRectangle.cpp">
       <Filter>Source Files\EntityObj</Filter>
     </ClCompile>
-    <ClCompile Include="BoxObjectDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FormBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectInfo.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TBox.cpp">
-      <Filter>Source Files\EntityObj</Filter>
-    </ClCompile>
-    <ClCompile Include="Object3D.cpp">
-      <Filter>Source Files\EntityObj</Filter>
     </ClCompile>
     <ClCompile Include="TCircle.cpp">
       <Filter>Source Files\EntityObj</Filter>
@@ -203,16 +176,7 @@
     <ClCompile Include="JiggBase.cpp">
       <Filter>Source Files\Jigg</Filter>
     </ClCompile>
-    <ClCompile Include="BoxObjectPanel.cpp">
-      <Filter>Source Files\PanelDocking</Filter>
-    </ClCompile>
     <ClCompile Include="ChildFrm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TDesk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CylinderObjectDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DataStack.cpp">
@@ -227,8 +191,8 @@
     <ClCompile Include="SettingInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TRoom.cpp">
-      <Filter>Source Files\EntityObj</Filter>
+    <ClCompile Include="MapGrid.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -249,9 +213,6 @@
     <Image Include="res\main.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\writelarge.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\writesmall.bmp">
       <Filter>Resource Files</Filter>
     </Image>
@@ -267,10 +228,7 @@
     <Image Include="res\Toolbar256.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\grid2.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\UNTITLED.bmp">
+    <Image Include="res\writelarge.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

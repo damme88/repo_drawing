@@ -55,6 +55,7 @@ public:
     void Set(double x, double y, double z);
     Vector3D CrossProduct(const Vector3D& v);
     double AngleTo(Vector3D& v);
+    Vector3D GetPointDis(const Vector3D& v, float d);
     float x_;
     float y_;
     float z_;

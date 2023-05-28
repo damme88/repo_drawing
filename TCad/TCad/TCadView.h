@@ -20,12 +20,11 @@
 #include "TPolyLine.h"
 #include "TRectangle.h"
 #include "TCircle.h"
-#include "TBox.h"
-#include "TRoom.h"
 #include "TCadDoc.h"
 #include "FormBar.h"
 #include "JiggBase.h"
 #include "SettingDlg.h"
+#include "MapGrid.h"
 
 class ChildFrame;
 class TCadView : public CView
@@ -43,7 +42,6 @@ protected: // create from serialization only
     enum ViewMode
     {
         VIEW_2D = 0,
-        VIEW_3D = 1,
     };
 // Attributes
 public:
@@ -63,7 +61,7 @@ public:
     void CreateOpenGLFont();
     void OnLighting();
     void OffLighting();
-    void MakeGrid(double width, double height, double distance);
+    void MakeGrid();
     POINT3D ConvertWindowToOpenGL(const CPoint &point2D);
     VEC3D GetPPVectorScreen();
     POINT3D GetMousePtOnPlane(POINT3D &gl_point, POINT3D &origin_point);
@@ -142,7 +140,6 @@ protected:
     bool is_grip_;
     EntityObject* pObjGripping_;
     UINT type_2d_;
-    UINT type_3d_;
     std::vector<CPoint> pt_list_;
     JiggBase* p_jig_base_;
 
@@ -150,7 +147,7 @@ protected:
 
     //Drawing style variable
     DrawingMode drawing_mode_;
-
+    MapGrid m_Grid;
 // Generated message map functions
 protected:
     afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -172,6 +169,7 @@ protected:
     afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 public:
+    VEC3D GetBaseColor();
     void OnSettingInfo();
     void OnDrawingAxis();
     void OnBtnGrid();

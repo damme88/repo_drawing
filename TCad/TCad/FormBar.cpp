@@ -14,7 +14,7 @@ IMPLEMENT_DYNCREATE(FormBar, CFormView)
 FormBar::FormBar()
 	: CFormView(IDD_FORMBAR)
 {
-
+    m_TcadView = NULL;
 }
 
 FormBar::~FormBar()
@@ -28,6 +28,7 @@ FormBar::~FormBar()
 void FormBar::DoDataExchange(CDataExchange* pDX)
 {
     CFormView::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_MFCCOLORBUTTON_BASE, m_ColorBase);
 }
 
 BEGIN_MESSAGE_MAP(FormBar, CFormView)
@@ -54,6 +55,7 @@ void FormBar::Dump(CDumpContext& dc) const
 void FormBar::OnInitialUpdate()
 {
     CFormView::OnInitialUpdate();
+    m_ColorBase.SetColor(RGB(0, 0, 0));
 }
 // FormBar message handlers
 void FormBar::OnSize(UINT nType, int cx, int cy) 
@@ -64,5 +66,11 @@ void FormBar::OnSize(UINT nType, int cx, int cy)
 
 TCadView* FormBar::GetTCadView()
 {
-    return NULL;
+    return m_TcadView;
+}
+
+COLORREF FormBar::GetColorBase()
+{
+    COLORREF color = m_ColorBase.GetColor();
+    return color;
 }

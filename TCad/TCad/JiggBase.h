@@ -39,7 +39,9 @@ public:
     POINT3D get_base_point()const { return base_pt_; }
     UINT GetStateJigg() const { return state_jigg_; }
     void SetStartJigg(const UINT& state) { state_jigg_ = state; }
+    void SetColor(VEC3D vColor) { m_color = vColor; }
 protected:
+    Vector3D m_color;
     POINT3D base_pt_;
     UINT state_jigg_;
 };

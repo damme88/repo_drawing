@@ -1,0 +1,6 @@
+de tao dc anh 32 bit cho ribbon thi lam nhu sau
+
+1. tao tren photoshop va save ra png no background
+2. mo pixel format va import anh vua save
+3. copy du lieu anh, roi new 1 file trong pixel va paste du lieu anh sang
+4. save lai img 32 bit tren pixel

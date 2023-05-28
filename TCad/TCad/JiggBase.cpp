@@ -50,6 +50,7 @@ void JigLine::MakeJiggObj()
         if (p_line_jig_ == NULL)
         {
             p_line_jig_ = new TLine(pt1, pt2);
+            p_line_jig_->set_color(m_color);
         }
         p_line_jig_->SetPoint(pt1, pt2);
     }
@@ -129,6 +130,7 @@ void JigCircle::MakeJiggObj()
         }
         TCircle* new_circle = (TCircle*)p_circle_jig_;
         new_circle->set_pos(pt1);
+        new_circle->set_color(m_color);
         double distance = pt1.distance(pt2);
         new_circle->set_radius(distance);
 
@@ -205,6 +207,7 @@ void JigRectangle::MakeJiggObj()
         if (p_rect_jig_ == NULL)
         {
             p_rect_jig_ = new TRectangle();
+            p_rect_jig_->set_color(m_color);
         }
         p_rect_jig_->SetPoints(pt1, pt2);
     }
@@ -285,6 +288,7 @@ void JigPolyLine::MakeJiggObj()
         if (p_poly_line_ == NULL)
         {
             p_poly_line_ = new TPolyLine();
+            p_poly_line_->set_color(m_color);
         }
         //Reset to created again
         p_poly_line_->FreePoint();

@@ -14,7 +14,6 @@
 
 #pragma once
 #include "TCadView.h"
-#include "BoxObjectPanel.h"
 #include "SettingInfo.h"
 
 class MainFrame : public CMDIFrameWndEx
@@ -26,9 +25,8 @@ public: // create from serialization only
 // Attributes
 public:
 // Operations
-    void UpdateBox(int idx);
-    void OnMakeBox();
     void SetStateDrawing(const INT& state);
+    FormBar* GetFormBar();
 public:
     //BOOL OnCreateClient(LPCREATESTRUCT lpCreateStruct, CCreateContext *pContext);
 // Overrides
@@ -48,8 +46,6 @@ protected:  // control bar embedded members
 	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar  m_wndStatusBar;
 
-
-    BoxObjectPanel m_object;
     bool show_box_;
     INT view_id_;
     INT drawing2d_id_;
@@ -69,29 +65,21 @@ protected:
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* pCmdUI);
     //Setting
     afx_msg void OnSettingInfo();
-
+        
+    // Operator
     afx_msg void OnDrawingAxis();
     afx_msg void OnUpdateDrawingAxis(CCmdUI *pCmdUI);
 
     afx_msg void OnBtnGrid();
     afx_msg void OnUpdateBtnGrid(CCmdUI *pCmdUI);
-    //View
-    afx_msg void OnHandleView(UINT nId);
-    afx_msg void OnUpdateViewEye(CCmdUI* pCmdUI);
+
     //2d
     afx_msg void OnHandle2D(UINT nId);
     afx_msg void OnUpdate2DObj(CCmdUI* pCmdUI);
 
     //Basic
-    afx_msg void OnShowReset();
-    afx_msg void OnUpdateReset(CCmdUI* pCmdUI);
     afx_msg void OnSelect();
     afx_msg void OnUpdateSelect(CCmdUI* pCmdUI);
-    afx_msg void OnMakeRoom();
-    //Drawing 3d
-    afx_msg void OnHandle3D(UINT nId);
-    afx_msg void OnUpdate3DObj(CCmdUI* pCmdUI);
-    afx_msg void ShowView3D();
 	DECLARE_MESSAGE_MAP()
 
 };

@@ -30,6 +30,7 @@ void TArc::Render()
     glPushMatrix();
     glTranslatef(pos_pt_.x_, pos_pt_.y_, pos_pt_.z_);
     glBegin(GL_LINE_LOOP);
+    glColor3f(color_value_.x_, color_value_.y_, color_value_.z_);
     for (int i = 0; i <= 360; i++) 
     {
         double angle = 2 * M_PI * i / 360;

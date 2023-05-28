@@ -15,7 +15,6 @@
 #include "stdafx.h"
 #include "TCad.h"
 #include "MainFrm.h"
-#include "BoxObjectDlg.h"
 
 
 #ifdef _DEBUG
@@ -39,8 +38,6 @@ BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_COMMAND(ID_APP_SETTING, &MainFrame::OnSettingInfo)
     ON_COMMAND(ID_DRAWING_AXIS, &MainFrame::OnDrawingAxis)
     ON_UPDATE_COMMAND_UI(ID_DRAWING_AXIS, &MainFrame::OnUpdateDrawingAxis)
-    ON_COMMAND(ID_SHOW_RESET, &MainFrame::OnShowReset)
-    ON_UPDATE_COMMAND_UI(ID_SHOW_RESET, &MainFrame::OnUpdateReset)
     ON_COMMAND(ID_BTN_SELECT, &MainFrame::OnSelect)
     ON_UPDATE_COMMAND_UI(ID_BTN_SELECT, &MainFrame::OnUpdateSelect)
     ON_COMMAND(ID_BTN_GRID, &MainFrame::OnBtnGrid)
@@ -49,14 +46,8 @@ BEGIN_MESSAGE_MAP(MainFrame, CMDIFrameWndEx)
     ON_UPDATE_COMMAND_UI(ID_EDIT_UNDO, OnUpdateEditUndo)
     ON_COMMAND(ID_EDIT_REDO, OnEditRedo)
     ON_UPDATE_COMMAND_UI(ID_EDIT_REDO, OnUpdateEditRedo)
-    ON_COMMAND_RANGE(ID_VIEW_ISO, ID_VIEW_BACK, &MainFrame::OnHandleView)
-    ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_ISO, ID_VIEW_BACK, &MainFrame::OnUpdateViewEye)
     ON_COMMAND_RANGE(ID_DRAWING_POINT, ID_DRAWING_ARC, &MainFrame::OnHandle2D)
     ON_UPDATE_COMMAND_UI_RANGE(ID_DRAWING_POINT, ID_DRAWING_ARC, &MainFrame::OnUpdate2DObj)
-    ON_COMMAND_RANGE(ID_BTN_SPHERE, ID_BTN_BOX, &MainFrame::OnHandle3D)
-    ON_UPDATE_COMMAND_UI_RANGE(ID_BTN_SPHERE, ID_BTN_BOX, &MainFrame::OnUpdate3DObj)
-    ON_COMMAND(ID_BTN_VIEW_3D, &MainFrame::ShowView3D)
-    ON_COMMAND(ID_BTN_ROOM, &MainFrame::OnMakeRoom)
 END_MESSAGE_MAP()
 
 // MainFrame construction/destruction
@@ -66,7 +57,6 @@ MainFrame::MainFrame()
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
     show_box_ = false;
-    view_id_ = ID_VIEW_ISO;
     drawing2d_id_ = 0;
     drawing3d_id_ = 0;
 }
@@ -126,35 +116,38 @@ int MainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     // improves the usability of the taskbar because the document name is visible with the thumbnail.
     ModifyStyle(0, FWS_PREFIXTITLE);
 
-    // GetOwner is an inherited method.
-    UINT style = WS_CHILD | CBRS_RIGHT | CBRS_FLOAT_MULTI;
-    CString strTitle = _T("Box Object Pane");
-    if (!m_object.Create(strTitle, this,CRect(0, 0, 300, 600), TRUE, IDC_OBJECT_PANE, style))
-    {
-        return 0;
-    }
-
 	return 0;
 }
 
 TCadView* MainFrame::GetView()
 {
+    TCadView * pCadView = NULL;
     CMDIFrameWnd* pFrame = ((CMDIFrameWnd*)(AfxGetApp()->m_pMainWnd));
     if (pFrame)
     {
         CMDIChildWnd * pChild = pFrame->MDIGetActive();
-        if (!pChild)
-            return NULL;
-        CView * pView = pChild->GetActiveView();
-        if (!pView)
-            return NULL;
-        // Fail if view is of wrong kind
-        if (!pView->IsKindOf(RUNTIME_CLASS(TCadView)))
-            return NULL;
-
-        return (TCadView *)pView;
+        if (pChild != NULL)
+        {
+            CView* pView = pChild->GetActiveView();
+            if (pView != NULL)
+            {
+                if (pView->IsKindOf(RUNTIME_CLASS(TCadView)))
+                {
+                    pCadView = STATIC_DOWNCAST(TCadView, pView);
+                }
+            }
+        }
     }
-    return NULL;
+
+    if (pCadView == NULL)
+    {
+        if (GetFormBar() != NULL)
+        {
+            pCadView = GetFormBar()->GetTCadView();
+        }
+    }
+    
+    return pCadView;
 }
 
 
@@ -314,15 +307,17 @@ void MainFrame::OnSettingInfo()
 void MainFrame::OnDrawingAxis()
 {
     if (GetView() != NULL)
+    {
         GetView()->OnDrawingAxis();
+    }
 }
 
 void MainFrame::OnUpdateDrawingAxis(CCmdUI *pCmdUI)
 {
     if (GetView() != NULL)
     {
-        bool is_show_axis = GetView()->get_is_show_axis();
-        pCmdUI->SetCheck(is_show_axis);
+        bool state = GetView()->get_is_show_axis();
+        pCmdUI->SetCheck(state);
         pCmdUI->Enable(TRUE);
     }
     else
@@ -344,96 +339,8 @@ void MainFrame::OnUpdateBtnGrid(CCmdUI *pCmdUI)
 {
     if (GetView() != NULL)
     {
-       bool is_show_grid = GetView()->get_is_gird();
-       pCmdUI->SetCheck(is_show_grid);
-       pCmdUI->Enable(TRUE);
-    }
-    else
-    {
-        pCmdUI->Enable(FALSE);
-    }
-}
-
-void MainFrame::OnHandleView(UINT nId)
-{
-    if (GetView() != NULL)
-    {
-        TCadView* pView = GetView();
-        switch (nId)
-        {
-        case ID_VIEW_TOP:
-        {
-            pView->OnViewTop();
-            view_id_ = ID_VIEW_TOP;
-            break;
-        }
-        case ID_VIEW_LEFT:
-        {
-            pView->OnViewLeft();
-            view_id_ = ID_VIEW_LEFT;
-            break;
-        }
-        case ID_VIEW_RIGHT:
-        {
-            pView->OnViewRight();
-            view_id_ = ID_VIEW_RIGHT;
-            break;
-        }
-        case ID_VIEW_BOTTOM:
-        {
-            pView->OnViewBottom();
-            view_id_ = ID_VIEW_BOTTOM;
-            break;
-        }
-        case ID_VIEW_FRONT:
-        {
-            pView->OnViewFront();
-            view_id_ = ID_VIEW_FRONT;
-            break;
-        }
-        case ID_VIEW_BACK:
-        {
-            pView->OnViewBack();
-            view_id_ = ID_VIEW_BACK;
-            break;
-        }
-        default:
-        {
-            pView->OnViewIso();
-            view_id_ = ID_VIEW_ISO;
-            break;
-        }
-        }
-    }
-}
-
-void MainFrame::OnUpdateViewEye(CCmdUI* pCmdUI)
-{
-    int nId = pCmdUI->m_nID;
-    if (GetView() != NULL)
-    {
-        pCmdUI->Enable(TRUE);
-        BOOL state = (view_id_ == pCmdUI->m_nID ? TRUE : FALSE);
+        bool state = GetView()->get_is_gird();
         pCmdUI->SetCheck(state);
-    }
-    else
-    {
-        pCmdUI->Enable(FALSE);
-    }
-}
-
-void MainFrame::OnShowReset()
-{
-    if (GetView() != NULL)
-    {
-        GetView()->OnViewIso();
-    }
-}
-
-void MainFrame::OnUpdateReset(CCmdUI* pCmdUI)
-{
-    if (GetView() != NULL)
-    {
         pCmdUI->Enable(TRUE);
     }
     else
@@ -441,6 +348,7 @@ void MainFrame::OnUpdateReset(CCmdUI* pCmdUI)
         pCmdUI->Enable(FALSE);
     }
 }
+
 
 void MainFrame::OnHandle2D(UINT nId)
 {
@@ -508,92 +416,6 @@ void MainFrame::OnUpdate2DObj(CCmdUI* pCmdUI)
     }
 }
 
-void MainFrame::ShowView3D()
-{
-    TCadView* pView = GetView();
-    if (pView != NULL)
-    {
-        if (pView->GetViewMode() == TCadView::VIEW_2D)
-        {
-            pView->SetViewMode(TCadView::VIEW_3D);
-            pView->OnViewLeft();
-        }
-        else
-        {
-            pView->SetViewMode(TCadView::VIEW_2D);
-        }
-        pView->Invalidate();
-    }
-}
-
-
-void MainFrame::OnMakeRoom()
-{
-    if (GetView() != NULL)
-    {
-        TCadView* pView = GetView();
-        if (pView != NULL)
-        {
-            pView->OnDrawing2d(Type2D::DR_ROOM);
-        }
-    }
-}
-
-void MainFrame::OnHandle3D(UINT nId)
-{
-    if (GetView() != NULL)
-    {
-        TCadView* pView = GetView();
-        switch (nId)
-        {
-        case ID_BTN_SPHERE:
-        {
-            drawing3d_id_ = ID_BTN_SPHERE;
-            break;
-        }
-        case ID_BTN_CYLINDER:
-        {
-            drawing3d_id_ = ID_BTN_CYLINDER;
-            break;
-        }
-        case ID_BTN_CONE:
-        {
-            drawing3d_id_ = ID_BTN_CONE;
-            break;
-        }
-        case ID_BTN_PYRAMID:
-        {
-            drawing3d_id_ = ID_BTN_PYRAMID;
-            break;
-        }
-        case ID_BTN_BOX:
-        {
-            OnMakeBox();
-            drawing3d_id_ = ID_BTN_BOX;
-            break;
-        }
-        default:
-        {
-            drawing3d_id_ = 0;
-            break;
-        }
-        }
-    }
-}
-
-void MainFrame::OnUpdate3DObj(CCmdUI* pCmdUI)
-{
-    if (GetView() != NULL)
-    {
-        bool state = (drawing3d_id_ == pCmdUI->m_nID ? TRUE : FALSE);
-        pCmdUI->SetCheck(state);
-        pCmdUI->Enable(TRUE);
-    }
-    else
-    {
-        pCmdUI->Enable(FALSE);
-    }
-}
 
 void MainFrame::OnSelect()
 {
@@ -616,52 +438,32 @@ void MainFrame::OnUpdateSelect(CCmdUI* pCmdUI)
     }
 }
 
-void MainFrame::OnMakeBox()
-{
-    if (GetView() != NULL)
-    {
-        show_box_ = !show_box_;
-        if (show_box_)
-        {
-            m_object.SetView(GetView());
-            m_object.SetType(0);
-            m_object.InitDlgVal();
-            m_object.EnableDocking(CBRS_ALIGN_ANY);
-            DockPane((CBasePane*)&m_object, AFX_IDW_DOCKBAR_LEFT);
-            m_object.ShowPane(TRUE, FALSE, TRUE);
-        }
-        else
-        {
-            m_object.ShowPane(FALSE, FALSE, FALSE);
-        }
-    }
-}
 
-void MainFrame::UpdateBox(int idx)
-{
-    TCadView* pView = GetView();
-    if (pView)
-    {
-        m_object.SetView(GetView());
-        m_object.SetType(1);
-        EntityObject* pEntity = pView->GetDocument()->FindEntity(idx);
-        if (pEntity->get_etype() == EntityObject::OBJ_3D)
-        {
-            Object3D* pObj = static_cast<Object3D*>(pEntity);
-            TBox* pBox = static_cast<TBox*>(pObj);
-            m_object.FillData(pBox, idx);
-        }
-
-        m_object.EnableDocking(CBRS_ALIGN_ANY);
-        DockPane((CBasePane*)&m_object, AFX_IDW_DOCKBAR_LEFT);
-        m_object.ShowPane(TRUE, FALSE, TRUE);
-    }
-}
 
 void MainFrame::SetStateDrawing(const INT& state) 
 { 
     drawing2d_id_ = state; 
     drawing3d_id_ = state; 
+}
+
+
+FormBar* MainFrame::GetFormBar()
+{
+    CMDIFrameWndEx* pFrame = ((CMDIFrameWndEx*)(AfxGetApp()->m_pMainWnd));
+    if (pFrame)
+    {
+        CMDIChildWnd * pChild = pFrame->MDIGetActive();
+        if (!pChild)
+            return NULL;
+        CView * pView = pChild->GetActiveView();
+        if (!pView)
+            return NULL;
+        if (!pView->IsKindOf(RUNTIME_CLASS(FormBar)))
+            return NULL;
+
+        return (FormBar *)pView;
+    }
+    return NULL;
 }
 
 void MainFrame::OnEditUndo()

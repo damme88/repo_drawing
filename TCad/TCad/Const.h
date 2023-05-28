@@ -38,21 +38,6 @@ enum Type2D
     DR_ROOM,
 };
 
-enum Type3D
-{
-    NONE_OBJ = 200,
-    BOX_OBJ,
-    CUBE_OBJ,
-    SPHERE_OBJ,
-    CYLINDER_OBJ,
-    TRUNCATED_CONE_OBJ,
-    CONE_OBJ,
-    PYRAMID_OBJ,
-    FRUSTUM_OBJ,
-    OCTAGON_OBJ,
-};
-
-
 #define ST_SOLID_DEF            0xFFFF
 #define ST_DOTTED_DEF           0xAAAA
 #define ST_DASH_DEF             0x00FF

@@ -27,7 +27,6 @@ EntityObject* TCircle::Clone()
 void TCircle::Render()
 {
     style_ = SettingInfo::getInstance()->GetStyle();
-    color_value_ = SettingInfo::getInstance()->color_;
     width_ = SettingInfo::getInstance()->width_;
 
     glPushMatrix();

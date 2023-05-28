@@ -21,9 +21,7 @@
 
 #include "TCadDoc.h"
 #include "TCadView.h"
-#include "BoxObjectDlg.h"
 #include "MainFrm.h"
-#include "TDesk.h"
 #include "ChildFrm.h"
 
 #ifdef _DEBUG
@@ -168,6 +166,9 @@ BOOL TCadView::InitOpenGL()
     //SetupLight();
     //OnLoadTexture();
     //CreateOpenGLFont();
+
+    m_Grid.InitGrid(100000, 100000, 250);
+
     return TRUE;
 }
 
@@ -225,7 +226,7 @@ void TCadView::OnDraw(CDC* /*pDC*/)
 
 	// TODO: add draw code for native data here
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    ::glClearColor(0, 0, 0, 1.0f);
+    ::glClearColor(1.0, 1.0, 1.0, 1.0f);
 
     RenderScene();
     glFlush();
@@ -256,9 +257,8 @@ void TCadView::RenderScene()
     p_cameral_.ViewDirection();
 
     DrawAxis();
-    DrawAxisSmall();
+    //DrawAxisSmall();
     glScalef(scaling_, scaling_, scaling_);
-    //MakeGrid(100000, 100000, 100);
 
     if (m_ViewMode == VIEW_2D)
     {
@@ -271,32 +271,24 @@ void TCadView::RenderScene()
         DrawEntityObject(GL_RENDER);
         OffLighting();
     }
+
+    MakeGrid();
     
 }
 
 
 void TCadView::DrawEntityObject(GLenum mode)
 {
-
-    //Check undo/redo
     ImplementUndoRedo();
-    //Implement undo/redo
-    //if (drawing_mode_ == JIG_MODE)
-    //{
-        if (p_jig_base_ != NULL)
-        {
-            p_jig_base_->DoJigg();
-        }
-    //}
-    //else
-    //{
-        TCadDoc* pDocument = GetDocument();
-        if (pDocument)
-        {
-            pDocument->RenderEntity(mode);
-        }
-    //}
-    
+    if (p_jig_base_ != NULL)
+    {
+        p_jig_base_->DoJigg();
+    }
+    TCadDoc* pDocument = GetDocument();
+    if (pDocument)
+    {
+        pDocument->RenderEntity(mode);
+    }
 }
 
 void TCadView::ImplementUndoRedo()
@@ -554,6 +546,19 @@ ChildFrame* TCadView::GetChildFrame() const
 
 // TCadView message handlers
 
+VEC3D TCadView::GetBaseColor()
+{
+    VEC3D vColor;
+    if (form_bar_ != NULL)
+    {
+        COLORREF color = form_bar_->GetColorBase();
+
+        vColor.x_ = GetRValue(color)/255.0;
+        vColor.y_ = GetGValue(color)/255.0;
+        vColor.z_ = GetBValue(color)/255.0;
+    }
+    return vColor;
+}
 
 void TCadView::OnSettingInfo()
 {
@@ -728,13 +733,9 @@ void TCadView::OnLButtonDown(UINT nFlags, CPoint point)
 
         pt_list_.push_back(point);
     }
-    else if (type_3d_ == BOX_OBJ)
-    {
-        pt_list_.push_back(point);
-    }
 
     //Select object
-    if (type_2d_ == Type2D::NONE && type_3d_ == Type3D::NONE_OBJ)
+    if (type_2d_ == Type2D::NONE)
     {
         if (pDocument->HasObject())
         {
@@ -799,7 +800,7 @@ void TCadView::OnLButtonDblClk(UINT nFlags, CPoint point)
     TCadDoc* pDocument = GetDocument();
     if (pDocument == NULL) return CView::OnLButtonDblClk(nFlags, point);
 
-    if (type_2d_ == Type2D::NONE && type_3d_ == Type3D::NONE_OBJ)
+    if (type_2d_ == Type2D::NONE)
     {
         if (pDocument->HasObject())
         {
@@ -815,7 +816,7 @@ void TCadView::OnLButtonDblClk(UINT nFlags, CPoint point)
                 MainFrame* pFrameMain = reinterpret_cast<MainFrame*>(AfxGetMainWnd());
                 if (pFrameMain != NULL)
                 {
-                    pFrameMain->UpdateBox(idx);
+                    ;//
                 }
             }
         }
@@ -864,6 +865,8 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
                 {
                     TLine* new_line = new TLine(line_jigg->get_start_point(), line_jigg->get_end_point());
                     new_line->set_pos_cam(p_cameral_.get_pos_cam());
+                    VEC3D vColor = GetBaseColor();
+                    new_line->set_color(vColor);
                     GetDocument()->AppendEntity(new_line);
                 }
             }
@@ -879,6 +882,9 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
         POINT3D point_mouse1 = PointWndToPointPlane(pt1);
 
         TPoint* new_pt = new TPoint(point_mouse1);
+        VEC3D vColor = GetBaseColor();
+        new_pt->set_color(vColor);
+
         GetDocument()->AppendEntity(new_pt);
         pt_list_.clear();
         InvalidateRect(false);
@@ -896,24 +902,10 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
 
         TRectangle* new_rect = new TRectangle();
         new_rect->SetPoints(point_mouse1, point_mouse2);
+        VEC3D vColor = GetBaseColor();
+        new_rect->set_color(vColor);
+
         GetDocument()->AppendEntity(new_rect);
-        pt_list_.clear();
-        InvalidateRect(false);
-    }
-    else if (type_2d_ == DR_ROOM && pt_list_.size() == 2)
-    {
-        delete p_jig_base_;
-        p_jig_base_ = NULL;
-
-        CPoint pt1 = pt_list_.at(0);
-        CPoint pt2 = pt_list_.at(1);
-
-        POINT3D point_mouse1 = PointWndToPointPlane(pt1);
-        POINT3D point_mouse2 = PointWndToPointPlane(pt2);
-
-        TRoom* new_room = new TRoom();
-        new_room->SetPoints(point_mouse1, point_mouse2);
-        GetDocument()->AppendEntity(new_room);
         pt_list_.clear();
         InvalidateRect(false);
     }
@@ -929,6 +921,10 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
         POINT3D point_mouse2 = PointWndToPointPlane(pt2);
 
         TCircle* new_circle = new TCircle();
+
+        VEC3D vColor = GetBaseColor();
+        new_circle->set_color(vColor);
+
         new_circle->set_pos(point_mouse1);
         double distance = point_mouse1.distance(point_mouse2);
         new_circle->set_radius(distance);
@@ -937,24 +933,7 @@ void TCadView::OnLButtonUp(UINT nFlags, CPoint point)
         pt_list_.clear();
         InvalidateRect(false);
     }
-    else if (type_3d_ == BOX_OBJ && !pt_list_.empty())
-    {
-        CPoint pt = pt_list_.at(0);
-        POINT3D point_mouse = PointWndToPointPlane(pt);
 
-        if (entity_obj_ != NULL)
-        {
-            EntityObject* clone_obj = entity_obj_->Clone();
-            clone_obj->set_pos(point_mouse);
-            GetDocument()->AppendEntity(clone_obj);
-            pt_list_.clear();
-            InvalidateRect(false);
-        }
-
-        //TDesk* pDesk = new TDesk;
-        //pDesk->Init();
-        //GetDocument()->AppendEntity(pDesk);
-    }
     CView::OnLButtonUp(nFlags, point);
 }
 
@@ -1027,7 +1006,7 @@ void TCadView::MakePolyLineObject(const bool& is_closed /*= false*/)
 }
 BOOL TCadView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-    if (type_2d_ != Type2D::NONE || type_3d_ != Type3D::NONE_OBJ)
+    if (type_2d_ != Type2D::NONE)
     {
        ::SetCursor(AfxGetApp()->LoadCursor(IDC_CUR_DRAW));
        return TRUE;
@@ -1038,14 +1017,6 @@ BOOL TCadView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void TCadView::OnMouseMove(UINT nFlags, CPoint point) 
 {
-    if (m_ViewMode == VIEW_3D)
-    {
-        if (r_btn_down_)
-        {
-            p_cameral_.CalAngle(point, cx_, cy_);
-        }
-    }
-    
     InvalidateRect(NULL, FALSE);
     CView::OnMouseMove(nFlags, point);
     if (GetCapture() == this) 
@@ -1071,6 +1042,8 @@ void TCadView::OnMouseMove(UINT nFlags, CPoint point)
 
 void TCadView::ImplementAction(const CPoint& pick_pt)
 {
+    VEC3D vColor = GetBaseColor();
+
     if (type_2d_ == DR_LINE || is_grip_ == true)
     {
         if (p_jig_base_)
@@ -1127,6 +1100,7 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
                 POINT3D gl_pt;
                 bool is_z = CheckZVector(pick_pt, gl_pt);
                 p_jig_base_->SetData(gl_pt);
+                p_jig_base_->SetColor(vColor);
                 p_jig_base_->MakeJiggObj();
             }
             InvalidateRect(FALSE);
@@ -1147,6 +1121,7 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
             {
                 POINT3D gl_pt = PointWndToPointPlane(pick_pt);
                 p_jig_base_->SetData(gl_pt);
+                p_jig_base_->SetColor(vColor);
                 p_jig_base_->MakeJiggObj();
             }
             InvalidateRect(FALSE);
@@ -1181,14 +1156,14 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
             {
                 POINT3D point_mouse2 = PointWndToPointPlane(pick_pt);
                 p_jig_base_->SetData(point_mouse2);
+                p_jig_base_->SetColor(vColor);
                 p_jig_base_->MakeJiggObj();
             }
             
             InvalidateRect(FALSE);
         }
     }
-    else if (type_2d_ == DR_RECTANGLE ||
-             type_2d_ == DR_ROOM)
+    else if (type_2d_ == DR_RECTANGLE)
     {
         if (p_jig_base_)
         {
@@ -1217,6 +1192,7 @@ void TCadView::ImplementAction(const CPoint& pick_pt)
             {
                 POINT3D point_mouse2 = PointWndToPointPlane(pick_pt);
                 p_jig_base_->SetData(point_mouse2);
+                p_jig_base_->SetColor(vColor);
                 p_jig_base_->MakeJiggObj();
             }
             InvalidateRect(FALSE);
@@ -1273,25 +1249,67 @@ BOOL TCadView::OnMouseWheel(UINT nFlags, short zDetal, CPoint point)
     return  ret;
 }
 
-void TCadView::MakeGrid(double width, double height, double distance)
+void TCadView::MakeGrid()
 {
     if (is_show_grid_)
     {
-        glBegin(GL_LINES);
-        glColor3f(0.1, 0.1, 0.1);
-        int sub_width = width*0.5;
-        int sub_height = height*0.5;
-        for (float x = -sub_width; x < sub_width; x += distance)
+        std::vector<Line*> xLines = m_Grid.GetXLine();
+        std::vector<Line*> yLines = m_Grid.GetYLine();
+
+        for (int yl = 0; yl < yLines.size(); yl++)
         {
-            glVertex3f(x, -sub_height, 0.0f);
-            glVertex3f(x, sub_height, 0.0f );
+            Line* yline = yLines.at(yl);
+            glColor3f(1.0, 0.0, 0.0);
+            VEC3D pt1 = yline->GetPoint1();
+            VEC3D pt2 = yline->GetPoint2();
+            glEnable(GL_LINE_STIPPLE);
+            GLfloat arrVertices[6];
+            arrVertices[0] = pt1.x_;
+            arrVertices[1] = pt1.y_;
+            arrVertices[2] = pt1.z_;
+            arrVertices[3] = pt2.x_;
+            arrVertices[4] = pt2.y_;
+            arrVertices[5] = pt2.z_;
+
+            glColor3f(1.0, 0.0, 0.0);
+            glEnable(GL_LINE_SMOOTH);
+            glLineWidth(0.5);
+            glLineStipple(1, ST_SOLID_DEF);
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glNormal3f(0.0f, 0.0f, 1.0f);
+            glVertexPointer(3, GL_FLOAT, 0, arrVertices);
+            glDrawArrays(GL_LINES, 0, 2);
+            glDisableClientState(GL_VERTEX_ARRAY);
+
+            glDisable(GL_LINE_STIPPLE);
         }
-        for (float y = -sub_height; y < sub_height; y += distance)
+
+        for (int xl = 0; xl < xLines.size(); xl++)
         {
-            glVertex3f(-sub_width, y, 0);
-            glVertex3f(sub_width, y, 0);
+            Line* xline = xLines.at(xl);
+            VEC3D pt1 = xline->GetPoint1();
+            VEC3D pt2 = xline->GetPoint2();
+
+            glEnable(GL_LINE_STIPPLE);
+            GLfloat arrVertices[6];
+            arrVertices[0] = pt1.x_;
+            arrVertices[1] = pt1.y_;
+            arrVertices[2] = pt1.z_;
+            arrVertices[3] = pt2.x_;
+            arrVertices[4] = pt2.y_;
+            arrVertices[5] = pt2.z_;
+            glColor3f(1.0, 0.0, 0.0);
+            glEnable(GL_LINE_SMOOTH);
+            glLineWidth(0.5);
+            glLineStipple(1, ST_SOLID_DEF);
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glNormal3f(0.0f, 0.0f, 1.0f);
+            glVertexPointer(3, GL_FLOAT, 0, arrVertices);
+            glDrawArrays(GL_LINES, 0, 2);
+            glDisableClientState(GL_VERTEX_ARRAY);
+
+            glDisable(GL_LINE_STIPPLE);
         }
-        glEnd();
     }
 }
 
@@ -1339,7 +1357,6 @@ void TCadView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
             pt_list_.clear();
         }
         type_2d_ = Type2D::NONE;
-        type_3d_ = Type3D::NONE_OBJ;
         middle_down_ = false;
         GetDocument()->FreeSelected();
         if (GetChildFrame() != NULL)
@@ -1494,14 +1511,12 @@ POINT3D TCadView::ConvertWindowToOpenGL(const CPoint &point2D)
 void TCadView::OnDrawing2d(UINT type)
 {
     type_2d_ = type;
-    type_3d_ = Type3D::NONE_OBJ;
 }
 
 
 void TCadView::DoSelect()
 {
     type_2d_ = Type2D::NONE;
-    type_3d_ = Type3D::NONE_OBJ;
     middle_down_ = false;
 }
 
@@ -1522,7 +1537,6 @@ void TCadView::MakeEntityObject(EntityObject* ents_obj)
 {
     if (ents_obj != NULL)
     {
-        type_3d_ = Type3D::BOX_OBJ;
         entity_obj_ = ents_obj;
     }
     type_2d_ = Type2D::NONE;
@@ -1535,22 +1549,6 @@ void TCadView::UpdateObject(EntityObject* newObj, int idx)
     {
         int type1 = pEntity->get_etype();
         int type2 = newObj->get_etype();
-
-        if (type2 == EntityObject::OBJ_3D && type2 == EntityObject::OBJ_3D)
-        {
-            Object3D* pObj1 = static_cast <Object3D*>(pEntity);
-            Object3D* pObj2 = static_cast <Object3D*>(newObj);
-            if (pObj1->get_type() == pObj2->get_type())
-            {
-                int type = pObj1->get_type();
-                if (type == Object3D::BOX_OBJ)
-                {
-                    TBox* pBox1 = (TBox*)pEntity;
-                    TBox* pBox2 = (TBox*)newObj;
-                    pBox1->CopyFrom(pBox2);
-                }
-            }
-        }
     }
 }
 bool TCadView::CheckZVector(CPoint pick_pt, POINT3D& retPt)

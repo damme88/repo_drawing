@@ -5,7 +5,9 @@
 
 
 Vector3D::Vector3D() {
-
+    x_ = 0.0;
+    y_ = 0.0;
+    z_ = 0.0;
 }
 
 Vector3D::Vector3D(float x, float y, float z) {
@@ -30,6 +32,19 @@ void Vector3D::Set(double x, double y, double z) {
     x_ = x;
     y_ = y;
     z_ = z;
+}
+
+Vector3D Vector3D::GetPointDis(const Vector3D& v, float d)
+{
+    Vector3D vTmp = v;
+    vTmp.Unit();
+
+    Vector3D pt;
+    pt.x_ = this->x_ + vTmp.x_*d;
+    pt.y_ = this->y_ + vTmp.y_*d;
+    pt.z_ = this->z_ + vTmp.z_*d;
+
+    return pt;
 }
 
 // Get vector Unit
