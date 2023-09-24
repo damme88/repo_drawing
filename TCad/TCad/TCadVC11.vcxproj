@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
@@ -190,28 +190,77 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxObjectDlg.h" />
+    <ClInclude Include="BoxObjectPanel.h" />
+    <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="Const.h" />
+    <ClInclude Include="CylinderObjectDlg.h" />
+    <ClInclude Include="DataList.h" />
+    <ClInclude Include="DataStack.h" />
+    <ClInclude Include="EntityObject.h" />
+    <ClInclude Include="FormBar.h" />
+    <ClInclude Include="FormView.h" />
+    <ClInclude Include="JiggBase.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Object2D.h" />
+    <ClInclude Include="Object3D.h" />
+    <ClInclude Include="ObjectInfo.h" />
     <ClInclude Include="PCam.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SettingDlg.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TArc.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TBox.h" />
     <ClInclude Include="TCad.h" />
     <ClInclude Include="TCadDoc.h" />
     <ClInclude Include="TCadView.h" />
+    <ClInclude Include="TCircle.h" />
+    <ClInclude Include="TDesk.h" />
+    <ClInclude Include="TGripPoint.h" />
+    <ClInclude Include="TLine.h" />
+    <ClInclude Include="TPoint.h" />
+    <ClInclude Include="TPolyLine.h" />
+    <ClInclude Include="TRectangle.h" />
+    <ClInclude Include="TRoom.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoxObjectDlg.cpp" />
+    <ClCompile Include="BoxObjectPanel.cpp" />
+    <ClCompile Include="ChildFrm.cpp" />
+    <ClCompile Include="CylinderObjectDlg.cpp" />
+    <ClCompile Include="DataList.cpp" />
+    <ClCompile Include="DataStack.cpp" />
+    <ClCompile Include="EntityObject.cpp" />
+    <ClCompile Include="FormBar.cpp" />
+    <ClCompile Include="FormView.cpp" />
+    <ClCompile Include="JiggBase.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Object2D.cpp" />
+    <ClCompile Include="Object3D.cpp" />
+    <ClCompile Include="ObjectInfo.cpp" />
     <ClCompile Include="PCam.cpp" />
+    <ClCompile Include="SettingDlg.cpp" />
+    <ClCompile Include="SettingInfo.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TArc.cpp" />
+    <ClCompile Include="TBox.cpp" />
     <ClCompile Include="TCad.cpp" />
     <ClCompile Include="TCadDoc.cpp" />
     <ClCompile Include="TCadView.cpp" />
+    <ClCompile Include="TCircle.cpp" />
+    <ClCompile Include="TDesk.cpp" />
+    <ClCompile Include="TGripPoint.cpp" />
+    <ClCompile Include="TLine.cpp" />
+    <ClCompile Include="TPoint.cpp" />
+    <ClCompile Include="TPolyLine.cpp" />
+    <ClCompile Include="TRectangle.cpp" />
+    <ClCompile Include="TRoom.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TCad.rc" />
